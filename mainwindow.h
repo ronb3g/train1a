@@ -47,6 +47,7 @@ private slots:
     void saveText();
     void loadText();
     void stopTimer();
+    void blockDest();
 
 };
 

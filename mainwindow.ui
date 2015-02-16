@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1023</width>
-    <height>325</height>
+    <width>833</width>
+    <height>285</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -159,6 +159,11 @@
           <item>
            <property name="text">
             <string>End Siding 6</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>End Siding 7</string>
            </property>
           </item>
          </widget>
@@ -313,6 +318,11 @@
             <string>End Siding 6</string>
            </property>
           </item>
+          <item>
+           <property name="text">
+            <string>End Siding 7</string>
+           </property>
+          </item>
          </widget>
         </item>
         <item row="2" column="2">
@@ -350,6 +360,11 @@
           <item>
            <property name="text">
             <string>End Siding 6</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>End Siding 7</string>
            </property>
           </item>
          </widget>
@@ -426,6 +441,11 @@
             <string>End Siding 6</string>
            </property>
           </item>
+          <item>
+           <property name="text">
+            <string>End Siding 7</string>
+           </property>
+          </item>
          </widget>
         </item>
         <item row="1" column="2">
@@ -463,6 +483,11 @@
           <item>
            <property name="text">
             <string>End Siding 6</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>End Siding 7</string>
            </property>
           </item>
          </widget>
@@ -546,6 +571,11 @@
           <item>
            <property name="text">
             <string>End Siding 6</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>End Siding 7</string>
            </property>
           </item>
          </widget>
@@ -702,6 +732,11 @@
             <string>End Siding 6</string>
            </property>
           </item>
+          <item>
+           <property name="text">
+            <string>End Siding 7</string>
+           </property>
+          </item>
          </widget>
         </item>
         <item row="3" column="5">
@@ -815,6 +850,11 @@
             <string>End Siding 6</string>
            </property>
           </item>
+          <item>
+           <property name="text">
+            <string>End Siding 7</string>
+           </property>
+          </item>
          </widget>
         </item>
         <item row="5" column="2">
@@ -854,6 +894,11 @@
             <string>End Siding 6</string>
            </property>
           </item>
+          <item>
+           <property name="text">
+            <string>End Siding 7</string>
+           </property>
+          </item>
          </widget>
         </item>
         <item row="4" column="2">
@@ -891,6 +936,11 @@
           <item>
            <property name="text">
             <string>End Siding 6</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>End Siding 7</string>
            </property>
           </item>
          </widget>
@@ -1211,8 +1261,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1023</width>
-     <height>25</height>
+     <width>833</width>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuCPE_453_Team_1A">
