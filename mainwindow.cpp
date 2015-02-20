@@ -20,6 +20,9 @@
 #include <QTimer>
 #include <QSettings>
 #include <QTextBrowser>
+#include <QSqlDatabase>
+#include <QString>
+#include <QSqlQuery>
 #define infinity 9999999
 
 using namespace std;
@@ -351,7 +354,40 @@ void MainWindow::greyOut1()
         std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
         //std::list<vertex_t> path = DijkstraGetShortestPathTo(ui->stoplineEdit2->text().toInt(), previous);
         std::cout << ui->trainselectBox1->currentText().toStdString() <<" Path : ";
-        std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
+    
+    
+    
+        
+        
+        // test code for reading the vector to a database
+        int pathSize = path.size();
+        cout << "The total number of hops is " << pathSize << endl;
+        //convert the list to an array
+        int *copyarray = new int[pathSize];
+        for (int i=0; i<pathSize; i++)
+        {
+            copyarray[i] = path.front();
+            path.pop_front();
+        }
+        for (int i=0; i<pathSize; i++)
+            cout << copyarray[i] << " ";
+
+        //Use array to fill out traininfo and pathinfo table. Values needed: values in the array, value of the "trainselectBox1" box,
+        //final node, initial node, number of rows on the path info table
+
+        QSqlQuery q;
+        //q.exec("")
+
+
+
+        //
+        
+        
+        
+        
+        
+        
+        //std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
         std::cout << std::endl;
         }
         //adjacency list selected based on heading
