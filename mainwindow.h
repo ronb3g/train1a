@@ -8,6 +8,9 @@
 #include <QMenu>
 #include <QAction>
 #include <QTimer>
+#include <QSqlDatabase>
+#include <QString>
+#include <QSqlQuery>
 
 namespace Ui {
 class MainWindow;
@@ -32,6 +35,7 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    QSqlDatabase ldb;
 
 private slots:
 
