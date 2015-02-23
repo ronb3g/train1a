@@ -23,6 +23,7 @@
 #include <QSqlDatabase>
 #include <QString>
 #include <QSqlQuery>
+#include <QtSql>
 #define infinity 9999999
 
 using namespace std;
@@ -95,6 +96,13 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+/*
+    ldb = QSqlDatabase::addDatabase("QSQLITE", "ldb");
+    ldb.setDatabaseName( "train.db" );
+    if(!db.isOpen())
+    qDebug() << ldb.lastError;
+
+*/
     //Start and Start button graphics
     startIcon = new QIcon("startbutton.png");
     stopIcon = new QIcon("stop.jpg");
@@ -374,14 +382,14 @@ void MainWindow::greyOut1()
 
         //Use array to fill out traininfo and pathinfo table. Values needed: values in the array, value of the "trainselectBox1" box,
         //final node, initial node, number of rows on the path info table
-
-                /*
-        int numRows = q.exec("SELECT COUNT(*) FROM pathInfo;");
+/*
+        QSqlQuery q(ldb);
+        int numRows = q.exec("SELECT COUNT(*) FROM pathinfo;");
         numRows++;
         //q.prepare("UPDATE pathInfo SET ")
 
-        QSqlQuery q;
-        q.prepare("UPDATE trainInfo SET current= ':cL', destination= ':dL', next= ':nL' WHERE id=':tid';");
+        
+        q.prepare("UPDATE traininfo SET current= ':cL', destination= ':dL', next= ':nL' WHERE trainID=':tid';");
         q.bindvalue(":tid", ui->trainselectBox1->currentText());
         q.bindvalue(":cL", copyarray[1] );
         q.bindvalue(":dL", copyarray[pathSize]);
