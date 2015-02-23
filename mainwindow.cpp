@@ -375,9 +375,24 @@ void MainWindow::greyOut1()
         //Use array to fill out traininfo and pathinfo table. Values needed: values in the array, value of the "trainselectBox1" box,
         //final node, initial node, number of rows on the path info table
 
-        QSqlQuery q;
-        //q.exec("")
+                /*
+        int numRows = q.exec("SELECT COUNT(*) FROM pathInfo;");
+        numRows++;
+        //q.prepare("UPDATE pathInfo SET ")
 
+        QSqlQuery q;
+        q.prepare("UPDATE trainInfo SET current= ':cL', destination= ':dL', next= ':nL' WHERE id=':tid';");
+        q.bindvalue(":tid", ui->trainselectBox1->currentText());
+        q.bindvalue(":cL", copyarray[1] );
+        q.bindvalue(":dL", copyarray[pathSize]);
+        q.bindvalue(":nL", copyarray[2]);
+
+        if(!q.exec())
+        {
+            cout << "Failed to update database";
+        }
+
+*/
 
 
         //
