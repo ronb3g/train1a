@@ -11,6 +11,7 @@
 #include <QSqlDatabase>
 #include <QString>
 #include <QSqlQuery>
+#include <QtSql>
 
 namespace Ui {
 class MainWindow;
