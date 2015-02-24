@@ -94,6 +94,12 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+    
+    ldb = QSqlDatabase::addDatabase("QSQLITE", "ldb");
+    ldb.setDatabaseName( "train.db" );
+    if(!ldb.open())
+       { qDebug() << ldb.lastError();}
+       
     ui->setupUi(this);
 
 /*
@@ -151,6 +157,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 MainWindow::~MainWindow()
 {
+    ldb.close();
     delete ui;
 }
 
@@ -412,28 +419,24 @@ void MainWindow::greyOut1()
 
         //Use array to fill out traininfo and pathinfo table. Values needed: values in the array, value of the "trainselectBox1" box,
         //final node, initial node, number of rows on the path info table
-/*
         QSqlQuery q(ldb);
-        int numRows = q.exec("SELECT COUNT(*) FROM pathinfo;");
-        numRows++;
-        //q.prepare("UPDATE pathInfo SET ")
 
-        
-        q.prepare("UPDATE traininfo SET current= ':cL', destination= ':dL', next= ':nL' WHERE trainID=':tid';");
-        q.bindvalue(":tid", ui->trainselectBox1->currentText());
-        q.bindvalue(":cL", copyarray[1] );
-        q.bindvalue(":dL", copyarray[pathSize]);
-        q.bindvalue(":nL", copyarray[2]);
-
-        if(!q.exec())
-        {
-            cout << "Failed to update database";
-        }
-
-*/
+//Paste Pathinfo table here, replace :id with ? bind values.
 
 
-        //
+    q.prepare("UPDATE traininfo SET current=?,destination=?,next=? WHERE trainID=?");
+    q.bindValue(0, copyarray[0] );
+    q.bindValue(1, copyarray[pathSize-1]);
+    q.bindValue(2, copyarray[1]);
+    q.bindValue(3, TrainNum);
+
+    if(!q.exec())
+    {
+        cout << "Failed to update database";
+    }
+
+
+        // Paste Switch info value here
         
         
         
