@@ -406,6 +406,9 @@ void MainWindow::greyOut1()
         
         // test code for reading the vector to a database
         int pathSize = path.size();
+        int numOfRows = pathsize/10;
+        if (pathSize%10 !=0)
+            numOfRows++;
         cout << "The total number of hops is " << pathSize << endl;
         //convert the list to an array
         int *copyarray = new int[pathSize];
@@ -420,15 +423,92 @@ void MainWindow::greyOut1()
         //Use array to fill out traininfo and pathinfo table. Values needed: values in the array, value of the "trainselectBox1" box,
         //final node, initial node, number of rows on the path info table
         QSqlQuery q(ldb);
+/*
+        int numRows = q.exec("SELECT COUNT(*) FROM pathinfo;");
+        numRows++;
+        int numRows2 = numRows;
+        int itt = 1;
+        
+        for( int iR = 0; iR<numOfRows; iR++)
+        {
+            q.prepare("INSERT INTO traininfo VALUES(?,?,?,?,?,?,?,?,?,?,?,?)");
+            q.bindValue(0,numRows);
+            if(numOfRows == (iR-1))
+                q.bindValue(1, NULL);
+            else
+                q.bindValue(1,(numRows+1));
+            
+            numRows++;
+            
+            if(itt <= pathsize){
+            q.bindValue(2, copyarray[itt]);
+            itt++;}
+            else
+                q.bindValue(2, NULL);
+            
+            if(itt <= pathsize){
+            q.bindValue(3, copyarray[itt]);
+            itt++;}
+            else
+                q.bindValue(3, NULL);
+            
+            if(itt <= pathsize){
+            q.bindValue(4, copyarray[itt]);
+            itt++;}
+            else
+                q.bindValue(4, NULL);
+            
+            if(itt <= pathsize){
+            q.bindValue(5, copyarray[itt]);
+            itt++;}
+            else
+                q.bindValue(5, NULL);
+            
+            if(itt <= pathsize){
+            q.bindValue(6, copyarray[itt]);
+            itt++;}
+            else
+                q.bindValue(6, NULL);
+            
+            if(itt <= pathsize){
+            q.bindValue(7, copyarray[itt]);
+            itt++;}
+            else
+                q.bindValue(7, NULL);
+            
+            if(itt <= pathsize){
+            q.bindValue(8, copyarray[itt]);
+            itt++;}
+            else
+                q.bindValue(8, NULL);
+            
+            if(itt <= pathsize){
+            q.bindValue(9, copyarray[itt]);
+            itt++;}
+            else
+                q.bindValue(9, NULL);
+            
+            if(itt <= pathsize){
+            q.bindValue(10, copyarray[itt]);
+            itt++;}
+            else
+                q.bindValue(10, NULL);
+            
+            if(itt <= pathsize){
+            q.bindValue(11, copyarray[itt]);
+            itt++;}
+            else
+                q.bindValue(11, NULL);
+        
+         }
+*/
 
-//Paste Pathinfo table here, replace :id with ? bind values.
-
-
-    q.prepare("UPDATE traininfo SET current=?,destination=?,next=? WHERE trainID=?");
+    q.prepare("UPDATE traininfo SET current=?,destination=?,next=?,path=? WHERE trainID=?");
     q.bindValue(0, copyarray[0] );
     q.bindValue(1, copyarray[pathSize-1]);
     q.bindValue(2, copyarray[1]);
     q.bindValue(3, TrainNum);
+    q.bindValue(4, numRows2);
 
     if(!q.exec())
     {
