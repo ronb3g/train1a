@@ -917,8 +917,8 @@ void MainWindow::greyOut1()
     q.bindValue(0, copyarray[0] );
     q.bindValue(1, copyarray[pathSize-1]);
     q.bindValue(2, copyarray[1]);
-    q.bindValue(3, TrainNum);
-    q.bindValue(4, numRows2);
+    q.bindValue(3, numRows2);
+    q.bindValue(4, ui->trainselectBox1->currentText().toStdString());
 
     if(!q.exec())
     {
