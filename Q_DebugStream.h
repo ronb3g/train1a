@@ -1,0 +1,4 @@
+#ifndef Q_DEBUGSTREAM_H
+#define Q_DEBUGSTREAM_H
+
+#endif // Q_DEBUGSTREAM_H
