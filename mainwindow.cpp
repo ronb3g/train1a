@@ -1,6 +1,5 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include <QTimer>
 #include <QLCDNumber>
 #include <QTime>
 #include <QPixmap>
@@ -13,24 +12,22 @@
 #include <utility> // for pair
 #include <algorithm>
 #include <iterator>
-#include <QPushButton>
 #include <QQueue>
-#include <QFile>
-#include <QFileDialog>
 #include <QTimer>
 #include <QSettings>
 #include <QTextBrowser>
 #include <QSqlDatabase>
-#include <QString>
 #include <QSqlQuery>
 #include <QtSql>
-#define infinity 9999999
+#include <Q_DebugStream.h>
+#include <QTimeEdit>
+//#define infinity 9999999
 
 using namespace std;
 typedef long vertex_t;
-typedef long double weight_t;
+typedef long weight_t;
 
-const weight_t max_weight = infinity;
+const weight_t max_weight = INFINITY;
 
 struct neighbor
 {
@@ -55,6 +52,7 @@ void DijkstraComputePaths(vertex_t source,
     std::set<std::pair<weight_t, vertex_t> > vertex_queue;
         vertex_queue.insert(std::make_pair(min_distance[source], source));
 
+    int count = 0;
     while (!vertex_queue.empty())
     {
         weight_t dist = vertex_queue.begin()->first;
@@ -76,10 +74,15 @@ void DijkstraComputePaths(vertex_t source,
                 vertex_queue.erase(std::make_pair(min_distance[v], v));
                 min_distance[v] = distance_through_u;
                 previous[v] = u;
+
                 vertex_queue.insert(std::make_pair(min_distance[v], v));
+
             }
+            count++;
+            cout << weight << " ";
         }
     }
+    cout << endl << "Total: " << count << endl;
 }
 
 std::list<vertex_t> DijkstraGetShortestPathTo(vertex_t vertex, const std::vector<vertex_t> &previous)
@@ -89,6 +92,16 @@ std::list<vertex_t> DijkstraGetShortestPathTo(vertex_t vertex, const std::vector
         path.push_front(vertex);
     return path;
 }
+
+std::list<weight_t> DijkstraGetShortestPathTow(vertex_t vertex, const std::vector<vertex_t> &previous, weight_t weight)
+{
+    std::list<weight_t> pathw;
+    for (; vertex != -1; vertex = previous[vertex])
+        weight = previous[weight];
+        pathw.push_front(weight);
+    return pathw;
+}
+
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -117,9 +130,30 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->stopButton->setIcon(*stopIcon);
     ui->stopButton->setIconSize(QSize(35,35));
 
+    //create train image icons
+    engine1Icon = new QIcon("engine1.jpg");
+    engine2Icon = new QIcon("engine2.jpg");
+    engine3Icon = new QIcon("engine3.jpg");
+    engine4Icon = new QIcon("engine4.jpg");
+    engine5Icon = new QIcon("engine5.jpg");
+
+    //train image and route info hidden until selected
+    ui->trainimageButton1->hide();
+    ui->routeInfo1->hide();
+    ui->trainimageButton2->hide();
+    ui->routeInfo2->hide();
+    ui->trainimageButton3->hide();
+    ui->routeInfo3->hide();
+    ui->trainimageButton4->hide();
+    ui->routeInfo4->hide();
+    ui->trainimageButton5->hide();
+    ui->routeInfo5->hide();
+
+
+
     //start button starts trains and periodic route calculations
     connect(ui->startButton, SIGNAL(clicked()), this, SLOT(calculateRoute()));
-    connect(ui->stopButton, SIGNAL(clicked()), this, SLOT(stopTimer()));
+    connect(ui->stopButton, SIGNAL(clicked()), this, SLOT(calculateRoute()));
 
     //once schedule created, select radio button to lock it in
     connect(ui->setButton1, SIGNAL(clicked(bool)), this, SLOT(greyOut1()));
@@ -173,7 +207,7 @@ void MainWindow::blockDest()
 //Function to save current configuration
 void MainWindow::saveText()
 {
-    QSettings settings("mytrainsettings.ini",QSettings::IniFormat);
+    QSettings settings(".mytrainsettings.ini",QSettings::IniFormat);
     settings.setValue("def/trainselectBox1", ui->trainselectBox1->currentIndex());
     settings.setValue("def/trainselectBox2", ui->trainselectBox2->currentIndex());
     settings.setValue("def/trainselectBox3", ui->trainselectBox3->currentIndex());
@@ -272,9 +306,17 @@ void MainWindow::stopTimer()
 //function to start periodic route calculations
 void MainWindow::calculateRoute()
 {
-    ui->startButton->setDisabled(true); //disabled start button to avoid throwing timer off
-
     QTimer *recalculateTimer = new QTimer(this);
+
+    if(recalculateTimer->isActive() == true)
+    {
+        recalculateTimer->stop();
+        ui->startButton->setDisabled(false);
+    }
+
+    else
+    {
+    ui->startButton->setDisabled(true); //disabled start button to avoid throwing timer off
 
     if(ui->setButton1->isChecked() == true)
     connect(recalculateTimer, SIGNAL(timeout()), this, SLOT(greyOut1()));
@@ -288,8 +330,9 @@ void MainWindow::calculateRoute()
     connect(recalculateTimer, SIGNAL(timeout()), this, SLOT(greyOut5()));
 
     recalculateTimer->start(5000);
-}
 
+    }
+}
 //function to display real world time according to current pc
 void MainWindow::showTime()
 {
@@ -299,9 +342,44 @@ void MainWindow::showTime()
         text[2] = ' ';
     ui->lcdNumber->display(text);
 }
+
+
 //lock in and calculate route for line 1
 void MainWindow::greyOut1()
 {
+
+    new Q_DebugStream(std::cout, ui->routeInfo1); //Redirect Console output to textBrowser1
+    Q_DebugStream::registerQDebugMessageHandler(); //Redirect qDebug() output to textBrowser1
+
+    //Determine which image to display
+    if(ui->trainselectBox1->currentIndex() == 1)
+    {
+        ui->trainimageButton1->setIcon(*engine1Icon);
+        ui->trainimageButton1->setIconSize(QSize(85,85));
+    }
+    else if(ui->trainselectBox1->currentIndex() == 2)
+    {
+        ui->trainimageButton1->setIcon(*engine2Icon);
+        ui->trainimageButton1->setIconSize(QSize(85,85));
+    }
+    else if(ui->trainselectBox1->currentIndex() == 3)
+    {
+        ui->trainimageButton1->setIcon(*engine3Icon);
+        ui->trainimageButton1->setIconSize(QSize(85,85));
+    }
+    else if(ui->trainselectBox1->currentIndex() == 4)
+    {
+        ui->trainimageButton1->setIcon(*engine4Icon);
+        ui->trainimageButton1->setIconSize(QSize(85,85));
+    }
+    else if(ui->trainselectBox1->currentIndex() == 5)
+    {
+        ui->trainimageButton1->setIcon(*engine5Icon);
+        ui->trainimageButton1->setIconSize(QSize(85,85));
+    }
+    else
+        ui->trainimageButton1->hide();
+
     int start;
     int end;
     //translate origin box
@@ -343,45 +421,47 @@ void MainWindow::greyOut1()
         ui->throttleBox1->setDisabled(true);
         ui->facingBox1->setDisabled(true);
         ui->headingBox1->setDisabled(true);
+        ui->trainimageButton1->show();
+        ui->routeInfo1->show();
         //adjacency list selected based on heading
         if (ui->headingBox1->currentIndex() == 1)
         {
         //adjacency list east
         adjacency_list_t adjacency_list(100);
 
-        adjacency_list[0].push_back(neighbor(39, 9));
-        adjacency_list[1].push_back(neighbor(0, 9));
+        adjacency_list[0].push_back(neighbor(39, 3));
+        adjacency_list[1].push_back(neighbor(0, 2));
         adjacency_list[2].push_back(neighbor(4, 9));
-        adjacency_list[3].push_back(neighbor(1, 9));
+        adjacency_list[3].push_back(neighbor(1, 1));
         adjacency_list[4].push_back(neighbor(72, 9));
         adjacency_list[5].push_back(neighbor(3, 9));
-        adjacency_list[7].push_back(neighbor(5, 9));
-        adjacency_list[8].push_back(neighbor(7, 9));
+        adjacency_list[7].push_back(neighbor(5, 8));
+        adjacency_list[8].push_back(neighbor(7, 7));
         adjacency_list[9].push_back(neighbor(10, 9));
         adjacency_list[10].push_back(neighbor(11, 9));
         adjacency_list[11].push_back(neighbor(13, 9));
-        adjacency_list[14].push_back(neighbor(8, 9));
-        adjacency_list[15].push_back(neighbor(14, 9));
-        adjacency_list[26].push_back(neighbor(51, 9));
-        adjacency_list[28].push_back(neighbor(26, 9));
-        adjacency_list[29].push_back(neighbor(28, 9));
-        adjacency_list[30].push_back(neighbor(29, 9));
+        adjacency_list[14].push_back(neighbor(8, 6));
+        adjacency_list[15].push_back(neighbor(14, 5));
+        adjacency_list[26].push_back(neighbor(51, 4));
+        adjacency_list[28].push_back(neighbor(26, 3));
+        adjacency_list[29].push_back(neighbor(28, 2));
+        adjacency_list[30].push_back(neighbor(29, 1));
         adjacency_list[31].push_back(neighbor(70, 9));
-        adjacency_list[31].push_back(neighbor(30, 9));
-        adjacency_list[32].push_back(neighbor(31, 9));
-        adjacency_list[33].push_back(neighbor(32, 9));
-        adjacency_list[35].push_back(neighbor(33, 9));
-        adjacency_list[36].push_back(neighbor(35, 9));
+        adjacency_list[31].push_back(neighbor(30, 8));
+        adjacency_list[32].push_back(neighbor(31, 7));
+        adjacency_list[33].push_back(neighbor(32, 6));
+        adjacency_list[35].push_back(neighbor(33, 5));
+        adjacency_list[36].push_back(neighbor(35, 4));
         adjacency_list[36].push_back(neighbor(68, 9));
-        adjacency_list[38].push_back(neighbor(36, 9));
-        adjacency_list[39].push_back(neighbor(38, 9));
-        adjacency_list[40].push_back(neighbor(15, 9));
-        adjacency_list[41].push_back(neighbor(40, 9));
-        adjacency_list[42].push_back(neighbor(41, 9));
-        adjacency_list[43].push_back(neighbor(42, 9));
+        adjacency_list[38].push_back(neighbor(36, 5));
+        adjacency_list[39].push_back(neighbor(38, 4));
+        adjacency_list[40].push_back(neighbor(15, 4));
+        adjacency_list[41].push_back(neighbor(40, 3));
+        adjacency_list[42].push_back(neighbor(41, 2));
+        adjacency_list[43].push_back(neighbor(42, 1));
         adjacency_list[44].push_back(neighbor(42, 9));
-        adjacency_list[51].push_back(neighbor(52, 9));
-        adjacency_list[52].push_back(neighbor(53, 9));
+        adjacency_list[51].push_back(neighbor(52, 3));
+        adjacency_list[52].push_back(neighbor(53, 4));
         adjacency_list[52].push_back(neighbor(54, 9));
         adjacency_list[51].push_back(neighbor(55, 9));
         adjacency_list[68].push_back(neighbor(69, 9));
@@ -397,18 +477,19 @@ void MainWindow::greyOut1()
         //DijkstraComputePaths(ui->startlineEdit1->text().toInt(), adjacency_list, min_distance, previous);
         std::cout << "Distance from " << ui->originBox1->currentText().toStdString() << " to " << ui->destBox1->currentText().toStdString() <<  ": " << min_distance[end] << std::endl;
         std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
+        std::list<vertex_t> pathw = DijkstraGetShortestPathTow(end, previous, min_distance);
         //std::list<vertex_t> path = DijkstraGetShortestPathTo(ui->stoplineEdit2->text().toInt(), previous);
         std::cout << ui->trainselectBox1->currentText().toStdString() <<" Path : ";
     
-    
+
     
         
         
         // test code for reading the vector to a database
         int pathSize = path.size();
-        int numOfRows = pathsize/10;
+        //int numOfRows = pathsize/10;
         if (pathSize%10 !=0)
-            numOfRows++;
+            //numOfRows++;
         cout << "The total number of hops is " << pathSize << endl;
         //convert the list to an array
         int *copyarray = new int[pathSize];
@@ -418,7 +499,10 @@ void MainWindow::greyOut1()
             path.pop_front();
         }
         for (int i=0; i<pathSize; i++)
+        {
             cout << copyarray[i] << " ";
+
+        }
 
         //Use array to fill out traininfo and pathinfo table. Values needed: values in the array, value of the "trainselectBox1" box,
         //final node, initial node, number of rows on the path info table
@@ -507,8 +591,8 @@ void MainWindow::greyOut1()
     q.bindValue(0, copyarray[0] );
     q.bindValue(1, copyarray[pathSize-1]);
     q.bindValue(2, copyarray[1]);
-    q.bindValue(3, TrainNum);
-    q.bindValue(4, numRows2);
+    //q.bindValue(3, TrainNum);
+   // q.bindValue(4, numRows2);
 
     if(!q.exec())
     {
@@ -599,12 +683,47 @@ void MainWindow::greyOut1()
         ui->throttleBox1->setDisabled(false);
         ui->facingBox1->setDisabled(false);
         ui->headingBox1->setDisabled(false);
+        ui->trainimageButton1->hide();
+        ui->routeInfo1->clear();
+        ui->routeInfo1->hide();
     }
 }
 
 //lock in and calculate route for line 2
 void MainWindow::greyOut2()
 {
+    new Q_DebugStream(std::cout, ui->routeInfo2); //Redirect Console output to textBrowser2
+    Q_DebugStream::registerQDebugMessageHandler(); //Redirect qDebug() output to textBrowser2
+
+    //Determine which image to display
+    if(ui->trainselectBox2->currentIndex() == 1)
+    {
+        ui->trainimageButton2->setIcon(*engine1Icon);
+        ui->trainimageButton2->setIconSize(QSize(85,85));
+    }
+    else if(ui->trainselectBox2->currentIndex() == 2)
+    {
+        ui->trainimageButton2->setIcon(*engine2Icon);
+        ui->trainimageButton2->setIconSize(QSize(85,85));
+    }
+    else if(ui->trainselectBox2->currentIndex() == 3)
+    {
+        ui->trainimageButton2->setIcon(*engine3Icon);
+        ui->trainimageButton2->setIconSize(QSize(85,85));
+    }
+    else if(ui->trainselectBox2->currentIndex() == 4)
+    {
+        ui->trainimageButton2->setIcon(*engine4Icon);
+        ui->trainimageButton2->setIconSize(QSize(85,85));
+    }
+    else if(ui->trainselectBox2->currentIndex() == 5)
+    {
+        ui->trainimageButton2->setIcon(*engine5Icon);
+        ui->trainimageButton2->setIconSize(QSize(85,85));
+    }
+    else
+        ui->trainimageButton2->hide();
+
     int start;
     int end;
     //translate origin box
@@ -646,6 +765,8 @@ void MainWindow::greyOut2()
         ui->throttleBox2->setDisabled(true);
         ui->facingBox2->setDisabled(true);
         ui->headingBox2->setDisabled(true);
+        ui->trainimageButton2->show();
+        ui->routeInfo2->show();
         //adjacency list selected based on heading
         if (ui->headingBox2->currentIndex() == 1)
         {
@@ -778,12 +899,47 @@ void MainWindow::greyOut2()
         ui->throttleBox2->setDisabled(false);
         ui->facingBox2->setDisabled(false);
         ui->headingBox2->setDisabled(false);
+        ui->trainimageButton2->hide();
+        ui->routeInfo2->clear();
+        ui->routeInfo2->hide();
     }
 }
 
 //lock in and calculate route for line 3
 void MainWindow::greyOut3()
 {
+    new Q_DebugStream(std::cout, ui->routeInfo3); //Redirect Console output to textBrowser2
+    Q_DebugStream::registerQDebugMessageHandler(); //Redirect qDebug() output to textBrowser2
+
+    //Determine which image to display
+    if(ui->trainselectBox3->currentIndex() == 1)
+    {
+        ui->trainimageButton3->setIcon(*engine1Icon);
+        ui->trainimageButton3->setIconSize(QSize(85,85));
+    }
+    else if(ui->trainselectBox3->currentIndex() == 2)
+    {
+        ui->trainimageButton3->setIcon(*engine2Icon);
+        ui->trainimageButton3->setIconSize(QSize(85,85));
+    }
+    else if(ui->trainselectBox3->currentIndex() == 3)
+    {
+        ui->trainimageButton3->setIcon(*engine3Icon);
+        ui->trainimageButton3->setIconSize(QSize(85,85));
+    }
+    else if(ui->trainselectBox3->currentIndex() == 4)
+    {
+        ui->trainimageButton3->setIcon(*engine4Icon);
+        ui->trainimageButton3->setIconSize(QSize(85,85));
+    }
+    else if(ui->trainselectBox3->currentIndex() == 5)
+    {
+        ui->trainimageButton3->setIcon(*engine5Icon);
+        ui->trainimageButton3->setIconSize(QSize(85,85));
+    }
+    else
+        ui->trainimageButton3->hide();
+
     int start;
     int end;
     //translate origin box
@@ -825,6 +981,9 @@ void MainWindow::greyOut3()
         ui->throttleBox3->setDisabled(true);
         ui->facingBox3->setDisabled(true);
         ui->headingBox3->setDisabled(true);
+        ui->trainimageButton3->show();
+        ui->routeInfo3->show();
+
         //adjacency list selected based on heading
         if (ui->headingBox3->currentIndex() == 1)
         {
@@ -957,12 +1116,47 @@ void MainWindow::greyOut3()
         ui->throttleBox3->setDisabled(false);
         ui->facingBox3->setDisabled(false);
         ui->headingBox3->setDisabled(false);
+        ui->trainimageButton3->hide();
+        ui->routeInfo3->clear();
+        ui->routeInfo3->hide();
     }
 }
 
 //lock in and calculate route for line 4
 void MainWindow::greyOut4()
 {
+    new Q_DebugStream(std::cout, ui->routeInfo4); //Redirect Console output to textBrowser2
+    Q_DebugStream::registerQDebugMessageHandler(); //Redirect qDebug() output to textBrowser2
+
+    //Determine which image to display
+    if(ui->trainselectBox4->currentIndex() == 1)
+    {
+        ui->trainimageButton4->setIcon(*engine1Icon);
+        ui->trainimageButton4->setIconSize(QSize(85,85));
+    }
+    else if(ui->trainselectBox4->currentIndex() == 2)
+    {
+        ui->trainimageButton4->setIcon(*engine2Icon);
+        ui->trainimageButton4->setIconSize(QSize(85,85));
+    }
+    else if(ui->trainselectBox4->currentIndex() == 3)
+    {
+        ui->trainimageButton4->setIcon(*engine3Icon);
+        ui->trainimageButton4->setIconSize(QSize(85,85));
+    }
+    else if(ui->trainselectBox4->currentIndex() == 4)
+    {
+        ui->trainimageButton4->setIcon(*engine4Icon);
+        ui->trainimageButton4->setIconSize(QSize(85,85));
+    }
+    else if(ui->trainselectBox4->currentIndex() == 5)
+    {
+        ui->trainimageButton4->setIcon(*engine5Icon);
+        ui->trainimageButton4->setIconSize(QSize(85,85));
+    }
+    else
+        ui->trainimageButton4->hide();
+
     int start;
     int end;
     //translate origin box
@@ -1004,6 +1198,8 @@ void MainWindow::greyOut4()
         ui->throttleBox4->setDisabled(true);
         ui->facingBox4->setDisabled(true);
         ui->headingBox4->setDisabled(true);
+        ui->trainimageButton4->show();
+        ui->routeInfo4->show();
         //adjacency list selected based on heading
         if (ui->headingBox4->currentIndex() == 1)
         {
@@ -1136,12 +1332,47 @@ void MainWindow::greyOut4()
         ui->throttleBox4->setDisabled(false);
         ui->facingBox4->setDisabled(false);
         ui->headingBox4->setDisabled(false);
+        ui->trainimageButton4->hide();
+        ui->routeInfo4->clear();
+        ui->routeInfo4->hide();
     }
 }
 
 //lock in and calculate route for line 5
 void MainWindow::greyOut5()
 {
+    new Q_DebugStream(std::cout, ui->routeInfo5); //Redirect Console output to textBrowser2
+    Q_DebugStream::registerQDebugMessageHandler(); //Redirect qDebug() output to textBrowser2
+
+    //Determine which image to display
+    if(ui->trainselectBox5->currentIndex() == 1)
+    {
+        ui->trainimageButton5->setIcon(*engine1Icon);
+        ui->trainimageButton5->setIconSize(QSize(85,85));
+    }
+    else if(ui->trainselectBox5->currentIndex() == 2)
+    {
+        ui->trainimageButton5->setIcon(*engine2Icon);
+        ui->trainimageButton5->setIconSize(QSize(85,85));
+    }
+    else if(ui->trainselectBox5->currentIndex() == 3)
+    {
+        ui->trainimageButton5->setIcon(*engine3Icon);
+        ui->trainimageButton5->setIconSize(QSize(85,85));
+    }
+    else if(ui->trainselectBox5->currentIndex() == 4)
+    {
+        ui->trainimageButton5->setIcon(*engine4Icon);
+        ui->trainimageButton5->setIconSize(QSize(85,85));
+    }
+    else if(ui->trainselectBox5->currentIndex() == 5)
+    {
+        ui->trainimageButton5->setIcon(*engine5Icon);
+        ui->trainimageButton5->setIconSize(QSize(85,85));
+    }
+    else
+        ui->trainimageButton5->hide();
+
     int start;
     int end;
     //translate origin box
@@ -1183,6 +1414,8 @@ void MainWindow::greyOut5()
         ui->throttleBox5->setDisabled(true);
         ui->facingBox5->setDisabled(true);
         ui->headingBox5->setDisabled(true);
+        ui->trainimageButton5->show();
+        ui->routeInfo5->show();
         //adjacency list selected based on heading
         if (ui->headingBox5->currentIndex() == 1)
         {
@@ -1315,6 +1548,9 @@ void MainWindow::greyOut5()
         ui->throttleBox5->setDisabled(false);
         ui->facingBox5->setDisabled(false);
         ui->headingBox5->setDisabled(false);
+        ui->trainimageButton5->hide();
+        ui->routeInfo5->clear();
+        ui->routeInfo5->hide();
     }
 }
 

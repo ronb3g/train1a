@@ -27,6 +27,11 @@ public:
 
     QIcon *startIcon;
     QIcon *stopIcon;
+    QIcon *engine1Icon;
+    QIcon *engine2Icon;
+    QIcon *engine3Icon;
+    QIcon *engine4Icon;
+    QIcon *engine5Icon;
     QPushButton * stopButton;
     QMenu* menu;
     QAction* savefile;
@@ -53,6 +58,7 @@ private slots:
     void loadText();
     void stopTimer();
     void blockDest();
+
 
 };
 
