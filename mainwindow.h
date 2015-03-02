@@ -58,6 +58,8 @@ private slots:
     void loadText();
     void stopTimer();
     void blockDest();
+    //void checkSwitches(string cN, string nN);
+    //void setSwitch(string sN, string sM);
 
 
 };
