@@ -23,83 +23,12 @@
 #include <QTimeEdit>
 #include <QVariant>
 #include <sstream>
+#include <Dijkstra.h>
+#include <save_loadIni.h>
+#include <QTableView>
+#include <switchFunctions.h>
 
 
-
-
-using namespace std;
-typedef long vertex_t;
-typedef long weight_t;
-
-const weight_t max_weight = INFINITY;
-
-template <class T>
-inline std::string to_string (const T& t)
-{
-std::stringstream ss;
-ss << t;
-return ss.str();
-}
-
-struct neighbor
-{
-    vertex_t target;
-    weight_t weight;
-    neighbor(vertex_t arg_target, weight_t arg_weight)
-        : target(arg_target), weight(arg_weight) { }
-};
-typedef std::vector<std::vector<neighbor> > adjacency_list_t;
-
-void DijkstraComputePaths(vertex_t source,
-    const adjacency_list_t &adjacency_list,
-        std::vector<weight_t> &min_distance,
-            std::vector<vertex_t> &previous)
-{
-    int n = adjacency_list.size();
-    min_distance.clear();
-    min_distance.resize(n, max_weight);
-    min_distance[source] = 0;
-    previous.clear();
-    previous.resize(n, -1);
-    std::set<std::pair<weight_t, vertex_t> > vertex_queue;
-        vertex_queue.insert(std::make_pair(min_distance[source], source));
-
-    while (!vertex_queue.empty())
-    {
-        weight_t dist = vertex_queue.begin()->first;
-        vertex_t u = vertex_queue.begin()->second;
-        vertex_queue.erase(vertex_queue.begin());
-
-        // Visit each edge exiting u
-        const std::vector<neighbor> &neighbors = adjacency_list[u];
-        for (std::vector<neighbor>::const_iterator neighbor_iter = neighbors.begin();
-        neighbor_iter != neighbors.end();
-        neighbor_iter++)
-        {
-            vertex_t v = neighbor_iter->target;
-            weight_t weight = neighbor_iter->weight;
-            weight_t distance_through_u = dist + weight;
-
-            if (distance_through_u < min_distance[v])
-            {
-                vertex_queue.erase(std::make_pair(min_distance[v], v));
-                min_distance[v] = distance_through_u;
-                previous[v] = u;
-
-                vertex_queue.insert(std::make_pair(min_distance[v], v));
-
-            }
-        }
-    }
-}
-
-std::list<vertex_t> DijkstraGetShortestPathTo(vertex_t vertex, const std::vector<vertex_t> &previous)
-{
-    std::list<vertex_t> path;
-    for (; vertex != -1; vertex = previous[vertex])
-        path.push_front(vertex);
-    return path;
-}
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -159,6 +88,8 @@ MainWindow::MainWindow(QWidget *parent) :
     //randomly selected destination for testing route algorithm
     connect(ui->destButton, SIGNAL(clicked()), this, SLOT(destNode()));
 
+    connect(ui->queryButton, SIGNAL(clicked()), this, SLOT(viewTable()));
+
     //Clock feature added to enable delayed train departures
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(showTime()));
@@ -177,7 +108,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->menuCPE_453_Team_1A->addAction(savefile);
     connect(savefile, SIGNAL(triggered()), this, SLOT(saveText()));
 
-
 }
 
 MainWindow::~MainWindow()
@@ -188,7 +118,7 @@ MainWindow::~MainWindow()
 
 
 //Function to check and toggle switches as needed
-void MainWindow::checkSwitches(QString cN, QString nN)
+/*void MainWindow::checkSwitches(QString cN, QString nN)
 {
     if (cN == "36")
     {
@@ -601,6 +531,31 @@ void MainWindow::setSwitch(QString sN, QString sM)
     cout << "Failed to update database";
     }
 }
+*/
+void MainWindow::viewTable()
+{
+    QString vt;
+    vt = ui->sqlQueryEdit->text();
+
+    QSqlTableModel* model = new QSqlTableModel(0, ldb);
+    model->setTable(vt);
+    model->select();
+    QTableView* view = new QTableView;
+    view = new QTableView;
+    view->setModel(model);
+    view->show();
+
+
+    if ( model->lastError().isValid() )
+    {
+        statusBar()->showMessage(tr(" table not opened successfully"));
+    }
+    else
+    {
+        statusBar()->showMessage(tr("table opened successfully"));
+    }
+}
+
 
 
 //Function to block unavailable destinations
@@ -612,78 +567,9 @@ void MainWindow::blockDest()
     }
 }
 
-//Function to save current configuration
-void MainWindow::saveText()
-{
-    QSettings settings(".mytrainsettings.ini",QSettings::IniFormat);
-    settings.setValue("def/trainselectBox1", ui->trainselectBox1->currentIndex());
-    settings.setValue("def/trainselectBox2", ui->trainselectBox2->currentIndex());
-    settings.setValue("def/trainselectBox3", ui->trainselectBox3->currentIndex());
-    settings.setValue("def/trainselectBox4", ui->trainselectBox4->currentIndex());
-    settings.setValue("def/trainselectBox5", ui->trainselectBox5->currentIndex());
-    settings.setValue("def/facingBox1", ui->facingBox1->currentIndex());
-    settings.setValue("def/facingBox2", ui->facingBox2->currentIndex());
-    settings.setValue("def/facingBox3", ui->facingBox3->currentIndex());
-    settings.setValue("def/facingBox4", ui->facingBox4->currentIndex());
-    settings.setValue("def/facingBox5", ui->facingBox5->currentIndex());
-    settings.setValue("def/originBox1", ui->originBox1->currentIndex());
-    settings.setValue("def/originBox2", ui->originBox2->currentIndex());
-    settings.setValue("def/originBox3", ui->originBox3->currentIndex());
-    settings.setValue("def/originBox4", ui->originBox4->currentIndex());
-    settings.setValue("def/originBox5", ui->originBox5->currentIndex());
-    settings.setValue("def/headingBox1", ui->headingBox1->currentIndex());
-    settings.setValue("def/headingBox2", ui->headingBox2->currentIndex());
-    settings.setValue("def/headingBox3", ui->headingBox3->currentIndex());
-    settings.setValue("def/headingBox4", ui->headingBox4->currentIndex());
-    settings.setValue("def/headingBox5", ui->headingBox5->currentIndex());
-    settings.setValue("def/destBox1", ui->destBox1->currentIndex());
-    settings.setValue("def/destBox2", ui->destBox2->currentIndex());
-    settings.setValue("def/destBox3", ui->destBox3->currentIndex());
-    settings.setValue("def/destBox4", ui->destBox4->currentIndex());
-    settings.setValue("def/destBox5", ui->destBox5->currentIndex());
-    settings.setValue("def/throttleBox1", ui->throttleBox1->currentIndex());
-    settings.setValue("def/throttleBox2", ui->throttleBox2->currentIndex());
-    settings.setValue("def/throttleBox3", ui->throttleBox3->currentIndex());
-    settings.setValue("def/throttleBox4", ui->throttleBox4->currentIndex());
-    settings.setValue("def/throttleBox5", ui->throttleBox5->currentIndex());
 
-}
 
 //Function to load previously saved configuration
-void MainWindow::loadText()
-{
-    QSettings settings(".mytrainsettings.ini",QSettings::IniFormat);
-    ui->trainselectBox1->setCurrentIndex(settings.value("def/trainselectBox1").toInt());
-    ui->trainselectBox2->setCurrentIndex(settings.value("def/trainselectBox2").toInt());
-    ui->trainselectBox3->setCurrentIndex(settings.value("def/trainselectBox3").toInt());
-    ui->trainselectBox4->setCurrentIndex(settings.value("def/trainselectBox4").toInt());
-    ui->trainselectBox5->setCurrentIndex(settings.value("def/trainselectBox5").toInt());
-    ui->facingBox1->setCurrentIndex(settings.value("def/facingBox1").toInt());
-    ui->facingBox2->setCurrentIndex(settings.value("def/facingBox2").toInt());
-    ui->facingBox3->setCurrentIndex(settings.value("def/facingBox3").toInt());
-    ui->facingBox4->setCurrentIndex(settings.value("def/facingBox4").toInt());
-    ui->facingBox5->setCurrentIndex(settings.value("def/facingBox5").toInt());
-    ui->originBox1->setCurrentIndex(settings.value("def/originBox1").toInt());
-    ui->originBox2->setCurrentIndex(settings.value("def/originBox2").toInt());
-    ui->originBox3->setCurrentIndex(settings.value("def/originBox3").toInt());
-    ui->originBox4->setCurrentIndex(settings.value("def/originBox4").toInt());
-    ui->originBox5->setCurrentIndex(settings.value("def/originBox5").toInt());
-    ui->headingBox1->setCurrentIndex(settings.value("def/headingBox1").toInt());
-    ui->headingBox2->setCurrentIndex(settings.value("def/headingBox2").toInt());
-    ui->headingBox3->setCurrentIndex(settings.value("def/headingBox3").toInt());
-    ui->headingBox4->setCurrentIndex(settings.value("def/headingBox4").toInt());
-    ui->headingBox5->setCurrentIndex(settings.value("def/headingBox5").toInt());
-    ui->destBox1->setCurrentIndex(settings.value("def/destBox1").toInt());
-    ui->destBox2->setCurrentIndex(settings.value("def/destBox2").toInt());
-    ui->destBox3->setCurrentIndex(settings.value("def/destBox3").toInt());
-    ui->destBox4->setCurrentIndex(settings.value("def/destBox4").toInt());
-    ui->destBox5->setCurrentIndex(settings.value("def/destBox5").toInt());
-    ui->throttleBox1->setCurrentIndex(settings.value("def/throttleBox1").toInt());
-    ui->throttleBox2->setCurrentIndex(settings.value("def/throttleBox2").toInt());
-    ui->throttleBox3->setCurrentIndex(settings.value("def/throttleBox3").toInt());
-    ui->throttleBox4->setCurrentIndex(settings.value("def/throttleBox4").toInt());
-    ui->throttleBox5->setCurrentIndex(settings.value("def/throttleBox5").toInt());
-}
 
 //function to add occupied node to origin boxes
 void MainWindow::occupiedNode()
@@ -835,53 +721,55 @@ void MainWindow::greyOut1()
         if (ui->headingBox1->currentIndex() == 1)
         {
         //adjacency list east
-        adjacency_list_t adjacency_list(100);
+            adjacency_list_t adjacency_listeast(100);
 
-        adjacency_list[0].push_back(neighbor(39, 3));
-        adjacency_list[1].push_back(neighbor(0, 2));
-        adjacency_list[2].push_back(neighbor(4, 9));
-        adjacency_list[3].push_back(neighbor(1, 1));
-        adjacency_list[4].push_back(neighbor(72, 9));
-        adjacency_list[5].push_back(neighbor(3, 9));
-        adjacency_list[7].push_back(neighbor(5, 8));
-        adjacency_list[8].push_back(neighbor(7, 7));
-        adjacency_list[9].push_back(neighbor(10, 9));
-        adjacency_list[10].push_back(neighbor(11, 9));
-        adjacency_list[11].push_back(neighbor(13, 9));
-        adjacency_list[14].push_back(neighbor(8, 6));
-        adjacency_list[15].push_back(neighbor(14, 5));
-        adjacency_list[26].push_back(neighbor(51, 4));
-        adjacency_list[28].push_back(neighbor(26, 3));
-        adjacency_list[29].push_back(neighbor(28, 2));
-        adjacency_list[30].push_back(neighbor(29, 1));
-        adjacency_list[31].push_back(neighbor(70, 9));
-        adjacency_list[31].push_back(neighbor(30, 8));
-        adjacency_list[32].push_back(neighbor(31, 7));
-        adjacency_list[33].push_back(neighbor(32, 6));
-        adjacency_list[35].push_back(neighbor(33, 5));
-        adjacency_list[36].push_back(neighbor(35, 4));
-        adjacency_list[36].push_back(neighbor(68, 9));
-        adjacency_list[38].push_back(neighbor(36, 5));
-        adjacency_list[39].push_back(neighbor(38, 4));
-        adjacency_list[40].push_back(neighbor(15, 4));
-        adjacency_list[41].push_back(neighbor(40, 3));
-        adjacency_list[42].push_back(neighbor(41, 2));
-        adjacency_list[43].push_back(neighbor(42, 1));
-        adjacency_list[44].push_back(neighbor(42, 9));
-        adjacency_list[51].push_back(neighbor(52, 3));
-        adjacency_list[52].push_back(neighbor(53, 4));
-        adjacency_list[52].push_back(neighbor(54, 9));
-        adjacency_list[51].push_back(neighbor(55, 9));
-        adjacency_list[68].push_back(neighbor(69, 9));
-        adjacency_list[70].push_back(neighbor(71, 9));
-        adjacency_list[71].push_back(neighbor(2, 9));
-        adjacency_list[72].push_back(neighbor(73, 9));
-        adjacency_list[73].push_back(neighbor(9, 9));
+            adjacency_listeast[0].push_back(neighbor(39, 3));
+            adjacency_listeast[1].push_back(neighbor(0, 2));
+            adjacency_listeast[2].push_back(neighbor(4, 9));
+            adjacency_listeast[3].push_back(neighbor(1, 1));
+            adjacency_listeast[4].push_back(neighbor(72, 9));
+            adjacency_listeast[5].push_back(neighbor(3, 9));
+            adjacency_listeast[7].push_back(neighbor(5, 8));
+            adjacency_listeast[8].push_back(neighbor(7, 7));
+            adjacency_listeast[9].push_back(neighbor(10, 9));
+            adjacency_listeast[10].push_back(neighbor(11, 9));
+            adjacency_listeast[11].push_back(neighbor(13, 9));
+            adjacency_listeast[14].push_back(neighbor(8, 6));
+            adjacency_listeast[15].push_back(neighbor(14, 5));
+            adjacency_listeast[26].push_back(neighbor(51, 4));
+            adjacency_listeast[28].push_back(neighbor(26, 3));
+            adjacency_listeast[29].push_back(neighbor(28, 2));
+            adjacency_listeast[30].push_back(neighbor(29, 1));
+            adjacency_listeast[31].push_back(neighbor(70, 9));
+            adjacency_listeast[31].push_back(neighbor(30, 8));
+            adjacency_listeast[32].push_back(neighbor(31, 7));
+            adjacency_listeast[33].push_back(neighbor(32, 6));
+            adjacency_listeast[35].push_back(neighbor(33, 5));
+            adjacency_listeast[36].push_back(neighbor(35, 4));
+            adjacency_listeast[36].push_back(neighbor(68, 9));
+            adjacency_listeast[38].push_back(neighbor(36, 5));
+            adjacency_listeast[39].push_back(neighbor(38, 4));
+            adjacency_listeast[40].push_back(neighbor(15, 4));
+            adjacency_listeast[41].push_back(neighbor(40, 3));
+            adjacency_listeast[42].push_back(neighbor(41, 2));
+            adjacency_listeast[43].push_back(neighbor(42, 1));
+            adjacency_listeast[44].push_back(neighbor(42, 9));
+            adjacency_listeast[51].push_back(neighbor(52, 3));
+            adjacency_listeast[52].push_back(neighbor(53, 4));
+            adjacency_listeast[52].push_back(neighbor(54, 9));
+            adjacency_listeast[51].push_back(neighbor(55, 9));
+            adjacency_listeast[68].push_back(neighbor(69, 9));
+            adjacency_listeast[70].push_back(neighbor(71, 9));
+            adjacency_listeast[71].push_back(neighbor(2, 9));
+            adjacency_listeast[72].push_back(neighbor(73, 9));
+            adjacency_listeast[73].push_back(neighbor(9, 9));
+
+
 
         //calculate and output information
         std::vector<weight_t> min_distance;
         std::vector<vertex_t> previous;
-        DijkstraComputePaths(start, adjacency_list, min_distance, previous);
+        DijkstraComputePaths(start, adjacency_listeast, min_distance, previous);
         //DijkstraComputePaths(ui->startlineEdit1->text().toInt(), adjacency_list, min_distance, previous);
         std::cout << "Distance from " << ui->originBox1->currentText().toStdString() << " to " << ui->destBox1->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
         std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
@@ -1112,49 +1000,49 @@ if(path3 != NULL){
   if(path5 != NULL){
     nextLoc = path5;
     checkSwitches(currentLoc, path5);
-    cout << tmpstr.toStdString() << "Moved from " << currentLoc.toStdString() << " to " << path5.toStdString() << endl;
+    cout << tmpstr.toStdString() << " Moved from " << currentLoc.toStdString() << " to " << path5.toStdString() << endl;
     currentLoc = nextLoc;
   }
 
   if(path6 != NULL){
     nextLoc = path6;
     checkSwitches(currentLoc, path6);
-    cout << tmpstr.toStdString() << "Moved from " << currentLoc.toStdString() << " to " << path6.toStdString() << endl;
+    cout << tmpstr.toStdString() << " Moved from " << currentLoc.toStdString() << " to " << path6.toStdString() << endl;
     currentLoc = nextLoc;
   }
 
   if(path7 != NULL){
     nextLoc = path7;
     checkSwitches(currentLoc, path7);
-    cout << tmpstr.toStdString() << "Moved from " << currentLoc.toStdString() << " to " << path7.toStdString() << endl;
+    cout << tmpstr.toStdString() << " Moved from " << currentLoc.toStdString() << " to " << path7.toStdString() << endl;
     currentLoc = nextLoc;
   }
 
   if(path8 != NULL){
     nextLoc = path8;
     checkSwitches(currentLoc, path8);
-    cout << tmpstr.toStdString() << "Moved from " << currentLoc.toStdString() << " to " << path8.toStdString() << endl;
+    cout << tmpstr.toStdString() << " Moved from " << currentLoc.toStdString() << " to " << path8.toStdString() << endl;
     currentLoc = nextLoc;
   }
 
   if(path9 != NULL){
     nextLoc = path9;
     checkSwitches(currentLoc, path9);
-    cout << tmpstr.toStdString() << "Moved from " << currentLoc.toStdString() << " to " << path9.toStdString() << endl;
+    cout << tmpstr.toStdString() << " Moved from " << currentLoc.toStdString() << " to " << path9.toStdString() << endl;
     currentLoc = nextLoc;
   }
 
   if(path10 != NULL){
     nextLoc = path10;
     checkSwitches(currentLoc, path10);
-    cout << tmpstr.toStdString() << "Moved from " << currentLoc.toStdString() << " to " << path10.toStdString() << endl;
+    cout << tmpstr.toStdString() << " Moved from " << currentLoc.toStdString() << " to " << path10.toStdString() << endl;
     currentLoc = nextLoc;
   }
 
   if(path11 != NULL){
     nextLoc = path11;
     checkSwitches(currentLoc, path11);
-    cout << tmpstr.toStdString() << "Moved from " << currentLoc.toStdString() << " to " << path11.toStdString() << endl;
+    cout << tmpstr.toStdString() << " Moved from " << currentLoc.toStdString() << " to " << path11.toStdString() << endl;
 }
 
   if(nextTab == NULL){

@@ -19,7 +19,10 @@ SOURCES += main.cpp\
 HEADERS  += mainwindow.h \
     stdafx.h \
     targetver.h \
-    Q_DebugStream.h
+    Q_DebugStream.h \
+    Dijkstra.h \
+    save_loadIni.h \
+    switchFunctions.h
 
 FORMS    += mainwindow.ui
 

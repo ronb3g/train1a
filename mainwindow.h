@@ -40,6 +40,7 @@ public:
     QTimer* recalculateTimer;
     QTimer* timer;
 
+
 private:
     Ui::MainWindow *ui;
     QSqlDatabase ldb;
@@ -61,6 +62,8 @@ private slots:
     void blockDest();
     void checkSwitches(QString cN, QString nN);
     void setSwitch(QString sN, QString sM);
+    void viewTable();
+
 
 
 };
