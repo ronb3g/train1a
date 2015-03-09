@@ -21,6 +21,10 @@
 #include <QtSql>
 #include <Q_DebugStream.h>
 #include <QTimeEdit>
+#include <QVariant>
+#include <sstream>
+
+
 
 
 using namespace std;
@@ -28,6 +32,14 @@ typedef long vertex_t;
 typedef long weight_t;
 
 const weight_t max_weight = INFINITY;
+
+template <class T>
+inline std::string to_string (const T& t)
+{
+std::stringstream ss;
+ss << t;
+return ss.str();
+}
 
 struct neighbor
 {
@@ -76,9 +88,9 @@ void DijkstraComputePaths(vertex_t source,
 
                 vertex_queue.insert(std::make_pair(min_distance[v], v));
 
-            }         
+            }
         }
-    }   
+    }
 }
 
 std::list<vertex_t> DijkstraGetShortestPathTo(vertex_t vertex, const std::vector<vertex_t> &previous)
@@ -93,12 +105,12 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-    
+
     ldb = QSqlDatabase::addDatabase("QSQLITE", "ldb");
     ldb.setDatabaseName( "train.db" );
     if(!ldb.open())
        { qDebug() << ldb.lastError();}
-       
+
     ui->setupUi(this);
 
     //Start and Start button graphics
@@ -174,9 +186,9 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-/*
+
 //Function to check and toggle switches as needed
-void MainWindow::checkSwitches(string cN, string nN)
+void MainWindow::checkSwitches(QString cN, QString nN)
 {
     if (cN == "36")
     {
@@ -577,19 +589,19 @@ void MainWindow::checkSwitches(string cN, string nN)
     return;
 }
 
-void MainWindow::setSwitch(string sN, string sM)
+void MainWindow::setSwitch(QString sN, QString sM)
 {
     QSqlQuery q(ldb);
     q.prepare("UPDATE switches SET position=? WHERE switch=?");
     q.bindValue(0, sM);
     q.bindValue(1, sN);
-    
+
     if(!q.exec())
     {
     cout << "Failed to update database";
-    }  
+    }
 }
-*/
+
 
 //Function to block unavailable destinations
 void MainWindow::blockDest()
@@ -871,21 +883,19 @@ void MainWindow::greyOut1()
         std::vector<vertex_t> previous;
         DijkstraComputePaths(start, adjacency_list, min_distance, previous);
         //DijkstraComputePaths(ui->startlineEdit1->text().toInt(), adjacency_list, min_distance, previous);
-        std::cout << "Distance from " << ui->originBox1->currentText().toStdString() << " to " << ui->destBox1->currentText().toStdString() <<  ": " << min_distance[end] << std::endl;
+        std::cout << "Distance from " << ui->originBox1->currentText().toStdString() << " to " << ui->destBox1->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
         std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
         //std::list<vertex_t> path = DijkstraGetShortestPathTo(ui->stoplineEdit2->text().toInt(), previous);
         std::cout << ui->trainselectBox1->currentText().toStdString() <<" Path : ";
-    
 
-    
-        
-        
-        // test code for reading the vector to a database
+
+
+// test code for reading the vector to a database
         int pathSize = path.size();
-        //int numOfRows = pathsize/10;
+        int numOfRows = pathSize/10; //number of rows on the path table needed
         if (pathSize%10 !=0)
-            //numOfRows++;
-        cout << "The total number of hops is " << pathSize << endl;
+            numOfRows++;
+        cout << "The total number of hops is " << to_string(pathSize) << endl;
         //convert the list to an array
         int *copyarray = new int[pathSize];
         for (int i=0; i<pathSize; i++)
@@ -895,90 +905,102 @@ void MainWindow::greyOut1()
         }
         for (int i=0; i<pathSize; i++)
         {
-            cout << copyarray[i] << " ";
+            cout << to_string(copyarray[i]) << " ";
 
         }
+        cout << endl;
 
         //Use array to fill out traininfo and pathinfo table. Values needed: values in the array, value of the "trainselectBox1" box,
         //final node, initial node, number of rows on the path info table
         QSqlQuery q(ldb);
-/*
-        int numRows = q.exec("SELECT COUNT(*) FROM pathinfo;");
-        numRows++;
-        int numRows2 = numRows;
-        int itt = 1;
-        
-        for( int iR = 0; iR<numOfRows; iR++)
+
+        q.exec("SELECT COUNT(*) FROM pathinfo;");
+        int numRows; //Current number of rows in the path table
+        while(q.next())
         {
-            q.prepare("INSERT INTO traininfo VALUES(?,?,?,?,?,?,?,?,?,?,?,?)");
-            q.bindValue(0,numRows);
-            if(numOfRows == (iR-1))
-                q.bindValue(1, NULL);
+            numRows = q.value(0).toInt();
+        }
+        numRows++; //increment this by one to get the first free row.
+        int numRows2 = numRows; //duplicate the value for later use
+        int itt = 1; //itterator for the loop
+
+        for( int iR = 1; iR<=numOfRows; iR++)
+        {
+            q.prepare("INSERT INTO pathinfo VALUES(?,?,?,?,?,?,?,?,?,?,?,?)");
+            q.bindValue(0,numRows); //bind first value to the row on the path table.
+
+            if(numOfRows == (iR))
+                q.bindValue(1, QVariant(QVariant::Int));
             else
                 q.bindValue(1,(numRows+1));
-            
+
             numRows++;
-            
-            if(itt <= pathsize){
+
+            if(itt <= pathSize){
             q.bindValue(2, copyarray[itt]);
             itt++;}
             else
-                q.bindValue(2, NULL);
-            
-            if(itt <= pathsize){
+                q.bindValue(2, QVariant(QVariant::String));
+
+            if(itt <= pathSize){
             q.bindValue(3, copyarray[itt]);
             itt++;}
             else
-                q.bindValue(3, NULL);
-            
-            if(itt <= pathsize){
+                q.bindValue(3, QVariant(QVariant::String));
+
+            if(itt <= pathSize){
             q.bindValue(4, copyarray[itt]);
             itt++;}
             else
-                q.bindValue(4, NULL);
-            
-            if(itt <= pathsize){
+                q.bindValue(4, QVariant(QVariant::String));
+
+            if(itt <= pathSize){
             q.bindValue(5, copyarray[itt]);
             itt++;}
             else
-                q.bindValue(5, NULL);
-            
-            if(itt <= pathsize){
+                q.bindValue(5, QVariant(QVariant::String));
+
+            if(itt <= pathSize){
             q.bindValue(6, copyarray[itt]);
             itt++;}
             else
-                q.bindValue(6, NULL);
-            
-            if(itt <= pathsize){
+                q.bindValue(6, QVariant(QVariant::String));
+
+            if(itt <= pathSize){
             q.bindValue(7, copyarray[itt]);
             itt++;}
             else
-                q.bindValue(7, NULL);
-            
-            if(itt <= pathsize){
+                q.bindValue(7, QVariant(QVariant::String));
+
+            if(itt <= pathSize){
             q.bindValue(8, copyarray[itt]);
             itt++;}
             else
-                q.bindValue(8, NULL);
-            
-            if(itt <= pathsize){
+                q.bindValue(8, QVariant(QVariant::String));
+
+            if(itt <= pathSize){
             q.bindValue(9, copyarray[itt]);
             itt++;}
             else
-                q.bindValue(9, NULL);
-            
-            if(itt <= pathsize){
+                q.bindValue(9, QVariant(QVariant::String));
+
+            if(itt <= pathSize){
             q.bindValue(10, copyarray[itt]);
             itt++;}
             else
-                q.bindValue(10, NULL);
-            
-            if(itt <= pathsize){
+                q.bindValue(10, QVariant(QVariant::String));
+
+            if(itt <= pathSize){
             q.bindValue(11, copyarray[itt]);
             itt++;}
             else
-                q.bindValue(11, NULL);
-        
+                q.bindValue(11, QVariant(QVariant::String));
+
+
+            if(!q.exec())
+            {
+                cout << "Failed to update database";
+            }
          }
 
 
@@ -986,27 +1008,203 @@ void MainWindow::greyOut1()
     q.bindValue(0, copyarray[0] );
     q.bindValue(1, copyarray[pathSize-1]);
     q.bindValue(2, copyarray[1]);
-<<<<<<< HEAD
-    //q.bindValue(3, TrainNum);
-   // q.bindValue(4, numRows2);
-=======
+//<<<<<<< HEAD
+    //q.bindValue(4, numRows2);
+    //q.bindValue(3, );
+//=======
     q.bindValue(3, numRows2);
-    q.bindValue(4, ui->trainselectBox1->currentText().toStdString());
->>>>>>> refs/remotes/train1a/master
+    QString tmpstr = ui->trainselectBox1->currentText();
+    q.bindValue(4, tmpstr);
+//>>>>>>> refs/remotes/train1a/master
 
     if(!q.exec())
     {
         cout << "Failed to update database";
     }
-*/
 
-        // Paste Switch info value here
-        
-        
-        
-        
-        
-        
+
+q.prepare("SELECT * FROM traininfo WHERE trainID=?");
+q.bindValue(0, tmpstr);
+if(!q.exec())
+{
+    cout << "Failed to update database";
+}
+QString currentLoc;
+QString nextLoc;
+QString endLoc;
+int nextTab = NULL;
+QString path2;
+QString path3;
+QString path4;
+QString path5;
+QString path6;
+QString path7;
+QString path8;
+QString path9;
+QString path10;
+QString path11;
+int pathTab;
+int currenttab;
+int itt2 = 0;
+
+
+
+while(q.next())
+{
+    currentLoc = q.value(1).toString();
+    nextLoc = q.value(2).toString();
+    endLoc = q.value(3).toString();
+    pathTab = q.value(4).toInt();
+}
+
+q.prepare("SELECT * FROM pathinfo WHERE pathID=?");
+q.bindValue(0,pathTab);
+if(!q.exec())
+{
+    cout << "Failed to update database";
+}
+while(q.next())
+{
+    nextTab = q.value(1).toInt();
+    path2 = q.value(2).toString();
+    path3 = q.value(3).toString();
+    path4 = q.value(4).toString();
+    path5 = q.value(5).toString();
+    path6 = q.value(6).toString();
+    path7 = q.value(7).toString();
+    path8 = q.value(8).toString();
+    path9 = q.value(9).toString();
+    path10 = q.value(10).toString();
+    path11 = q.value(11).toString();
+}
+
+
+
+for(int i=0; i<3; i++)
+{
+
+
+    //checkSwitches(currentLoc, nextLoc);
+    //cout << tmpstr.toStdString() << " Moved from " << currentLoc.toStdString() << " to " << endLoc.toStdString() << endl;
+    //currentLoc = nextLoc;
+
+if(path2 != NULL){
+    nextLoc = path2;
+    checkSwitches(currentLoc, path2);
+    cout << tmpstr.toStdString() << " Moved from " << currentLoc.toStdString() << " to " << path2.toStdString() << endl;
+    currentLoc = nextLoc;
+}
+
+if(path3 != NULL){
+    nextLoc = path3;
+    checkSwitches(currentLoc, path3);
+    cout << tmpstr.toStdString() << " Moved from " << currentLoc.toStdString() << " to " << path3.toStdString() << endl;
+    currentLoc = nextLoc;
+}
+
+ if(path4 != NULL){
+    nextLoc = path4;
+    checkSwitches(currentLoc, path4);
+    cout << tmpstr.toStdString() << " Moved from " << currentLoc.toStdString() << " to " << path4.toStdString() << endl;
+    currentLoc = nextLoc;
+ }
+
+  if(path5 != NULL){
+    nextLoc = path5;
+    checkSwitches(currentLoc, path5);
+    cout << tmpstr.toStdString() << "Moved from " << currentLoc.toStdString() << " to " << path5.toStdString() << endl;
+    currentLoc = nextLoc;
+  }
+
+  if(path6 != NULL){
+    nextLoc = path6;
+    checkSwitches(currentLoc, path6);
+    cout << tmpstr.toStdString() << "Moved from " << currentLoc.toStdString() << " to " << path6.toStdString() << endl;
+    currentLoc = nextLoc;
+  }
+
+  if(path7 != NULL){
+    nextLoc = path7;
+    checkSwitches(currentLoc, path7);
+    cout << tmpstr.toStdString() << "Moved from " << currentLoc.toStdString() << " to " << path7.toStdString() << endl;
+    currentLoc = nextLoc;
+  }
+
+  if(path8 != NULL){
+    nextLoc = path8;
+    checkSwitches(currentLoc, path8);
+    cout << tmpstr.toStdString() << "Moved from " << currentLoc.toStdString() << " to " << path8.toStdString() << endl;
+    currentLoc = nextLoc;
+  }
+
+  if(path9 != NULL){
+    nextLoc = path9;
+    checkSwitches(currentLoc, path9);
+    cout << tmpstr.toStdString() << "Moved from " << currentLoc.toStdString() << " to " << path9.toStdString() << endl;
+    currentLoc = nextLoc;
+  }
+
+  if(path10 != NULL){
+    nextLoc = path10;
+    checkSwitches(currentLoc, path10);
+    cout << tmpstr.toStdString() << "Moved from " << currentLoc.toStdString() << " to " << path10.toStdString() << endl;
+    currentLoc = nextLoc;
+  }
+
+  if(path11 != NULL){
+    nextLoc = path11;
+    checkSwitches(currentLoc, path11);
+    cout << tmpstr.toStdString() << "Moved from " << currentLoc.toStdString() << " to " << path11.toStdString() << endl;
+}
+
+  if(nextTab == NULL){
+
+      q.prepare("SELECT * FROM pathinfo WHERE pathID=?");
+      q.bindValue(0,nextTab);
+      if(!q.exec())
+      {
+          cout << "Failed to update database 123";
+      }
+
+      //int nextTab2 = nextTab;
+
+      while(q.next())
+      {
+          currenttab = q.value(0).toInt();
+          nextTab = q.value(1).toInt();
+          path2 = q.value(2).toString();
+          path3 = q.value(3).toString();
+          path4 = q.value(4).toString();
+          path5 = q.value(5).toString();
+          path6 = q.value(6).toString();
+          path7 = q.value(7).toString();
+          path8 = q.value(8).toString();
+          path9 = q.value(9).toString();
+          path10 = q.value(10).toString();
+          path11 = q.value(11).toString();
+      }
+
+
+
+
+
+
+      q.prepare("UPDATE traininfo SET current=?,next=?,path=? WHERE trainID =?");
+      q.bindValue(0,currentLoc);
+      q.bindValue(1,path2);
+      q.bindValue(2,currenttab);
+      q.bindValue(3,tmpstr);
+      if(!q.exec())
+      {
+          cout << "Failed to update database 456";
+      }
+
+}
+}
+
+
+
+
         //std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
         std::cout << std::endl;
         }

@@ -12,6 +12,7 @@
 #include <QString>
 #include <QSqlQuery>
 #include <QtSql>
+#include <QString>
 
 namespace Ui {
 class MainWindow;
@@ -58,8 +59,8 @@ private slots:
     void loadText();
     void stopTimer();
     void blockDest();
-    //void checkSwitches(string cN, string nN);
-    //void setSwitch(string sN, string sM);
+    void checkSwitches(QString cN, QString nN);
+    void setSwitch(QString sN, QString sM);
 
 
 };
