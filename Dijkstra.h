@@ -1,19 +1,14 @@
 #ifndef DIJKSTRA_H
 #define DIJKSTRA_H
+#include <climits>
 
 using namespace std;
 typedef long vertex_t;
 typedef long weight_t;
 
-const weight_t max_weight = INFINITY;
+const weight_t max_weight = LONG_MAX;
 
-template <class T>
-inline std::string to_string (const T& t)
-{
-std::stringstream ss;
-ss << t;
-return ss.str();
-}
+
 
 struct neighbor
 {

@@ -1,20 +1,15 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include <QLCDNumber>
+//#include <QLCDNumber>
 #include <QTime>
 #include <QPixmap>
 #include <iostream>
 #include <QVector>
 #include <string>
 #include <QList>
-#include <limits> // for numeric_limits
 #include <set>
-#include <utility> // for pair
-#include <algorithm>
-#include <iterator>
 #include <QQueue>
 #include <QTimer>
-#include <QSettings>
 #include <QTextBrowser>
 #include <QSqlDatabase>
 #include <QSqlQuery>
@@ -27,6 +22,14 @@
 #include <save_loadIni.h>
 #include <QTableView>
 #include <switchFunctions.h>
+#include <tableOperations.h>
+#include <sql_tables.h>
+#include <QMessageBox>
+#include <QFileDialog>
+#include <timedelay.h>
+#include <fstream>
+#include <Qsound>
+
 
 
 
@@ -49,6 +52,25 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->startButton->setIconSize(QSize(65,65));
     ui->stopButton->setIcon(*stopIcon);
     ui->stopButton->setIconSize(QSize(35,35));
+
+    /*
+    mapIcon = new QIcon("MasterTracknumbered1.jpg");
+    //ui->graphicsView->setScene(scene);
+    QGraphicsView* w = new QGraphicsView();
+    QGraphicsScene *scn = new QGraphicsScene( w );
+     scn->setSceneRect( w->rect() );
+     w->setScene( scn );
+     w->scale(.1, .1);
+     //w->setAlignment(Qt::AlignCenter);
+     //w->setDragMode(QGraphicsView::ScrollHandDrag);
+     w->viewport();
+     //w->addScrollBarWidget(w, Qt::AlignCenter);
+     //w->setFixedSize( 400, 400 );
+    QPixmap pix( "MasterTracknumbered1.jpg" );
+    scn->addPixmap(pix);
+    w->show();
+*/
+
 
     //create train image icons
     engine1Icon = new QIcon("engine1.jpg");
@@ -73,14 +95,17 @@ MainWindow::MainWindow(QWidget *parent) :
 
     //start button starts trains and periodic route calculations
     connect(ui->startButton, SIGNAL(clicked()), this, SLOT(calculateRoute()));
-    connect(ui->stopButton, SIGNAL(clicked()), this, SLOT(calculateRoute()));
+    connect(ui->stopButton, SIGNAL(clicked()), this, SLOT(stop1()));
+
+    connect(ui->delaypushButton, SIGNAL(clicked()), this, SLOT(timeDelay1()));
+    //connect(ui->timeEdit1, SIGNAL(timeChanged(QTime)), this, SLOT(timedDelay()));
 
     //once schedule created, select radio button to lock it in
-    connect(ui->setButton1, SIGNAL(clicked(bool)), this, SLOT(greyOut1()));
-    connect(ui->setButton2, SIGNAL(clicked(bool)), this, SLOT(greyOut2()));
-    connect(ui->setButton3, SIGNAL(clicked(bool)), this, SLOT(greyOut3()));
-    connect(ui->setButton4, SIGNAL(clicked(bool)), this, SLOT(greyOut4()));
-    connect(ui->setButton5, SIGNAL(clicked(bool)), this, SLOT(greyOut5()));
+    //connect(ui->setButton1, SIGNAL(clicked(bool)), this, SLOT(greyOut1()));
+    //connect(ui->setButton2, SIGNAL(clicked(bool)), this, SLOT(greyOut2()));
+    //connect(ui->setButton3, SIGNAL(clicked(bool)), this, SLOT(greyOut3()));
+    //connect(ui->setButton4, SIGNAL(clicked(bool)), this, SLOT(greyOut4()));
+    //connect(ui->setButton5, SIGNAL(clicked(bool)), this, SLOT(greyOut5()));
 
     //feature to include randomly selected node to include in origin box to start train from
     //i.e. dynamically added due to node being occuppied when train placed on it
@@ -108,6 +133,27 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->menuCPE_453_Team_1A->addAction(savefile);
     connect(savefile, SIGNAL(triggered()), this, SLOT(saveText()));
 
+    //SQL Database query drop down menu selection
+    traininfo = new QAction("Train Info table", this);
+    throttle = new QAction("Throttle table", this);
+    pathinfo = new QAction("Path Info table", this);
+    switches = new QAction("Switches table", this);
+    connect(traininfo, SIGNAL(triggered()), this, SLOT(traininfoTable()));
+    connect(throttle, SIGNAL(triggered()), this, SLOT(throttleTable()));
+    connect(pathinfo, SIGNAL(triggered()), this, SLOT(pathinfoTable()));
+    connect(switches, SIGNAL(triggered()), this, SLOT(switchesTable()));
+
+    menu = menuBar()->addMenu("Query");
+    menu->addAction(traininfo);
+    menu->addAction(throttle);
+    menu->addAction(pathinfo);
+    menu->addAction(switches);
+
+    techsupport = new QAction("Technical Support", this);
+    connect(techsupport, SIGNAL(triggered()), this, SLOT(techsupportDoc()));
+    menu = menuBar()->addMenu("Help");
+    menu->addAction(techsupport);
+
 }
 
 MainWindow::~MainWindow()
@@ -116,426 +162,10 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-
-//Function to check and toggle switches as needed
-/*void MainWindow::checkSwitches(QString cN, QString nN)
-{
-    if (cN == "36")
-    {
-        if(nN == "35")
-            setSwitch("11", "Open");
-        else if(nN == "68")
-           setSwitch("11", "Bypass");
-        else
-           return;
-    }
-    else if (cN == "39")
-    {
-        if(nN == "38")
-            setSwitch("21", "Open");
-        else if(nN == "37")
-           setSwitch("21", "Bypass");
-        else
-           return;
-    }
-    else if (cN == "65")
-    {
-        if(nN == "66")
-            setSwitch("43", "Open");
-        else if(nN == "67")
-           setSwitch("43", "Bypass");
-        else
-           return;
-    }
-    else if (cN == "31")
-    {
-        if(nN == "70")
-            setSwitch("42", "Open");
-        else if(nN == "30")
-           setSwitch("42", "Bypass");
-        else
-           return;
-    }
-    else if (cN == "32")
-    {
-        if(nN == "33")
-            setSwitch("13", "Open");
-        else if(nN == "34")
-          {
-           setSwitch("13", "Bypass");
-           setSwitch("12", "Bypass");
-          }
-        else
-           return;
-    }
-    else if (cN == "34")
-    {
-        if(nN == "50")
-            setSwitch("12", "Open");
-        else if(nN == "32")
-            {
-             setSwitch("13", "Bypass");
-             setSwitch("12", "Bypass");
-            }
-        else
-           return;
-    }
-    else if (cN == "0")
-    {
-        if(nN == "1")
-            setSwitch("22", "Open");
-        else if(nN == "2")
-           {
-            setSwitch("22", "Bypass");
-            setSwitch("23", "Bypass");
-           }
-        else
-           return;
-    }
-    else if (cN == "2")
-    {
-        if(nN == "71")
-            setSwitch("23", "Open");
-        else if(nN == "0")
-            {
-            setSwitch("22", "Bypass");
-            setSwitch("23", "Bypass");
-            }
-        else
-           return;
-    }
-    else if (cN == "29")
-    {
-        if(nN == "21")
-            setSwitch("24", "Open");
-        else if(nN == "28")
-           setSwitch("24", "Bypass");
-        else
-           return;
-    }
-    else if (cN == "28")
-    {
-        if(nN == "26")
-            setSwitch("34", "Open");
-        else if(nN == "27")
-           setSwitch("34", "Bypass");
-        else if(nN == "29")
-           setSwitch("24", "Bypass");
-        else
-           return;
-    }
-    else if (cN == "26")
-    {
-        if(nN == "51")
-            setSwitch("33", "Open");
-        else if(nN == "25")
-           setSwitch("33", "Bypass");
-        else if(nN == "28")
-            setSwitch("34", "Open");
-        else
-           return;
-    }
-    else if (cN == "51")
-    {
-        if(nN == "52")
-            setSwitch("32", "Open");
-        else if(nN == "55")
-           setSwitch("32", "Bypass");
-        else if(nN == "26")
-            setSwitch("33", "Open");
-        else
-           return;
-    }
-    else if (cN == "52")
-    {
-        if(nN == "53")
-            setSwitch("31", "Open");
-        else if(nN == "54")
-           setSwitch("31", "Bypass");
-        else if(nN == "51")
-            setSwitch("32", "Open");
-        else
-           return;
-    }
-    else if (cN == "49")
-    {
-        if(nN == "47")
-            setSwitch("41", "Open");
-        else if(nN == "48")
-           setSwitch("41", "Bypass");
-        else
-           return;
-    }
-    else if (cN == "56")
-    {
-        if(nN == "57")
-            setSwitch("14", "Open");
-        else if(nN == "58")
-           setSwitch("14", "Bypass");
-        else
-           return;
-    }
-    else if (cN == "42")
-    {
-        if(nN == "43")
-            setSwitch("63", "Open");
-        else if(nN == "44")
-           setSwitch("63", "Bypass");
-        else if(nN == "41")
-            setSwitch("62", "Open");
-        else
-           return;
-    }
-    else if (cN == "41")
-    {
-        if(nN == "42")
-            setSwitch("62", "Open");
-        else if(nN == "46")
-           setSwitch("62", "Bypass");
-        else if(nN == "40")
-            setSwitch("61", "Open");
-        else
-           return;
-    }
-    else if (cN == "40")
-    {
-        if(nN == "41")
-            setSwitch("61", "Open");
-        else if(nN == "45")
-           setSwitch("61", "Bypass");
-        else
-           return;
-    }
-    else if (cN == "61")
-    {
-        if(nN == "59")
-            setSwitch("84", "Open");
-        else if(nN == "60")
-           setSwitch("84", "Bypass");
-        else
-           return;
-    }
-    else if (cN == "22")
-    {
-        if(nN == "24")
-            setSwitch("64", "Open");
-        else if(nN == "23")
-           setSwitch("64", "Bypass");
-        else if(nN == "20")
-            setSwitch("75","Bypass");
-        else
-           return;
-    }
-    else if (cN == "20")
-    {
-        if(nN == "21")
-            setSwitch("74", "Open");
-        else if(nN == "22")
-           setSwitch("74", "Bypass");
-        else
-           return;
-    }
-    else if (cN == "4")
-    {
-        if(nN == "6")
-            setSwitch("73", "Open");
-        else if(nN == "5")
-        {
-           setSwitch("73", "Bypass");
-           setSwitch("72", "Bypass");
-        }
-        else
-           return;
-    }
-    else if (cN == "5")
-    {
-        if(nN == "3")
-            setSwitch("72", "Open");
-        else if(nN == "4")
-        {
-           setSwitch("73", "Bypass");
-           setSwitch("72", "Bypass");
-        }
-        else
-           return;
-    }
-    else if (cN == "7")
-    {
-        if(nN == "9")
-            setSwitch("71", "Open");
-        else if(nN == "8")
-           setSwitch("71", "Bypass");
-        else
-           return;
-    }
-    else if (cN == "62")
-    {
-        if(nN == "63")
-            setSwitch("52", "Open");
-        else if(nN == "64")
-           setSwitch("52", "Bypass");
-        else
-           return;
-    }
-    else if (cN == "17")
-    {
-        if(nN == "19")
-            setSwitch("51", "Open");
-        else if(nN == "18")
-           setSwitch("51", "Bypass");
-        else
-           return;
-    }
-    else if (cN == "16")
-    {
-        if(nN == "12")
-            setSwitch("83", "Open");
-        else if(nN == "14")
-        {
-           setSwitch("83", "Bypass");
-           setSwitch("82", "Bypass");
-        }
-        else
-           return;
-    }
-    else if (cN == "14")
-    {
-        if(nN == "15")
-            setSwitch("82", "Open");
-        else if(nN == "16")
-        {
-           setSwitch("82", "Bypass");
-           setSwitch("83", "Bypass");
-        }
-        else
-           return;
-    }
-    else if (cN == "10")
-    {
-        if(nN == "12")
-            setSwitch("81", "Open");
-        else if(nN == "11")
-           setSwitch("81", "Bypass");
-        else
-           return;
-    }
-    else if (cN == "35" && nN == "36")
-        setSwitch("11", "Open");
-    else if (cN == "38" && nN == "39")
-        setSwitch("21", "Open");
-    else if (cN == "66" && nN == "65")
-        setSwitch("43", "Open");
-    else if (cN == "70" && nN == "31")
-        setSwitch("42", "Open");
-    else if (cN == "33" && nN == "32")
-        setSwitch("13", "Open");
-    else if (cN == "50" && nN == "34")
-        setSwitch("12", "Open");
-    else if (cN == "1" && nN == "0")
-        setSwitch("22", "Open");
-    else if (cN == "71" && nN == "2")
-        setSwitch("23", "Open");
-    else if (cN == "53" && nN == "52")
-        setSwitch("31", "Open");
-    else if (cN == "47" && nN == "49")
-        setSwitch("41", "Open");
-    else if (cN == "57" && nN == "56")
-        setSwitch("14", "Open");
-    else if (cN == "43" && nN == "42")
-        setSwitch("63", "Open");
-    else if (cN == "59" && nN == "61")
-        setSwitch("84", "Open");
-    else if (cN == "24" && nN == "22")
-        setSwitch("64", "Open");
-    else if (cN == "6" && nN == "4")
-        setSwitch("73", "Open");
-    else if (cN == "3" && nN == "5")
-        setSwitch("72", "Open");
-    else if (cN == "9" && nN == "7")
-        setSwitch("71", "Open");
-    else if (cN == "63" && nN == "62")
-        setSwitch("52", "Open");
-    else if (cN == "19" && nN == "17")
-        setSwitch("51", "Open");
-    else if (cN == "15" && nN == "14")
-        setSwitch("82", "Open");
-    else if(cN == "21")
-    {
-        if (nN == "20")
-            setSwitch("74", "Open");
-        else if (nN == "29")
-            setSwitch("24", "Open");
-        else
-            return;
-    }
-    else if(cN == "12")
-    {
-        if (nN == "16")
-            setSwitch("83", "Open");
-        else if (nN == "10")
-            setSwitch("81", "Open");
-        else
-            return;
-    }
-    else if (cN == "68" && nN == "36")
-        setSwitch("11", "Bypass");
-    else if (cN == "37" && nN == "39")
-        setSwitch("21", "Bypass");
-    else if (cN == "67" && nN == "65")
-        setSwitch("43", "Bypass");
-    else if (cN == "30" && nN == "31")
-        setSwitch("42", "Bypass");
-    else if (cN == "27" && nN == "28")
-        setSwitch("34", "Bypass");
-    else if (cN == "25" && nN == "26")
-        setSwitch("33", "Bypass");
-    else if (cN == "55" && nN == "51")
-        setSwitch("32", "Bypass");
-    else if (cN == "54" && nN == "52")
-        setSwitch("31", "Bypass");
-    else if (cN == "48" && nN == "49")
-        setSwitch("41", "Bypass");
-    else if (cN == "58" && nN == "56")
-        setSwitch("14", "Bypass");
-    else if (cN == "44" && nN == "42")
-        setSwitch("63", "Bypass");
-    else if (cN == "46" && nN == "41")
-        setSwitch("62", "Bypass");
-    else if (cN == "45" && nN == "40")
-        setSwitch("61", "Bypass");
-    else if (cN == "60" && nN == "61")
-        setSwitch("84", "Bypass");
-    else if (cN == "23" && nN == "22")
-        setSwitch("64", "Bypass");
-    else if (cN == "8" && nN == "7")
-        setSwitch("71", "Bypass");
-    else if (cN == "64" && nN == "62")
-        setSwitch("52", "Bypass");
-    else if (cN == "18" && nN == "17")
-        setSwitch("51", "Bypass");
-    else if (cN == "11" && nN == "10")
-        setSwitch("81", "Bypass");
-
-    return;
-}
-
-void MainWindow::setSwitch(QString sN, QString sM)
-{
-    QSqlQuery q(ldb);
-    q.prepare("UPDATE switches SET position=? WHERE switch=?");
-    q.bindValue(0, sM);
-    q.bindValue(1, sN);
-
-    if(!q.exec())
-    {
-    cout << "Failed to update database";
-    }
-}
-*/
 void MainWindow::viewTable()
 {
-    QString vt;
-    vt = ui->sqlQueryEdit->text();
+    QString vt = "traininfo";
+    //vt = ui->sqlQueryEdit->text();
 
     QSqlTableModel* model = new QSqlTableModel(0, ldb);
     model->setTable(vt);
@@ -557,7 +187,6 @@ void MainWindow::viewTable()
 }
 
 
-
 //Function to block unavailable destinations
 void MainWindow::blockDest()
 {
@@ -568,8 +197,6 @@ void MainWindow::blockDest()
 }
 
 
-
-//Function to load previously saved configuration
 
 //function to add occupied node to origin boxes
 void MainWindow::occupiedNode()
@@ -597,47 +224,170 @@ void MainWindow::stopTimer()
     //recalculateTimer->stop();
 }
 
+void MainWindow::stop1()
+{
+    ui->startButton->setDisabled(false);
+
+    ui->setButton1->setDisabled(false);
+    if (ui->setButton1->isChecked() == true)
+    {
+        ui->setButton1->click();
+        ui->trainselectBox1->setDisabled(false);
+        ui->originBox1->setDisabled(false);
+        ui->destBox1->setDisabled(false);
+        ui->throttleBox1->setDisabled(false);
+        ui->facingBox1->setDisabled(false);
+        ui->headingBox1->setDisabled(false);
+        ui->trainimageButton1->hide();
+        ui->routeInfo1->clear();
+        ui->routeInfo1->hide();
+    }
+
+    ui->setButton2->setDisabled(false);
+    if (ui->setButton2->isChecked() == true)
+    {
+        ui->setButton2->click();
+        ui->trainselectBox2->setDisabled(false);
+        ui->originBox2->setDisabled(false);
+        ui->destBox2->setDisabled(false);
+        ui->throttleBox2->setDisabled(false);
+        ui->facingBox2->setDisabled(false);
+        ui->headingBox2->setDisabled(false);
+        ui->trainimageButton2->hide();
+        ui->routeInfo2->clear();
+        ui->routeInfo2->hide();
+    }
+
+    ui->setButton3->setDisabled(false);
+    if (ui->setButton3->isChecked() == true)
+    {
+        ui->setButton3->click();
+        ui->trainselectBox3->setDisabled(false);
+        ui->originBox3->setDisabled(false);
+        ui->destBox3->setDisabled(false);
+        ui->throttleBox3->setDisabled(false);
+        ui->facingBox3->setDisabled(false);
+        ui->headingBox3->setDisabled(false);
+        ui->trainimageButton3->hide();
+        ui->routeInfo3->clear();
+        ui->routeInfo3->hide();
+    }
+
+    ui->setButton4->setDisabled(false);
+    if (ui->setButton4->isChecked() == true)
+    {
+        ui->setButton4->click();
+        ui->trainselectBox4->setDisabled(false);
+        ui->originBox4->setDisabled(false);
+        ui->destBox4->setDisabled(false);
+        ui->throttleBox4->setDisabled(false);
+        ui->facingBox4->setDisabled(false);
+        ui->headingBox4->setDisabled(false);
+        ui->trainimageButton4->hide();
+        ui->routeInfo4->clear();
+        ui->routeInfo4->hide();
+    }
+
+    ui->setButton5->setDisabled(false);
+    if (ui->setButton5->isChecked() == true)
+    {
+        ui->setButton5->click();
+        ui->trainselectBox5->setDisabled(false);
+        ui->originBox5->setDisabled(false);
+        ui->destBox5->setDisabled(false);
+        ui->throttleBox5->setDisabled(false);
+        ui->facingBox5->setDisabled(false);
+        ui->headingBox5->setDisabled(false);
+        ui->trainimageButton5->hide();
+        ui->routeInfo5->clear();
+        ui->routeInfo5->hide();
+    }
+}
+
 //function to start periodic route calculations
 void MainWindow::calculateRoute()
 {
-    QTimer *recalculateTimer = new QTimer(this);
 
-    if(recalculateTimer->isActive() == true)
-    {
-        recalculateTimer->stop();
-        ui->startButton->setDisabled(false);
-    }
-
-    else
-    {
     ui->startButton->setDisabled(true); //disabled start button to avoid throwing timer off
 
     if(ui->setButton1->isChecked() == true)
-    connect(recalculateTimer, SIGNAL(timeout()), this, SLOT(greyOut1()));
+        greyOut1();
+    else if(ui->delayButton1->isChecked() == true)
+        timeDelay1();
     if(ui->setButton2->isChecked() == true)
-    connect(recalculateTimer, SIGNAL(timeout()), this, SLOT(greyOut2()));
+        greyOut2();
+    else if(ui->delayButton2->isChecked() == true)
+        timeDelay2();
     if(ui->setButton3->isChecked() == true)
-    connect(recalculateTimer, SIGNAL(timeout()), this, SLOT(greyOut3()));
+        greyOut3();
+    else if(ui->delayButton3->isChecked() == true)
+        timeDelay3();
     if(ui->setButton4->isChecked() == true)
-    connect(recalculateTimer, SIGNAL(timeout()), this, SLOT(greyOut4()));
+        greyOut4();
+    else if(ui->delayButton4->isChecked() == true)
+        timeDelay4();
     if(ui->setButton5->isChecked() == true)
-    connect(recalculateTimer, SIGNAL(timeout()), this, SLOT(greyOut5()));
+        greyOut5();
+    else if(ui->delayButton5->isChecked() == true)
+        timeDelay5();
+    //connect(recalculateTimer, SIGNAL(timeout()), this, SLOT(greyOut1()));
+    //if(ui->setButton2->isChecked() == true)
+    //connect(recalculateTimer, SIGNAL(timeout()), this, SLOT(greyOut2()));
+    //if(ui->setButton3->isChecked() == true)
+    //connect(recalculateTimer, SIGNAL(timeout()), this, SLOT(greyOut3()));
+    //if(ui->setButton4->isChecked() == true)
+    //connect(recalculateTimer, SIGNAL(timeout()), this, SLOT(greyOut4()));
+    //if(ui->setButton5->isChecked() == true)
+    //connect(recalculateTimer, SIGNAL(timeout()), this, SLOT(greyOut5()));
 
-    recalculateTimer->start(5000);
+    //recalculateTimer->start(5000);
 
-    }
+
 }
 //function to display real world time according to current pc
 void MainWindow::showTime()
 {
     QTime time = QTime::currentTime();
-    QString text = time.toString("hh:mm:ssap");
+    QString text = time.toString("hh:mm:ss");
     if ((time.second() % 2) == 0)
         text[2] = ' ';
     ui->lcdNumber->display(text);
 }
 
+void MainWindow::setgreyOut1()
+{
+    ui->setButton1->click();
+    greyOut1();
+    QSound::play("american_train.wav");
+}
 
+void MainWindow::setgreyOut2()
+{
+    ui->setButton2->click();
+    greyOut2();
+    QSound::play("american_train_whistle_blow.wav");
+}
+
+void MainWindow::setgreyOut3()
+{
+    ui->setButton3->click();
+    greyOut3();
+    QSound::play("amtrak_passenger_train_whistle_blow_exterior_long.wav");
+}
+
+void MainWindow::setgreyOut4()
+{
+    ui->setButton4->click();
+    greyOut4();
+    QSound::play("vintage_steam_train_double_whistle.wav");
+}
+
+void MainWindow::setgreyOut5()
+{
+    ui->setButton5->click();
+    greyOut5();
+    QSound::play("vintage_steam_train_single_whistle.wav");
+}
 //lock in and calculate route for line 1
 void MainWindow::greyOut1()
 {
@@ -715,12 +465,21 @@ void MainWindow::greyOut1()
         ui->throttleBox1->setDisabled(true);
         ui->facingBox1->setDisabled(true);
         ui->headingBox1->setDisabled(true);
+        ui->setButton1->setDisabled(true);
         ui->trainimageButton1->show();
         ui->routeInfo1->show();
-        //adjacency list selected based on heading
-        if (ui->headingBox1->currentIndex() == 1)
+
+
+        if((ui->originBox1->currentIndex() == 1 ||
+            ui->originBox1->currentIndex() == 2) &&
+           (ui->destBox1->currentIndex() == 3 ||
+            ui->destBox1->currentIndex() == 4 ||
+            ui->destBox1->currentIndex() == 5 ||
+            ui->destBox1->currentIndex() == 6 ||
+            ui->destBox1->currentIndex() == 7))
         {
-        //adjacency list east
+        //adjacency list from 1 & 2 to everywhere else
+
             adjacency_list_t adjacency_listeast(100);
 
             adjacency_listeast[0].push_back(neighbor(39, 3));
@@ -765,341 +524,27 @@ void MainWindow::greyOut1()
             adjacency_listeast[73].push_back(neighbor(9, 9));
 
 
-
         //calculate and output information
         std::vector<weight_t> min_distance;
         std::vector<vertex_t> previous;
         DijkstraComputePaths(start, adjacency_listeast, min_distance, previous);
-        //DijkstraComputePaths(ui->startlineEdit1->text().toInt(), adjacency_list, min_distance, previous);
         std::cout << "Distance from " << ui->originBox1->currentText().toStdString() << " to " << ui->destBox1->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
         std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
-        //std::list<vertex_t> path = DijkstraGetShortestPathTo(ui->stoplineEdit2->text().toInt(), previous);
         std::cout << ui->trainselectBox1->currentText().toStdString() <<" Path : ";
-
-
-
-// test code for reading the vector to a database
-        int pathSize = path.size();
-        int numOfRows = pathSize/10; //number of rows on the path table needed
-        if (pathSize%10 !=0)
-            numOfRows++;
-        cout << "The total number of hops is " << to_string(pathSize) << endl;
-        //convert the list to an array
-        int *copyarray = new int[pathSize];
-        for (int i=0; i<pathSize; i++)
-        {
-            copyarray[i] = path.front();
-            path.pop_front();
-        }
-        for (int i=0; i<pathSize; i++)
-        {
-            cout << to_string(copyarray[i]) << " ";
-
-        }
-        cout << endl;
-
-        //Use array to fill out traininfo and pathinfo table. Values needed: values in the array, value of the "trainselectBox1" box,
-        //final node, initial node, number of rows on the path info table
-        QSqlQuery q(ldb);
-
-        q.exec("SELECT COUNT(*) FROM pathinfo;");
-        int numRows; //Current number of rows in the path table
-        while(q.next())
-        {
-            numRows = q.value(0).toInt();
-        }
-        numRows++; //increment this by one to get the first free row.
-        int numRows2 = numRows; //duplicate the value for later use
-        int itt = 1; //itterator for the loop
-
-        for( int iR = 1; iR<=numOfRows; iR++)
-        {
-            q.prepare("INSERT INTO pathinfo VALUES(?,?,?,?,?,?,?,?,?,?,?,?)");
-            q.bindValue(0,numRows); //bind first value to the row on the path table.
-
-            if(numOfRows == (iR))
-                q.bindValue(1, QVariant(QVariant::Int));
-            else
-                q.bindValue(1,(numRows+1));
-
-            numRows++;
-
-            if(itt <= pathSize){
-            q.bindValue(2, copyarray[itt]);
-            itt++;}
-            else
-                q.bindValue(2, QVariant(QVariant::String));
-
-            if(itt <= pathSize){
-            q.bindValue(3, copyarray[itt]);
-            itt++;}
-            else
-                q.bindValue(3, QVariant(QVariant::String));
-
-            if(itt <= pathSize){
-            q.bindValue(4, copyarray[itt]);
-            itt++;}
-            else
-                q.bindValue(4, QVariant(QVariant::String));
-
-            if(itt <= pathSize){
-            q.bindValue(5, copyarray[itt]);
-            itt++;}
-            else
-                q.bindValue(5, QVariant(QVariant::String));
-
-            if(itt <= pathSize){
-            q.bindValue(6, copyarray[itt]);
-            itt++;}
-            else
-                q.bindValue(6, QVariant(QVariant::String));
-
-            if(itt <= pathSize){
-            q.bindValue(7, copyarray[itt]);
-            itt++;}
-            else
-                q.bindValue(7, QVariant(QVariant::String));
-
-            if(itt <= pathSize){
-            q.bindValue(8, copyarray[itt]);
-            itt++;}
-            else
-                q.bindValue(8, QVariant(QVariant::String));
-
-            if(itt <= pathSize){
-            q.bindValue(9, copyarray[itt]);
-            itt++;}
-            else
-                q.bindValue(9, QVariant(QVariant::String));
-
-            if(itt <= pathSize){
-            q.bindValue(10, copyarray[itt]);
-            itt++;}
-            else
-                q.bindValue(10, QVariant(QVariant::String));
-
-            if(itt <= pathSize){
-            q.bindValue(11, copyarray[itt]);
-            itt++;}
-            else
-                q.bindValue(11, QVariant(QVariant::String));
-
-
-            if(!q.exec())
-            {
-                cout << "Failed to update database";
-            }
-         }
-
-
-    q.prepare("UPDATE traininfo SET current=?,destination=?,next=?,path=? WHERE trainID=?");
-    q.bindValue(0, copyarray[0] );
-    q.bindValue(1, copyarray[pathSize-1]);
-    q.bindValue(2, copyarray[1]);
-//<<<<<<< HEAD
-    //q.bindValue(4, numRows2);
-    //q.bindValue(3, );
-//=======
-    q.bindValue(3, numRows2);
-    QString tmpstr = ui->trainselectBox1->currentText();
-    q.bindValue(4, tmpstr);
-//>>>>>>> refs/remotes/train1a/master
-
-    if(!q.exec())
-    {
-        cout << "Failed to update database";
-    }
-
-
-q.prepare("SELECT * FROM traininfo WHERE trainID=?");
-q.bindValue(0, tmpstr);
-if(!q.exec())
-{
-    cout << "Failed to update database";
-}
-QString currentLoc;
-QString nextLoc;
-QString endLoc;
-int nextTab = NULL;
-QString path2;
-QString path3;
-QString path4;
-QString path5;
-QString path6;
-QString path7;
-QString path8;
-QString path9;
-QString path10;
-QString path11;
-int pathTab;
-int currenttab;
-int itt2 = 0;
-
-
-
-while(q.next())
-{
-    currentLoc = q.value(1).toString();
-    nextLoc = q.value(2).toString();
-    endLoc = q.value(3).toString();
-    pathTab = q.value(4).toInt();
-}
-
-q.prepare("SELECT * FROM pathinfo WHERE pathID=?");
-q.bindValue(0,pathTab);
-if(!q.exec())
-{
-    cout << "Failed to update database";
-}
-while(q.next())
-{
-    nextTab = q.value(1).toInt();
-    path2 = q.value(2).toString();
-    path3 = q.value(3).toString();
-    path4 = q.value(4).toString();
-    path5 = q.value(5).toString();
-    path6 = q.value(6).toString();
-    path7 = q.value(7).toString();
-    path8 = q.value(8).toString();
-    path9 = q.value(9).toString();
-    path10 = q.value(10).toString();
-    path11 = q.value(11).toString();
-}
-
-
-
-for(int i=0; i<3; i++)
-{
-
-
-    //checkSwitches(currentLoc, nextLoc);
-    //cout << tmpstr.toStdString() << " Moved from " << currentLoc.toStdString() << " to " << endLoc.toStdString() << endl;
-    //currentLoc = nextLoc;
-
-if(path2 != NULL){
-    nextLoc = path2;
-    checkSwitches(currentLoc, path2);
-    cout << tmpstr.toStdString() << " Moved from " << currentLoc.toStdString() << " to " << path2.toStdString() << endl;
-    currentLoc = nextLoc;
-}
-
-if(path3 != NULL){
-    nextLoc = path3;
-    checkSwitches(currentLoc, path3);
-    cout << tmpstr.toStdString() << " Moved from " << currentLoc.toStdString() << " to " << path3.toStdString() << endl;
-    currentLoc = nextLoc;
-}
-
- if(path4 != NULL){
-    nextLoc = path4;
-    checkSwitches(currentLoc, path4);
-    cout << tmpstr.toStdString() << " Moved from " << currentLoc.toStdString() << " to " << path4.toStdString() << endl;
-    currentLoc = nextLoc;
- }
-
-  if(path5 != NULL){
-    nextLoc = path5;
-    checkSwitches(currentLoc, path5);
-    cout << tmpstr.toStdString() << " Moved from " << currentLoc.toStdString() << " to " << path5.toStdString() << endl;
-    currentLoc = nextLoc;
-  }
-
-  if(path6 != NULL){
-    nextLoc = path6;
-    checkSwitches(currentLoc, path6);
-    cout << tmpstr.toStdString() << " Moved from " << currentLoc.toStdString() << " to " << path6.toStdString() << endl;
-    currentLoc = nextLoc;
-  }
-
-  if(path7 != NULL){
-    nextLoc = path7;
-    checkSwitches(currentLoc, path7);
-    cout << tmpstr.toStdString() << " Moved from " << currentLoc.toStdString() << " to " << path7.toStdString() << endl;
-    currentLoc = nextLoc;
-  }
-
-  if(path8 != NULL){
-    nextLoc = path8;
-    checkSwitches(currentLoc, path8);
-    cout << tmpstr.toStdString() << " Moved from " << currentLoc.toStdString() << " to " << path8.toStdString() << endl;
-    currentLoc = nextLoc;
-  }
-
-  if(path9 != NULL){
-    nextLoc = path9;
-    checkSwitches(currentLoc, path9);
-    cout << tmpstr.toStdString() << " Moved from " << currentLoc.toStdString() << " to " << path9.toStdString() << endl;
-    currentLoc = nextLoc;
-  }
-
-  if(path10 != NULL){
-    nextLoc = path10;
-    checkSwitches(currentLoc, path10);
-    cout << tmpstr.toStdString() << " Moved from " << currentLoc.toStdString() << " to " << path10.toStdString() << endl;
-    currentLoc = nextLoc;
-  }
-
-  if(path11 != NULL){
-    nextLoc = path11;
-    checkSwitches(currentLoc, path11);
-    cout << tmpstr.toStdString() << " Moved from " << currentLoc.toStdString() << " to " << path11.toStdString() << endl;
-}
-
-  if(nextTab == NULL){
-
-      q.prepare("SELECT * FROM pathinfo WHERE pathID=?");
-      q.bindValue(0,nextTab);
-      if(!q.exec())
-      {
-          cout << "Failed to update database 123";
-      }
-
-      //int nextTab2 = nextTab;
-
-      while(q.next())
-      {
-          currenttab = q.value(0).toInt();
-          nextTab = q.value(1).toInt();
-          path2 = q.value(2).toString();
-          path3 = q.value(3).toString();
-          path4 = q.value(4).toString();
-          path5 = q.value(5).toString();
-          path6 = q.value(6).toString();
-          path7 = q.value(7).toString();
-          path8 = q.value(8).toString();
-          path9 = q.value(9).toString();
-          path10 = q.value(10).toString();
-          path11 = q.value(11).toString();
-      }
-
-
-
-
-
-
-      q.prepare("UPDATE traininfo SET current=?,next=?,path=? WHERE trainID =?");
-      q.bindValue(0,currentLoc);
-      q.bindValue(1,path2);
-      q.bindValue(2,currenttab);
-      q.bindValue(3,tmpstr);
-      if(!q.exec())
-      {
-          cout << "Failed to update database 456";
-      }
-
-}
-}
-
-
-
+        tableOperation(path);
 
         //std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
         std::cout << std::endl;
         }
+
         //adjacency list selected based on heading
-        else if (ui->headingBox1->currentIndex() == 2)
+        else if ((ui->originBox1->currentIndex() == 3 ||
+                  ui->originBox1->currentIndex() == 4 ||
+                  ui->originBox1->currentIndex() == 5) &&
+                 (ui->destBox1->currentIndex() == 1 ||
+                  ui->destBox1->currentIndex() == 2))
         {
-            //adjacency list west
+            //adjacency list 3, 4 & 5 to 1 & 2
             adjacency_list_t adjacency_list(100);
 
             adjacency_list[53].push_back(neighbor(52, 9));
@@ -1150,13 +595,187 @@ if(path3 != NULL){
             std::vector<weight_t> min_distance;
             std::vector<vertex_t> previous;
             DijkstraComputePaths(start, adjacency_list, min_distance, previous);
-            //DijkstraComputePaths(ui->startlineEdit1->text().toInt(), adjacency_list, min_distance, previous);
-            std::cout << "Distance from " << ui->originBox1->currentText().toStdString() << " to " << ui->destBox1->currentText().toStdString() <<  ": " << min_distance[end] << std::endl;
+            std::cout << "Distance from " << ui->originBox1->currentText().toStdString() << " to " << ui->destBox1->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
             std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
             //std::list<vertex_t> path = DijkstraGetShortestPathTo(ui->stoplineEdit2->text().toInt(), previous);
             std::cout << ui->trainselectBox1->currentText().toStdString() <<" Path : ";
-            std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
-            std::cout << std::endl;
+            tableOperation(path);
+        }
+        else if((ui->originBox1->currentIndex() == 5 ||
+                ui->originBox1->currentIndex() == 4 ||
+                ui->originBox1->currentIndex() == 3) &&
+                (ui->destBox1->currentIndex() == 6 ||
+                ui->destBox1->currentIndex() == 7))
+        {
+            //adjacency list 3, 4 & 5 to 6 & 7
+            adjacency_list_t adjacency_lists(150);
+
+            adjacency_lists[53].push_back(neighbor(52, 2));
+            adjacency_lists[54].push_back(neighbor(52, 2));
+            adjacency_lists[55].push_back(neighbor(51, 2));
+            adjacency_lists[52].push_back(neighbor(51, 2));
+            adjacency_lists[51].push_back(neighbor(26, 2));
+            adjacency_lists[26].push_back(neighbor(28, 2));
+            adjacency_lists[28].push_back(neighbor(29, 2));
+            adjacency_lists[29].push_back(neighbor(30, 2));
+            adjacency_lists[30].push_back(neighbor(31, 2));
+            adjacency_lists[31].push_back(neighbor(32, 2));
+            adjacency_lists[32].push_back(neighbor(34, 2));
+            adjacency_lists[34].push_back(neighbor(37, 2));
+            adjacency_lists[37].push_back(neighbor(39, 2));
+            adjacency_lists[39].push_back(neighbor(0, 2));
+            adjacency_lists[0].push_back(neighbor(1, 2));
+            adjacency_lists[1].push_back(neighbor(3, 2));
+            adjacency_lists[3].push_back(neighbor(72, 2));
+            adjacency_lists[72].push_back(neighbor(73, 2));
+            adjacency_lists[73].push_back(neighbor(9, 2));
+            adjacency_lists[9].push_back(neighbor(10, 2));
+            adjacency_lists[10].push_back(neighbor(11, 2));
+            adjacency_lists[11].push_back(neighbor(13, 2));
+            adjacency_lists[10].push_back(neighbor(12, 2));
+            adjacency_lists[12].push_back(neighbor(16, 2));
+            adjacency_lists[16].push_back(neighbor(17, 2));
+            adjacency_lists[17].push_back(neighbor(19, 2));
+            adjacency_lists[19].push_back(neighbor(6, 2));
+            adjacency_lists[6].push_back(neighbor(4, 2));
+            adjacency_lists[4].push_back(neighbor(2, 2));
+            adjacency_lists[2].push_back(neighbor(75, 2));
+            adjacency_lists[75].push_back(neighbor(74, 2));
+            adjacency_lists[74].push_back(neighbor(38, 2));
+            adjacency_lists[38].push_back(neighbor(36, 2));
+            adjacency_lists[36].push_back(neighbor(68, 2));
+            adjacency_lists[68].push_back(neighbor(69, 2));
+
+            //calculate and output information
+            std::vector<weight_t> min_distance;
+            std::vector<vertex_t> previous;
+            DijkstraComputePaths(start, adjacency_lists, min_distance, previous);
+            std::cout << "Distance from " << ui->originBox1->currentText().toStdString() << " to " << ui->destBox1->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
+            std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
+            //std::list<vertex_t> path = DijkstraGetShortestPathTo(ui->stoplineEdit2->text().toInt(), previous);
+            std::cout << ui->trainselectBox1->currentText().toStdString() <<" Path : ";
+            tableOperation(path);
+        }
+
+        else if(ui->originBox1->currentIndex() == 6)
+        {
+            //adjacency list 6 to everywhere
+            adjacency_list_t adjacency_list(150);
+
+                adjacency_list[13].push_back(neighbor(11, 2));
+                adjacency_list[11].push_back(neighbor(10, 2));
+                adjacency_list[10].push_back(neighbor(9, 2));
+                adjacency_list[9].push_back(neighbor(73, 2));
+                adjacency_list[73].push_back(neighbor(72, 2));
+                adjacency_list[72].push_back(neighbor(3, 2));
+                adjacency_list[3].push_back(neighbor(1, 2));
+                adjacency_list[1].push_back(neighbor(0, 2));
+                adjacency_list[0].push_back(neighbor(39, 2));
+                adjacency_list[39].push_back(neighbor(38, 2));
+                adjacency_list[38].push_back(neighbor(36, 2));
+                adjacency_list[36].push_back(neighbor(35, 2));
+                adjacency_list[36].push_back(neighbor(68, 2));
+                adjacency_list[68].push_back(neighbor(69, 2));
+                adjacency_list[35].push_back(neighbor(33, 2));
+                adjacency_list[33].push_back(neighbor(32, 2));
+                adjacency_list[32].push_back(neighbor(31, 2));
+                adjacency_list[31].push_back(neighbor(30, 2));
+                adjacency_list[30].push_back(neighbor(29, 2));
+                adjacency_list[29].push_back(neighbor(28, 2));
+                adjacency_list[28].push_back(neighbor(26, 2));
+                adjacency_list[26].push_back(neighbor(51, 2));
+                adjacency_list[51].push_back(neighbor(55, 2));
+                adjacency_list[51].push_back(neighbor(52, 2));
+                adjacency_list[52].push_back(neighbor(54, 2));
+                adjacency_list[52].push_back(neighbor(53, 2));
+                adjacency_list[31].push_back(neighbor(70, 2));
+                adjacency_list[70].push_back(neighbor(71, 2));
+                adjacency_list[71].push_back(neighbor(2, 2));
+                adjacency_list[2].push_back(neighbor(4, 2));
+                adjacency_list[4].push_back(neighbor(5, 2));
+                adjacency_list[5].push_back(neighbor(7, 2));
+                adjacency_list[7].push_back(neighbor(8, 2));
+                adjacency_list[8].push_back(neighbor(14, 2));
+                adjacency_list[14].push_back(neighbor(15, 2));
+                adjacency_list[15].push_back(neighbor(40, 2));
+                adjacency_list[40].push_back(neighbor(41, 2));
+                adjacency_list[41].push_back(neighbor(42, 2));
+                adjacency_list[42].push_back(neighbor(44, 2));
+                adjacency_list[42].push_back(neighbor(43, 2));
+
+
+            //calculate and output information
+            std::vector<weight_t> min_distance;
+            std::vector<vertex_t> previous;
+            DijkstraComputePaths(start, adjacency_list, min_distance, previous);
+            std::cout << "Distance from " << ui->originBox1->currentText().toStdString() << " to " << ui->destBox1->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
+            std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
+            //std::list<vertex_t> path = DijkstraGetShortestPathTo(ui->stoplineEdit2->text().toInt(), previous);
+            std::cout << ui->trainselectBox1->currentText().toStdString() <<" Path : ";
+            tableOperation(path);
+        }
+
+        else if(ui->originBox1->currentIndex() == 7)
+        {
+            //adjacency list 7 to everywhere
+            adjacency_list_t adjacency_list(150);
+
+            adjacency_list[69].push_back(neighbor(68, 2));
+            adjacency_list[68].push_back(neighbor(36, 2));
+            adjacency_list[36].push_back(neighbor(38, 2));
+            adjacency_list[38].push_back(neighbor(74, 2));
+            adjacency_list[74].push_back(neighbor(75, 2));
+            adjacency_list[75].push_back(neighbor(1, 2));
+            adjacency_list[1].push_back(neighbor(3, 2));
+            adjacency_list[3].push_back(neighbor(72, 2));
+            adjacency_list[72].push_back(neighbor(73, 2));
+            adjacency_list[73].push_back(neighbor(9, 2));
+            adjacency_list[9].push_back(neighbor(10, 2));
+            adjacency_list[10].push_back(neighbor(11, 2));
+            adjacency_list[10].push_back(neighbor(12, 2));
+            adjacency_list[11].push_back(neighbor(13, 2));
+            adjacency_list[12].push_back(neighbor(16, 2));
+            adjacency_list[16].push_back(neighbor(17, 2));
+            adjacency_list[17].push_back(neighbor(19, 2));
+            adjacency_list[19].push_back(neighbor(6, 2));
+            adjacency_list[6].push_back(neighbor(4, 2));
+            adjacency_list[4].push_back(neighbor(2, 2));
+            adjacency_list[2].push_back(neighbor(0, 2));
+            adjacency_list[0].push_back(neighbor(39, 2));
+            adjacency_list[39].push_back(neighbor(37, 2));
+            adjacency_list[37].push_back(neighbor(34, 2));
+            adjacency_list[34].push_back(neighbor(32, 2));
+            adjacency_list[32].push_back(neighbor(31, 2));
+            adjacency_list[31].push_back(neighbor(30, 2));
+            adjacency_list[30].push_back(neighbor(29, 2));
+            adjacency_list[29].push_back(neighbor(28, 2));
+            adjacency_list[28].push_back(neighbor(26, 2));
+            adjacency_list[26].push_back(neighbor(51, 2));
+            adjacency_list[51].push_back(neighbor(55, 2));
+            adjacency_list[51].push_back(neighbor(52, 2));
+            adjacency_list[52].push_back(neighbor(54, 2));
+            adjacency_list[52].push_back(neighbor(53, 2));
+            adjacency_list[3].push_back(neighbor(5, 2));
+            adjacency_list[5].push_back(neighbor(7, 2));
+            adjacency_list[7].push_back(neighbor(8, 2));
+            adjacency_list[8].push_back(neighbor(14, 2));
+            adjacency_list[14].push_back(neighbor(15, 2));
+            adjacency_list[15].push_back(neighbor(40, 2));
+            adjacency_list[40].push_back(neighbor(41, 2));
+            adjacency_list[41].push_back(neighbor(42, 2));
+            adjacency_list[42].push_back(neighbor(44, 2));
+            adjacency_list[42].push_back(neighbor(43, 2));
+
+
+            //calculate and output information
+            std::vector<weight_t> min_distance;
+            std::vector<vertex_t> previous;
+            DijkstraComputePaths(start, adjacency_list, min_distance, previous);
+            std::cout << "Distance from " << ui->originBox1->currentText().toStdString() << " to " << ui->destBox1->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
+            std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
+            //std::list<vertex_t> path = DijkstraGetShortestPathTo(ui->stoplineEdit2->text().toInt(), previous);
+            std::cout << ui->trainselectBox1->currentText().toStdString() <<" Path : ";
+            tableOperation(path);
         }
 
     }
@@ -1251,71 +870,85 @@ void MainWindow::greyOut2()
         ui->throttleBox2->setDisabled(true);
         ui->facingBox2->setDisabled(true);
         ui->headingBox2->setDisabled(true);
+        ui->setButton2->setDisabled(true);
         ui->trainimageButton2->show();
         ui->routeInfo2->show();
-        //adjacency list selected based on heading
-        if (ui->headingBox2->currentIndex() == 1)
-        {
-        //adjacency list east
-        adjacency_list_t adjacency_list(100);
 
-        adjacency_list[0].push_back(neighbor(39, 9));
-        adjacency_list[1].push_back(neighbor(0, 9));
-        adjacency_list[2].push_back(neighbor(4, 9));
-        adjacency_list[3].push_back(neighbor(1, 9));
-        adjacency_list[4].push_back(neighbor(72, 9));
-        adjacency_list[5].push_back(neighbor(3, 9));
-        adjacency_list[7].push_back(neighbor(5, 9));
-        adjacency_list[8].push_back(neighbor(7, 9));
-        adjacency_list[9].push_back(neighbor(10, 9));
-        adjacency_list[10].push_back(neighbor(11, 9));
-        adjacency_list[11].push_back(neighbor(13, 9));
-        adjacency_list[14].push_back(neighbor(8, 9));
-        adjacency_list[15].push_back(neighbor(14, 9));
-        adjacency_list[26].push_back(neighbor(51, 9));
-        adjacency_list[28].push_back(neighbor(26, 9));
-        adjacency_list[29].push_back(neighbor(28, 9));
-        adjacency_list[30].push_back(neighbor(29, 9));
-        adjacency_list[31].push_back(neighbor(70, 9));
-        adjacency_list[31].push_back(neighbor(30, 9));
-        adjacency_list[32].push_back(neighbor(31, 9));
-        adjacency_list[33].push_back(neighbor(32, 9));
-        adjacency_list[35].push_back(neighbor(33, 9));
-        adjacency_list[36].push_back(neighbor(35, 9));
-        adjacency_list[36].push_back(neighbor(68, 9));
-        adjacency_list[38].push_back(neighbor(36, 9));
-        adjacency_list[39].push_back(neighbor(38, 9));
-        adjacency_list[40].push_back(neighbor(15, 9));
-        adjacency_list[41].push_back(neighbor(40, 9));
-        adjacency_list[42].push_back(neighbor(41, 9));
-        adjacency_list[43].push_back(neighbor(42, 9));
-        adjacency_list[44].push_back(neighbor(42, 9));
-        adjacency_list[51].push_back(neighbor(52, 9));
-        adjacency_list[52].push_back(neighbor(53, 9));
-        adjacency_list[52].push_back(neighbor(54, 9));
-        adjacency_list[51].push_back(neighbor(55, 9));
-        adjacency_list[68].push_back(neighbor(69, 9));
-        adjacency_list[70].push_back(neighbor(71, 9));
-        adjacency_list[71].push_back(neighbor(2, 9));
-        adjacency_list[72].push_back(neighbor(73, 9));
-        adjacency_list[73].push_back(neighbor(9, 9));
+        if((ui->originBox2->currentIndex() == 1 ||
+            ui->originBox2->currentIndex() == 2) &&
+           (ui->destBox2->currentIndex() == 3 ||
+            ui->destBox2->currentIndex() == 4 ||
+            ui->destBox2->currentIndex() == 5 ||
+            ui->destBox2->currentIndex() == 6 ||
+            ui->destBox2->currentIndex() == 7))
+        {
+        //adjacency list from 1 & 2 to everywhere else
+
+            adjacency_list_t adjacency_listeast(100);
+
+            adjacency_listeast[0].push_back(neighbor(39, 3));
+            adjacency_listeast[1].push_back(neighbor(0, 2));
+            adjacency_listeast[2].push_back(neighbor(4, 9));
+            adjacency_listeast[3].push_back(neighbor(1, 1));
+            adjacency_listeast[4].push_back(neighbor(72, 9));
+            adjacency_listeast[5].push_back(neighbor(3, 9));
+            adjacency_listeast[7].push_back(neighbor(5, 8));
+            adjacency_listeast[8].push_back(neighbor(7, 7));
+            adjacency_listeast[9].push_back(neighbor(10, 9));
+            adjacency_listeast[10].push_back(neighbor(11, 9));
+            adjacency_listeast[11].push_back(neighbor(13, 9));
+            adjacency_listeast[14].push_back(neighbor(8, 6));
+            adjacency_listeast[15].push_back(neighbor(14, 5));
+            adjacency_listeast[26].push_back(neighbor(51, 4));
+            adjacency_listeast[28].push_back(neighbor(26, 3));
+            adjacency_listeast[29].push_back(neighbor(28, 2));
+            adjacency_listeast[30].push_back(neighbor(29, 1));
+            adjacency_listeast[31].push_back(neighbor(70, 9));
+            adjacency_listeast[31].push_back(neighbor(30, 8));
+            adjacency_listeast[32].push_back(neighbor(31, 7));
+            adjacency_listeast[33].push_back(neighbor(32, 6));
+            adjacency_listeast[35].push_back(neighbor(33, 5));
+            adjacency_listeast[36].push_back(neighbor(35, 4));
+            adjacency_listeast[36].push_back(neighbor(68, 9));
+            adjacency_listeast[38].push_back(neighbor(36, 5));
+            adjacency_listeast[39].push_back(neighbor(38, 4));
+            adjacency_listeast[40].push_back(neighbor(15, 4));
+            adjacency_listeast[41].push_back(neighbor(40, 3));
+            adjacency_listeast[42].push_back(neighbor(41, 2));
+            adjacency_listeast[43].push_back(neighbor(42, 1));
+            adjacency_listeast[44].push_back(neighbor(42, 9));
+            adjacency_listeast[51].push_back(neighbor(52, 3));
+            adjacency_listeast[52].push_back(neighbor(53, 4));
+            adjacency_listeast[52].push_back(neighbor(54, 9));
+            adjacency_listeast[51].push_back(neighbor(55, 9));
+            adjacency_listeast[68].push_back(neighbor(69, 9));
+            adjacency_listeast[70].push_back(neighbor(71, 9));
+            adjacency_listeast[71].push_back(neighbor(2, 9));
+            adjacency_listeast[72].push_back(neighbor(73, 9));
+            adjacency_listeast[73].push_back(neighbor(9, 9));
+
 
         //calculate and output information
         std::vector<weight_t> min_distance;
         std::vector<vertex_t> previous;
-        DijkstraComputePaths(start, adjacency_list, min_distance, previous);
-        //DijkstraComputePaths(ui->startlineEdit1->text().toInt(), adjacency_list, min_distance, previous);
-        std::cout << "Distance from " << ui->originBox2->currentText().toStdString() << " to " << ui->destBox2->currentText().toStdString() <<  ": " << min_distance[end] << std::endl;
+        DijkstraComputePaths(start, adjacency_listeast, min_distance, previous);
+        std::cout << "Distance from " << ui->originBox2->currentText().toStdString() << " to " << ui->destBox2->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
         std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
-        //std::list<vertex_t> path = DijkstraGetShortestPathTo(ui->stoplineEdit2->text().toInt(), previous);
         std::cout << ui->trainselectBox2->currentText().toStdString() <<" Path : ";
-        std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
+        tableOperation(path);
+
+        //std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
         std::cout << std::endl;
         }
+
         //adjacency list selected based on heading
-        else if (ui->headingBox2->currentIndex() == 2)
+        else if ((ui->originBox2->currentIndex() == 3 ||
+                  ui->originBox2->currentIndex() == 4 ||
+                  ui->originBox2->currentIndex() == 5) &&
+                 (ui->destBox2->currentIndex() == 1 ||
+                  ui->destBox2->currentIndex() == 2))
         {
-            //adjacency list west
+            //adjacency list 3, 4 & 5 to 1 & 2
             adjacency_list_t adjacency_list(100);
 
             adjacency_list[53].push_back(neighbor(52, 9));
@@ -1366,13 +999,187 @@ void MainWindow::greyOut2()
             std::vector<weight_t> min_distance;
             std::vector<vertex_t> previous;
             DijkstraComputePaths(start, adjacency_list, min_distance, previous);
-            //DijkstraComputePaths(ui->startlineEdit1->text().toInt(), adjacency_list, min_distance, previous);
-            std::cout << "Distance from " << ui->originBox2->currentText().toStdString() << " to " << ui->destBox2->currentText().toStdString() <<  ": " << min_distance[end] << std::endl;
+            std::cout << "Distance from " << ui->originBox2->currentText().toStdString() << " to " << ui->destBox2->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
             std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
             //std::list<vertex_t> path = DijkstraGetShortestPathTo(ui->stoplineEdit2->text().toInt(), previous);
             std::cout << ui->trainselectBox2->currentText().toStdString() <<" Path : ";
-            std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
-            std::cout << std::endl;
+            tableOperation(path);
+        }
+        else if((ui->originBox2->currentIndex() == 5 ||
+                ui->originBox2->currentIndex() == 4 ||
+                ui->originBox2->currentIndex() == 3) &&
+                (ui->destBox2->currentIndex() == 6 ||
+                ui->destBox2->currentIndex() == 7))
+        {
+            //adjacency list 3, 4 & 5 to 6 & 7
+            adjacency_list_t adjacency_lists(150);
+
+            adjacency_lists[53].push_back(neighbor(52, 2));
+            adjacency_lists[54].push_back(neighbor(52, 2));
+            adjacency_lists[55].push_back(neighbor(51, 2));
+            adjacency_lists[52].push_back(neighbor(51, 2));
+            adjacency_lists[51].push_back(neighbor(26, 2));
+            adjacency_lists[26].push_back(neighbor(28, 2));
+            adjacency_lists[28].push_back(neighbor(29, 2));
+            adjacency_lists[29].push_back(neighbor(30, 2));
+            adjacency_lists[30].push_back(neighbor(31, 2));
+            adjacency_lists[31].push_back(neighbor(32, 2));
+            adjacency_lists[32].push_back(neighbor(34, 2));
+            adjacency_lists[34].push_back(neighbor(37, 2));
+            adjacency_lists[37].push_back(neighbor(39, 2));
+            adjacency_lists[39].push_back(neighbor(0, 2));
+            adjacency_lists[0].push_back(neighbor(1, 2));
+            adjacency_lists[1].push_back(neighbor(3, 2));
+            adjacency_lists[3].push_back(neighbor(72, 2));
+            adjacency_lists[72].push_back(neighbor(73, 2));
+            adjacency_lists[73].push_back(neighbor(9, 2));
+            adjacency_lists[9].push_back(neighbor(10, 2));
+            adjacency_lists[10].push_back(neighbor(11, 2));
+            adjacency_lists[11].push_back(neighbor(13, 2));
+            adjacency_lists[10].push_back(neighbor(12, 2));
+            adjacency_lists[12].push_back(neighbor(16, 2));
+            adjacency_lists[16].push_back(neighbor(17, 2));
+            adjacency_lists[17].push_back(neighbor(19, 2));
+            adjacency_lists[19].push_back(neighbor(6, 2));
+            adjacency_lists[6].push_back(neighbor(4, 2));
+            adjacency_lists[4].push_back(neighbor(2, 2));
+            adjacency_lists[2].push_back(neighbor(75, 2));
+            adjacency_lists[75].push_back(neighbor(74, 2));
+            adjacency_lists[74].push_back(neighbor(38, 2));
+            adjacency_lists[38].push_back(neighbor(36, 2));
+            adjacency_lists[36].push_back(neighbor(68, 2));
+            adjacency_lists[68].push_back(neighbor(69, 2));
+
+            //calculate and output information
+            std::vector<weight_t> min_distance;
+            std::vector<vertex_t> previous;
+            DijkstraComputePaths(start, adjacency_lists, min_distance, previous);
+            std::cout << "Distance from " << ui->originBox2->currentText().toStdString() << " to " << ui->destBox2->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
+            std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
+            //std::list<vertex_t> path = DijkstraGetShortestPathTo(ui->stoplineEdit2->text().toInt(), previous);
+            std::cout << ui->trainselectBox2->currentText().toStdString() <<" Path : ";
+            tableOperation(path);
+        }
+
+        else if(ui->originBox2->currentIndex() == 6)
+        {
+            //adjacency list 6 to everywhere
+            adjacency_list_t adjacency_list(150);
+
+                adjacency_list[13].push_back(neighbor(11, 2));
+                adjacency_list[11].push_back(neighbor(10, 2));
+                adjacency_list[10].push_back(neighbor(9, 2));
+                adjacency_list[9].push_back(neighbor(73, 2));
+                adjacency_list[73].push_back(neighbor(72, 2));
+                adjacency_list[72].push_back(neighbor(3, 2));
+                adjacency_list[3].push_back(neighbor(1, 2));
+                adjacency_list[1].push_back(neighbor(0, 2));
+                adjacency_list[0].push_back(neighbor(39, 2));
+                adjacency_list[39].push_back(neighbor(38, 2));
+                adjacency_list[38].push_back(neighbor(36, 2));
+                adjacency_list[36].push_back(neighbor(35, 2));
+                adjacency_list[36].push_back(neighbor(68, 2));
+                adjacency_list[68].push_back(neighbor(69, 2));
+                adjacency_list[35].push_back(neighbor(33, 2));
+                adjacency_list[33].push_back(neighbor(32, 2));
+                adjacency_list[32].push_back(neighbor(31, 2));
+                adjacency_list[31].push_back(neighbor(30, 2));
+                adjacency_list[30].push_back(neighbor(29, 2));
+                adjacency_list[29].push_back(neighbor(28, 2));
+                adjacency_list[28].push_back(neighbor(26, 2));
+                adjacency_list[26].push_back(neighbor(51, 2));
+                adjacency_list[51].push_back(neighbor(55, 2));
+                adjacency_list[51].push_back(neighbor(52, 2));
+                adjacency_list[52].push_back(neighbor(54, 2));
+                adjacency_list[52].push_back(neighbor(53, 2));
+                adjacency_list[31].push_back(neighbor(70, 2));
+                adjacency_list[70].push_back(neighbor(71, 2));
+                adjacency_list[71].push_back(neighbor(2, 2));
+                adjacency_list[2].push_back(neighbor(4, 2));
+                adjacency_list[4].push_back(neighbor(5, 2));
+                adjacency_list[5].push_back(neighbor(7, 2));
+                adjacency_list[7].push_back(neighbor(8, 2));
+                adjacency_list[8].push_back(neighbor(14, 2));
+                adjacency_list[14].push_back(neighbor(15, 2));
+                adjacency_list[15].push_back(neighbor(40, 2));
+                adjacency_list[40].push_back(neighbor(41, 2));
+                adjacency_list[41].push_back(neighbor(42, 2));
+                adjacency_list[42].push_back(neighbor(44, 2));
+                adjacency_list[42].push_back(neighbor(43, 2));
+
+
+            //calculate and output information
+            std::vector<weight_t> min_distance;
+            std::vector<vertex_t> previous;
+            DijkstraComputePaths(start, adjacency_list, min_distance, previous);
+            std::cout << "Distance from " << ui->originBox2->currentText().toStdString() << " to " << ui->destBox2->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
+            std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
+            //std::list<vertex_t> path = DijkstraGetShortestPathTo(ui->stoplineEdit2->text().toInt(), previous);
+            std::cout << ui->trainselectBox2->currentText().toStdString() <<" Path : ";
+            tableOperation(path);
+        }
+
+        else if(ui->originBox2->currentIndex() == 7)
+        {
+            //adjacency list 7 to everywhere
+            adjacency_list_t adjacency_list(150);
+
+            adjacency_list[69].push_back(neighbor(68, 2));
+            adjacency_list[68].push_back(neighbor(36, 2));
+            adjacency_list[36].push_back(neighbor(38, 2));
+            adjacency_list[38].push_back(neighbor(74, 2));
+            adjacency_list[74].push_back(neighbor(75, 2));
+            adjacency_list[75].push_back(neighbor(1, 2));
+            adjacency_list[1].push_back(neighbor(3, 2));
+            adjacency_list[3].push_back(neighbor(72, 2));
+            adjacency_list[72].push_back(neighbor(73, 2));
+            adjacency_list[73].push_back(neighbor(9, 2));
+            adjacency_list[9].push_back(neighbor(10, 2));
+            adjacency_list[10].push_back(neighbor(11, 2));
+            adjacency_list[10].push_back(neighbor(12, 2));
+            adjacency_list[11].push_back(neighbor(13, 2));
+            adjacency_list[12].push_back(neighbor(16, 2));
+            adjacency_list[16].push_back(neighbor(17, 2));
+            adjacency_list[17].push_back(neighbor(19, 2));
+            adjacency_list[19].push_back(neighbor(6, 2));
+            adjacency_list[6].push_back(neighbor(4, 2));
+            adjacency_list[4].push_back(neighbor(2, 2));
+            adjacency_list[2].push_back(neighbor(0, 2));
+            adjacency_list[0].push_back(neighbor(39, 2));
+            adjacency_list[39].push_back(neighbor(37, 2));
+            adjacency_list[37].push_back(neighbor(34, 2));
+            adjacency_list[34].push_back(neighbor(32, 2));
+            adjacency_list[32].push_back(neighbor(31, 2));
+            adjacency_list[31].push_back(neighbor(30, 2));
+            adjacency_list[30].push_back(neighbor(29, 2));
+            adjacency_list[29].push_back(neighbor(28, 2));
+            adjacency_list[28].push_back(neighbor(26, 2));
+            adjacency_list[26].push_back(neighbor(51, 2));
+            adjacency_list[51].push_back(neighbor(55, 2));
+            adjacency_list[51].push_back(neighbor(52, 2));
+            adjacency_list[52].push_back(neighbor(54, 2));
+            adjacency_list[52].push_back(neighbor(53, 2));
+            adjacency_list[3].push_back(neighbor(5, 2));
+            adjacency_list[5].push_back(neighbor(7, 2));
+            adjacency_list[7].push_back(neighbor(8, 2));
+            adjacency_list[8].push_back(neighbor(14, 2));
+            adjacency_list[14].push_back(neighbor(15, 2));
+            adjacency_list[15].push_back(neighbor(40, 2));
+            adjacency_list[40].push_back(neighbor(41, 2));
+            adjacency_list[41].push_back(neighbor(42, 2));
+            adjacency_list[42].push_back(neighbor(44, 2));
+            adjacency_list[42].push_back(neighbor(43, 2));
+
+
+            //calculate and output information
+            std::vector<weight_t> min_distance;
+            std::vector<vertex_t> previous;
+            DijkstraComputePaths(start, adjacency_list, min_distance, previous);
+            std::cout << "Distance from " << ui->originBox2->currentText().toStdString() << " to " << ui->destBox2->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
+            std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
+            //std::list<vertex_t> path = DijkstraGetShortestPathTo(ui->stoplineEdit2->text().toInt(), previous);
+            std::cout << ui->trainselectBox2->currentText().toStdString() <<" Path : ";
+            tableOperation(path);
         }
 
     }
@@ -1467,72 +1274,85 @@ void MainWindow::greyOut3()
         ui->throttleBox3->setDisabled(true);
         ui->facingBox3->setDisabled(true);
         ui->headingBox3->setDisabled(true);
+        ui->setButton3->setDisabled(true);
         ui->trainimageButton3->show();
         ui->routeInfo3->show();
 
-        //adjacency list selected based on heading
-        if (ui->headingBox3->currentIndex() == 1)
+        if((ui->originBox3->currentIndex() == 1 ||
+            ui->originBox3->currentIndex() == 2) &&
+           (ui->destBox3->currentIndex() == 3 ||
+            ui->destBox3->currentIndex() == 4 ||
+            ui->destBox3->currentIndex() == 5 ||
+            ui->destBox3->currentIndex() == 6 ||
+            ui->destBox3->currentIndex() == 7))
         {
-        //adjacency list east
-        adjacency_list_t adjacency_list(100);
+        //adjacency list from 1 & 2 to everywhere else
 
-        adjacency_list[0].push_back(neighbor(39, 9));
-        adjacency_list[1].push_back(neighbor(0, 9));
-        adjacency_list[2].push_back(neighbor(4, 9));
-        adjacency_list[3].push_back(neighbor(1, 9));
-        adjacency_list[4].push_back(neighbor(72, 9));
-        adjacency_list[5].push_back(neighbor(3, 9));
-        adjacency_list[7].push_back(neighbor(5, 9));
-        adjacency_list[8].push_back(neighbor(7, 9));
-        adjacency_list[9].push_back(neighbor(10, 9));
-        adjacency_list[10].push_back(neighbor(11, 9));
-        adjacency_list[11].push_back(neighbor(13, 9));
-        adjacency_list[14].push_back(neighbor(8, 9));
-        adjacency_list[15].push_back(neighbor(14, 9));
-        adjacency_list[26].push_back(neighbor(51, 9));
-        adjacency_list[28].push_back(neighbor(26, 9));
-        adjacency_list[29].push_back(neighbor(28, 9));
-        adjacency_list[30].push_back(neighbor(29, 9));
-        adjacency_list[31].push_back(neighbor(70, 9));
-        adjacency_list[31].push_back(neighbor(30, 9));
-        adjacency_list[32].push_back(neighbor(31, 9));
-        adjacency_list[33].push_back(neighbor(32, 9));
-        adjacency_list[35].push_back(neighbor(33, 9));
-        adjacency_list[36].push_back(neighbor(35, 9));
-        adjacency_list[36].push_back(neighbor(68, 9));
-        adjacency_list[38].push_back(neighbor(36, 9));
-        adjacency_list[39].push_back(neighbor(38, 9));
-        adjacency_list[40].push_back(neighbor(15, 9));
-        adjacency_list[41].push_back(neighbor(40, 9));
-        adjacency_list[42].push_back(neighbor(41, 9));
-        adjacency_list[43].push_back(neighbor(42, 9));
-        adjacency_list[44].push_back(neighbor(42, 9));
-        adjacency_list[51].push_back(neighbor(52, 9));
-        adjacency_list[52].push_back(neighbor(53, 9));
-        adjacency_list[52].push_back(neighbor(54, 9));
-        adjacency_list[51].push_back(neighbor(55, 9));
-        adjacency_list[68].push_back(neighbor(69, 9));
-        adjacency_list[70].push_back(neighbor(71, 9));
-        adjacency_list[71].push_back(neighbor(2, 9));
-        adjacency_list[72].push_back(neighbor(73, 9));
-        adjacency_list[73].push_back(neighbor(9, 9));
+            adjacency_list_t adjacency_listeast(100);
+
+            adjacency_listeast[0].push_back(neighbor(39, 3));
+            adjacency_listeast[1].push_back(neighbor(0, 2));
+            adjacency_listeast[2].push_back(neighbor(4, 9));
+            adjacency_listeast[3].push_back(neighbor(1, 1));
+            adjacency_listeast[4].push_back(neighbor(72, 9));
+            adjacency_listeast[5].push_back(neighbor(3, 9));
+            adjacency_listeast[7].push_back(neighbor(5, 8));
+            adjacency_listeast[8].push_back(neighbor(7, 7));
+            adjacency_listeast[9].push_back(neighbor(10, 9));
+            adjacency_listeast[10].push_back(neighbor(11, 9));
+            adjacency_listeast[11].push_back(neighbor(13, 9));
+            adjacency_listeast[14].push_back(neighbor(8, 6));
+            adjacency_listeast[15].push_back(neighbor(14, 5));
+            adjacency_listeast[26].push_back(neighbor(51, 4));
+            adjacency_listeast[28].push_back(neighbor(26, 3));
+            adjacency_listeast[29].push_back(neighbor(28, 2));
+            adjacency_listeast[30].push_back(neighbor(29, 1));
+            adjacency_listeast[31].push_back(neighbor(70, 9));
+            adjacency_listeast[31].push_back(neighbor(30, 8));
+            adjacency_listeast[32].push_back(neighbor(31, 7));
+            adjacency_listeast[33].push_back(neighbor(32, 6));
+            adjacency_listeast[35].push_back(neighbor(33, 5));
+            adjacency_listeast[36].push_back(neighbor(35, 4));
+            adjacency_listeast[36].push_back(neighbor(68, 9));
+            adjacency_listeast[38].push_back(neighbor(36, 5));
+            adjacency_listeast[39].push_back(neighbor(38, 4));
+            adjacency_listeast[40].push_back(neighbor(15, 4));
+            adjacency_listeast[41].push_back(neighbor(40, 3));
+            adjacency_listeast[42].push_back(neighbor(41, 2));
+            adjacency_listeast[43].push_back(neighbor(42, 1));
+            adjacency_listeast[44].push_back(neighbor(42, 9));
+            adjacency_listeast[51].push_back(neighbor(52, 3));
+            adjacency_listeast[52].push_back(neighbor(53, 4));
+            adjacency_listeast[52].push_back(neighbor(54, 9));
+            adjacency_listeast[51].push_back(neighbor(55, 9));
+            adjacency_listeast[68].push_back(neighbor(69, 9));
+            adjacency_listeast[70].push_back(neighbor(71, 9));
+            adjacency_listeast[71].push_back(neighbor(2, 9));
+            adjacency_listeast[72].push_back(neighbor(73, 9));
+            adjacency_listeast[73].push_back(neighbor(9, 9));
+
 
         //calculate and output information
         std::vector<weight_t> min_distance;
         std::vector<vertex_t> previous;
-        DijkstraComputePaths(start, adjacency_list, min_distance, previous);
-        //DijkstraComputePaths(ui->startlineEdit1->text().toInt(), adjacency_list, min_distance, previous);
-        std::cout << "Distance from " << ui->originBox3->currentText().toStdString() << " to " << ui->destBox3->currentText().toStdString() <<  ": " << min_distance[end] << std::endl;
+        DijkstraComputePaths(start, adjacency_listeast, min_distance, previous);
+        std::cout << "Distance from " << ui->originBox3->currentText().toStdString() << " to " << ui->destBox3->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
         std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
-        //std::list<vertex_t> path = DijkstraGetShortestPathTo(ui->stoplineEdit2->text().toInt(), previous);
         std::cout << ui->trainselectBox3->currentText().toStdString() <<" Path : ";
-        std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
+        tableOperation(path);
+
+        //std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
         std::cout << std::endl;
         }
+
         //adjacency list selected based on heading
-        else if (ui->headingBox3->currentIndex() == 2)
+        else if ((ui->originBox3->currentIndex() == 3 ||
+                  ui->originBox3->currentIndex() == 4 ||
+                  ui->originBox3->currentIndex() == 5) &&
+                 (ui->destBox3->currentIndex() == 1 ||
+                  ui->destBox3->currentIndex() == 2))
         {
-            //adjacency list west
+            //adjacency list 3, 4 & 5 to 1 & 2
             adjacency_list_t adjacency_list(100);
 
             adjacency_list[53].push_back(neighbor(52, 9));
@@ -1583,13 +1403,187 @@ void MainWindow::greyOut3()
             std::vector<weight_t> min_distance;
             std::vector<vertex_t> previous;
             DijkstraComputePaths(start, adjacency_list, min_distance, previous);
-            //DijkstraComputePaths(ui->startlineEdit1->text().toInt(), adjacency_list, min_distance, previous);
-            std::cout << "Distance from " << ui->originBox3->currentText().toStdString() << " to " << ui->destBox3->currentText().toStdString() <<  ": " << min_distance[end] << std::endl;
+            std::cout << "Distance from " << ui->originBox3->currentText().toStdString() << " to " << ui->destBox3->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
             std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
             //std::list<vertex_t> path = DijkstraGetShortestPathTo(ui->stoplineEdit2->text().toInt(), previous);
             std::cout << ui->trainselectBox3->currentText().toStdString() <<" Path : ";
-            std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
-            std::cout << std::endl;
+            tableOperation(path);
+        }
+        else if((ui->originBox3->currentIndex() == 5 ||
+                ui->originBox3->currentIndex() == 4 ||
+                ui->originBox3->currentIndex() == 3) &&
+                (ui->destBox3->currentIndex() == 6 ||
+                ui->destBox3->currentIndex() == 7))
+        {
+            //adjacency list 3, 4 & 5 to 6 & 7
+            adjacency_list_t adjacency_lists(150);
+
+            adjacency_lists[53].push_back(neighbor(52, 2));
+            adjacency_lists[54].push_back(neighbor(52, 2));
+            adjacency_lists[55].push_back(neighbor(51, 2));
+            adjacency_lists[52].push_back(neighbor(51, 2));
+            adjacency_lists[51].push_back(neighbor(26, 2));
+            adjacency_lists[26].push_back(neighbor(28, 2));
+            adjacency_lists[28].push_back(neighbor(29, 2));
+            adjacency_lists[29].push_back(neighbor(30, 2));
+            adjacency_lists[30].push_back(neighbor(31, 2));
+            adjacency_lists[31].push_back(neighbor(32, 2));
+            adjacency_lists[32].push_back(neighbor(34, 2));
+            adjacency_lists[34].push_back(neighbor(37, 2));
+            adjacency_lists[37].push_back(neighbor(39, 2));
+            adjacency_lists[39].push_back(neighbor(0, 2));
+            adjacency_lists[0].push_back(neighbor(1, 2));
+            adjacency_lists[1].push_back(neighbor(3, 2));
+            adjacency_lists[3].push_back(neighbor(72, 2));
+            adjacency_lists[72].push_back(neighbor(73, 2));
+            adjacency_lists[73].push_back(neighbor(9, 2));
+            adjacency_lists[9].push_back(neighbor(10, 2));
+            adjacency_lists[10].push_back(neighbor(11, 2));
+            adjacency_lists[11].push_back(neighbor(13, 2));
+            adjacency_lists[10].push_back(neighbor(12, 2));
+            adjacency_lists[12].push_back(neighbor(16, 2));
+            adjacency_lists[16].push_back(neighbor(17, 2));
+            adjacency_lists[17].push_back(neighbor(19, 2));
+            adjacency_lists[19].push_back(neighbor(6, 2));
+            adjacency_lists[6].push_back(neighbor(4, 2));
+            adjacency_lists[4].push_back(neighbor(2, 2));
+            adjacency_lists[2].push_back(neighbor(75, 2));
+            adjacency_lists[75].push_back(neighbor(74, 2));
+            adjacency_lists[74].push_back(neighbor(38, 2));
+            adjacency_lists[38].push_back(neighbor(36, 2));
+            adjacency_lists[36].push_back(neighbor(68, 2));
+            adjacency_lists[68].push_back(neighbor(69, 2));
+
+            //calculate and output information
+            std::vector<weight_t> min_distance;
+            std::vector<vertex_t> previous;
+            DijkstraComputePaths(start, adjacency_lists, min_distance, previous);
+            std::cout << "Distance from " << ui->originBox3->currentText().toStdString() << " to " << ui->destBox3->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
+            std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
+            //std::list<vertex_t> path = DijkstraGetShortestPathTo(ui->stoplineEdit2->text().toInt(), previous);
+            std::cout << ui->trainselectBox3->currentText().toStdString() <<" Path : ";
+            tableOperation(path);
+        }
+
+        else if(ui->originBox3->currentIndex() == 6)
+        {
+            //adjacency list 6 to everywhere
+            adjacency_list_t adjacency_list(150);
+
+                adjacency_list[13].push_back(neighbor(11, 2));
+                adjacency_list[11].push_back(neighbor(10, 2));
+                adjacency_list[10].push_back(neighbor(9, 2));
+                adjacency_list[9].push_back(neighbor(73, 2));
+                adjacency_list[73].push_back(neighbor(72, 2));
+                adjacency_list[72].push_back(neighbor(3, 2));
+                adjacency_list[3].push_back(neighbor(1, 2));
+                adjacency_list[1].push_back(neighbor(0, 2));
+                adjacency_list[0].push_back(neighbor(39, 2));
+                adjacency_list[39].push_back(neighbor(38, 2));
+                adjacency_list[38].push_back(neighbor(36, 2));
+                adjacency_list[36].push_back(neighbor(35, 2));
+                adjacency_list[36].push_back(neighbor(68, 2));
+                adjacency_list[68].push_back(neighbor(69, 2));
+                adjacency_list[35].push_back(neighbor(33, 2));
+                adjacency_list[33].push_back(neighbor(32, 2));
+                adjacency_list[32].push_back(neighbor(31, 2));
+                adjacency_list[31].push_back(neighbor(30, 2));
+                adjacency_list[30].push_back(neighbor(29, 2));
+                adjacency_list[29].push_back(neighbor(28, 2));
+                adjacency_list[28].push_back(neighbor(26, 2));
+                adjacency_list[26].push_back(neighbor(51, 2));
+                adjacency_list[51].push_back(neighbor(55, 2));
+                adjacency_list[51].push_back(neighbor(52, 2));
+                adjacency_list[52].push_back(neighbor(54, 2));
+                adjacency_list[52].push_back(neighbor(53, 2));
+                adjacency_list[31].push_back(neighbor(70, 2));
+                adjacency_list[70].push_back(neighbor(71, 2));
+                adjacency_list[71].push_back(neighbor(2, 2));
+                adjacency_list[2].push_back(neighbor(4, 2));
+                adjacency_list[4].push_back(neighbor(5, 2));
+                adjacency_list[5].push_back(neighbor(7, 2));
+                adjacency_list[7].push_back(neighbor(8, 2));
+                adjacency_list[8].push_back(neighbor(14, 2));
+                adjacency_list[14].push_back(neighbor(15, 2));
+                adjacency_list[15].push_back(neighbor(40, 2));
+                adjacency_list[40].push_back(neighbor(41, 2));
+                adjacency_list[41].push_back(neighbor(42, 2));
+                adjacency_list[42].push_back(neighbor(44, 2));
+                adjacency_list[42].push_back(neighbor(43, 2));
+
+
+            //calculate and output information
+            std::vector<weight_t> min_distance;
+            std::vector<vertex_t> previous;
+            DijkstraComputePaths(start, adjacency_list, min_distance, previous);
+            std::cout << "Distance from " << ui->originBox3->currentText().toStdString() << " to " << ui->destBox3->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
+            std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
+            //std::list<vertex_t> path = DijkstraGetShortestPathTo(ui->stoplineEdit2->text().toInt(), previous);
+            std::cout << ui->trainselectBox3->currentText().toStdString() <<" Path : ";
+            tableOperation(path);
+        }
+
+        else if(ui->originBox3->currentIndex() == 7)
+        {
+            //adjacency list 7 to everywhere
+            adjacency_list_t adjacency_list(150);
+
+            adjacency_list[69].push_back(neighbor(68, 2));
+            adjacency_list[68].push_back(neighbor(36, 2));
+            adjacency_list[36].push_back(neighbor(38, 2));
+            adjacency_list[38].push_back(neighbor(74, 2));
+            adjacency_list[74].push_back(neighbor(75, 2));
+            adjacency_list[75].push_back(neighbor(1, 2));
+            adjacency_list[1].push_back(neighbor(3, 2));
+            adjacency_list[3].push_back(neighbor(72, 2));
+            adjacency_list[72].push_back(neighbor(73, 2));
+            adjacency_list[73].push_back(neighbor(9, 2));
+            adjacency_list[9].push_back(neighbor(10, 2));
+            adjacency_list[10].push_back(neighbor(11, 2));
+            adjacency_list[10].push_back(neighbor(12, 2));
+            adjacency_list[11].push_back(neighbor(13, 2));
+            adjacency_list[12].push_back(neighbor(16, 2));
+            adjacency_list[16].push_back(neighbor(17, 2));
+            adjacency_list[17].push_back(neighbor(19, 2));
+            adjacency_list[19].push_back(neighbor(6, 2));
+            adjacency_list[6].push_back(neighbor(4, 2));
+            adjacency_list[4].push_back(neighbor(2, 2));
+            adjacency_list[2].push_back(neighbor(0, 2));
+            adjacency_list[0].push_back(neighbor(39, 2));
+            adjacency_list[39].push_back(neighbor(37, 2));
+            adjacency_list[37].push_back(neighbor(34, 2));
+            adjacency_list[34].push_back(neighbor(32, 2));
+            adjacency_list[32].push_back(neighbor(31, 2));
+            adjacency_list[31].push_back(neighbor(30, 2));
+            adjacency_list[30].push_back(neighbor(29, 2));
+            adjacency_list[29].push_back(neighbor(28, 2));
+            adjacency_list[28].push_back(neighbor(26, 2));
+            adjacency_list[26].push_back(neighbor(51, 2));
+            adjacency_list[51].push_back(neighbor(55, 2));
+            adjacency_list[51].push_back(neighbor(52, 2));
+            adjacency_list[52].push_back(neighbor(54, 2));
+            adjacency_list[52].push_back(neighbor(53, 2));
+            adjacency_list[3].push_back(neighbor(5, 2));
+            adjacency_list[5].push_back(neighbor(7, 2));
+            adjacency_list[7].push_back(neighbor(8, 2));
+            adjacency_list[8].push_back(neighbor(14, 2));
+            adjacency_list[14].push_back(neighbor(15, 2));
+            adjacency_list[15].push_back(neighbor(40, 2));
+            adjacency_list[40].push_back(neighbor(41, 2));
+            adjacency_list[41].push_back(neighbor(42, 2));
+            adjacency_list[42].push_back(neighbor(44, 2));
+            adjacency_list[42].push_back(neighbor(43, 2));
+
+
+            //calculate and output information
+            std::vector<weight_t> min_distance;
+            std::vector<vertex_t> previous;
+            DijkstraComputePaths(start, adjacency_list, min_distance, previous);
+            std::cout << "Distance from " << ui->originBox3->currentText().toStdString() << " to " << ui->destBox3->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
+            std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
+            //std::list<vertex_t> path = DijkstraGetShortestPathTo(ui->stoplineEdit2->text().toInt(), previous);
+            std::cout << ui->trainselectBox3->currentText().toStdString() <<" Path : ";
+            tableOperation(path);
         }
 
     }
@@ -1684,71 +1678,85 @@ void MainWindow::greyOut4()
         ui->throttleBox4->setDisabled(true);
         ui->facingBox4->setDisabled(true);
         ui->headingBox4->setDisabled(true);
+        ui->setButton4->setDisabled(true);
         ui->trainimageButton4->show();
         ui->routeInfo4->show();
-        //adjacency list selected based on heading
-        if (ui->headingBox4->currentIndex() == 1)
-        {
-        //adjacency list east
-        adjacency_list_t adjacency_list(100);
 
-        adjacency_list[0].push_back(neighbor(39, 9));
-        adjacency_list[1].push_back(neighbor(0, 9));
-        adjacency_list[2].push_back(neighbor(4, 9));
-        adjacency_list[3].push_back(neighbor(1, 9));
-        adjacency_list[4].push_back(neighbor(72, 9));
-        adjacency_list[5].push_back(neighbor(3, 9));
-        adjacency_list[7].push_back(neighbor(5, 9));
-        adjacency_list[8].push_back(neighbor(7, 9));
-        adjacency_list[9].push_back(neighbor(10, 9));
-        adjacency_list[10].push_back(neighbor(11, 9));
-        adjacency_list[11].push_back(neighbor(13, 9));
-        adjacency_list[14].push_back(neighbor(8, 9));
-        adjacency_list[15].push_back(neighbor(14, 9));
-        adjacency_list[26].push_back(neighbor(51, 9));
-        adjacency_list[28].push_back(neighbor(26, 9));
-        adjacency_list[29].push_back(neighbor(28, 9));
-        adjacency_list[30].push_back(neighbor(29, 9));
-        adjacency_list[31].push_back(neighbor(70, 9));
-        adjacency_list[31].push_back(neighbor(30, 9));
-        adjacency_list[32].push_back(neighbor(31, 9));
-        adjacency_list[33].push_back(neighbor(32, 9));
-        adjacency_list[35].push_back(neighbor(33, 9));
-        adjacency_list[36].push_back(neighbor(35, 9));
-        adjacency_list[36].push_back(neighbor(68, 9));
-        adjacency_list[38].push_back(neighbor(36, 9));
-        adjacency_list[39].push_back(neighbor(38, 9));
-        adjacency_list[40].push_back(neighbor(15, 9));
-        adjacency_list[41].push_back(neighbor(40, 9));
-        adjacency_list[42].push_back(neighbor(41, 9));
-        adjacency_list[43].push_back(neighbor(42, 9));
-        adjacency_list[44].push_back(neighbor(42, 9));
-        adjacency_list[51].push_back(neighbor(52, 9));
-        adjacency_list[52].push_back(neighbor(53, 9));
-        adjacency_list[52].push_back(neighbor(54, 9));
-        adjacency_list[51].push_back(neighbor(55, 9));
-        adjacency_list[68].push_back(neighbor(69, 9));
-        adjacency_list[70].push_back(neighbor(71, 9));
-        adjacency_list[71].push_back(neighbor(2, 9));
-        adjacency_list[72].push_back(neighbor(73, 9));
-        adjacency_list[73].push_back(neighbor(9, 9));
+        if((ui->originBox4->currentIndex() == 1 ||
+            ui->originBox4->currentIndex() == 2) &&
+           (ui->destBox4->currentIndex() == 3 ||
+            ui->destBox4->currentIndex() == 4 ||
+            ui->destBox4->currentIndex() == 5 ||
+            ui->destBox4->currentIndex() == 6 ||
+            ui->destBox4->currentIndex() == 7))
+        {
+        //adjacency list from 1 & 2 to everywhere else
+
+            adjacency_list_t adjacency_listeast(100);
+
+            adjacency_listeast[0].push_back(neighbor(39, 3));
+            adjacency_listeast[1].push_back(neighbor(0, 2));
+            adjacency_listeast[2].push_back(neighbor(4, 9));
+            adjacency_listeast[3].push_back(neighbor(1, 1));
+            adjacency_listeast[4].push_back(neighbor(72, 9));
+            adjacency_listeast[5].push_back(neighbor(3, 9));
+            adjacency_listeast[7].push_back(neighbor(5, 8));
+            adjacency_listeast[8].push_back(neighbor(7, 7));
+            adjacency_listeast[9].push_back(neighbor(10, 9));
+            adjacency_listeast[10].push_back(neighbor(11, 9));
+            adjacency_listeast[11].push_back(neighbor(13, 9));
+            adjacency_listeast[14].push_back(neighbor(8, 6));
+            adjacency_listeast[15].push_back(neighbor(14, 5));
+            adjacency_listeast[26].push_back(neighbor(51, 4));
+            adjacency_listeast[28].push_back(neighbor(26, 3));
+            adjacency_listeast[29].push_back(neighbor(28, 2));
+            adjacency_listeast[30].push_back(neighbor(29, 1));
+            adjacency_listeast[31].push_back(neighbor(70, 9));
+            adjacency_listeast[31].push_back(neighbor(30, 8));
+            adjacency_listeast[32].push_back(neighbor(31, 7));
+            adjacency_listeast[33].push_back(neighbor(32, 6));
+            adjacency_listeast[35].push_back(neighbor(33, 5));
+            adjacency_listeast[36].push_back(neighbor(35, 4));
+            adjacency_listeast[36].push_back(neighbor(68, 9));
+            adjacency_listeast[38].push_back(neighbor(36, 5));
+            adjacency_listeast[39].push_back(neighbor(38, 4));
+            adjacency_listeast[40].push_back(neighbor(15, 4));
+            adjacency_listeast[41].push_back(neighbor(40, 3));
+            adjacency_listeast[42].push_back(neighbor(41, 2));
+            adjacency_listeast[43].push_back(neighbor(42, 1));
+            adjacency_listeast[44].push_back(neighbor(42, 9));
+            adjacency_listeast[51].push_back(neighbor(52, 3));
+            adjacency_listeast[52].push_back(neighbor(53, 4));
+            adjacency_listeast[52].push_back(neighbor(54, 9));
+            adjacency_listeast[51].push_back(neighbor(55, 9));
+            adjacency_listeast[68].push_back(neighbor(69, 9));
+            adjacency_listeast[70].push_back(neighbor(71, 9));
+            adjacency_listeast[71].push_back(neighbor(2, 9));
+            adjacency_listeast[72].push_back(neighbor(73, 9));
+            adjacency_listeast[73].push_back(neighbor(9, 9));
+
 
         //calculate and output information
         std::vector<weight_t> min_distance;
         std::vector<vertex_t> previous;
-        DijkstraComputePaths(start, adjacency_list, min_distance, previous);
-        //DijkstraComputePaths(ui->startlineEdit1->text().toInt(), adjacency_list, min_distance, previous);
-        std::cout << "Distance from " << ui->originBox4->currentText().toStdString() << " to " << ui->destBox4->currentText().toStdString() <<  ": " << min_distance[end] << std::endl;
+        DijkstraComputePaths(start, adjacency_listeast, min_distance, previous);
+        std::cout << "Distance from " << ui->originBox4->currentText().toStdString() << " to " << ui->destBox4->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
         std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
-        //std::list<vertex_t> path = DijkstraGetShortestPathTo(ui->stoplineEdit2->text().toInt(), previous);
         std::cout << ui->trainselectBox4->currentText().toStdString() <<" Path : ";
-        std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
+        tableOperation(path);
+
+        //std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
         std::cout << std::endl;
         }
+
         //adjacency list selected based on heading
-        else if (ui->headingBox4->currentIndex() == 2)
+        else if ((ui->originBox4->currentIndex() == 3 ||
+                  ui->originBox4->currentIndex() == 4 ||
+                  ui->originBox4->currentIndex() == 5) &&
+                 (ui->destBox4->currentIndex() == 1 ||
+                  ui->destBox4->currentIndex() == 2))
         {
-            //adjacency list west
+            //adjacency list 3, 4 & 5 to 1 & 2
             adjacency_list_t adjacency_list(100);
 
             adjacency_list[53].push_back(neighbor(52, 9));
@@ -1799,15 +1807,188 @@ void MainWindow::greyOut4()
             std::vector<weight_t> min_distance;
             std::vector<vertex_t> previous;
             DijkstraComputePaths(start, adjacency_list, min_distance, previous);
-            //DijkstraComputePaths(ui->startlineEdit1->text().toInt(), adjacency_list, min_distance, previous);
-            std::cout << "Distance from " << ui->originBox4->currentText().toStdString() << " to " << ui->destBox4->currentText().toStdString() <<  ": " << min_distance[end] << std::endl;
+            std::cout << "Distance from " << ui->originBox4->currentText().toStdString() << " to " << ui->destBox4->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
             std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
             //std::list<vertex_t> path = DijkstraGetShortestPathTo(ui->stoplineEdit2->text().toInt(), previous);
             std::cout << ui->trainselectBox4->currentText().toStdString() <<" Path : ";
-            std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
-            std::cout << std::endl;
+            tableOperation(path);
+        }
+        else if((ui->originBox4->currentIndex() == 5 ||
+                ui->originBox4->currentIndex() == 4 ||
+                ui->originBox4->currentIndex() == 3) &&
+                (ui->destBox4->currentIndex() == 6 ||
+                ui->destBox4->currentIndex() == 7))
+        {
+            //adjacency list 3, 4 & 5 to 6 & 7
+            adjacency_list_t adjacency_lists(150);
+
+            adjacency_lists[53].push_back(neighbor(52, 2));
+            adjacency_lists[54].push_back(neighbor(52, 2));
+            adjacency_lists[55].push_back(neighbor(51, 2));
+            adjacency_lists[52].push_back(neighbor(51, 2));
+            adjacency_lists[51].push_back(neighbor(26, 2));
+            adjacency_lists[26].push_back(neighbor(28, 2));
+            adjacency_lists[28].push_back(neighbor(29, 2));
+            adjacency_lists[29].push_back(neighbor(30, 2));
+            adjacency_lists[30].push_back(neighbor(31, 2));
+            adjacency_lists[31].push_back(neighbor(32, 2));
+            adjacency_lists[32].push_back(neighbor(34, 2));
+            adjacency_lists[34].push_back(neighbor(37, 2));
+            adjacency_lists[37].push_back(neighbor(39, 2));
+            adjacency_lists[39].push_back(neighbor(0, 2));
+            adjacency_lists[0].push_back(neighbor(1, 2));
+            adjacency_lists[1].push_back(neighbor(3, 2));
+            adjacency_lists[3].push_back(neighbor(72, 2));
+            adjacency_lists[72].push_back(neighbor(73, 2));
+            adjacency_lists[73].push_back(neighbor(9, 2));
+            adjacency_lists[9].push_back(neighbor(10, 2));
+            adjacency_lists[10].push_back(neighbor(11, 2));
+            adjacency_lists[11].push_back(neighbor(13, 2));
+            adjacency_lists[10].push_back(neighbor(12, 2));
+            adjacency_lists[12].push_back(neighbor(16, 2));
+            adjacency_lists[16].push_back(neighbor(17, 2));
+            adjacency_lists[17].push_back(neighbor(19, 2));
+            adjacency_lists[19].push_back(neighbor(6, 2));
+            adjacency_lists[6].push_back(neighbor(4, 2));
+            adjacency_lists[4].push_back(neighbor(2, 2));
+            adjacency_lists[2].push_back(neighbor(75, 2));
+            adjacency_lists[75].push_back(neighbor(74, 2));
+            adjacency_lists[74].push_back(neighbor(38, 2));
+            adjacency_lists[38].push_back(neighbor(36, 2));
+            adjacency_lists[36].push_back(neighbor(68, 2));
+            adjacency_lists[68].push_back(neighbor(69, 2));
+
+            //calculate and output information
+            std::vector<weight_t> min_distance;
+            std::vector<vertex_t> previous;
+            DijkstraComputePaths(start, adjacency_lists, min_distance, previous);
+            std::cout << "Distance from " << ui->originBox4->currentText().toStdString() << " to " << ui->destBox4->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
+            std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
+            //std::list<vertex_t> path = DijkstraGetShortestPathTo(ui->stoplineEdit2->text().toInt(), previous);
+            std::cout << ui->trainselectBox4->currentText().toStdString() <<" Path : ";
+            tableOperation(path);
         }
 
+        else if(ui->originBox4->currentIndex() == 6)
+        {
+            //adjacency list 6 to everywhere
+            adjacency_list_t adjacency_list(150);
+
+                adjacency_list[13].push_back(neighbor(11, 2));
+                adjacency_list[11].push_back(neighbor(10, 2));
+                adjacency_list[10].push_back(neighbor(9, 2));
+                adjacency_list[9].push_back(neighbor(73, 2));
+                adjacency_list[73].push_back(neighbor(72, 2));
+                adjacency_list[72].push_back(neighbor(3, 2));
+                adjacency_list[3].push_back(neighbor(1, 2));
+                adjacency_list[1].push_back(neighbor(0, 2));
+                adjacency_list[0].push_back(neighbor(39, 2));
+                adjacency_list[39].push_back(neighbor(38, 2));
+                adjacency_list[38].push_back(neighbor(36, 2));
+                adjacency_list[36].push_back(neighbor(35, 2));
+                adjacency_list[36].push_back(neighbor(68, 2));
+                adjacency_list[68].push_back(neighbor(69, 2));
+                adjacency_list[35].push_back(neighbor(33, 2));
+                adjacency_list[33].push_back(neighbor(32, 2));
+                adjacency_list[32].push_back(neighbor(31, 2));
+                adjacency_list[31].push_back(neighbor(30, 2));
+                adjacency_list[30].push_back(neighbor(29, 2));
+                adjacency_list[29].push_back(neighbor(28, 2));
+                adjacency_list[28].push_back(neighbor(26, 2));
+                adjacency_list[26].push_back(neighbor(51, 2));
+                adjacency_list[51].push_back(neighbor(55, 2));
+                adjacency_list[51].push_back(neighbor(52, 2));
+                adjacency_list[52].push_back(neighbor(54, 2));
+                adjacency_list[52].push_back(neighbor(53, 2));
+                adjacency_list[31].push_back(neighbor(70, 2));
+                adjacency_list[70].push_back(neighbor(71, 2));
+                adjacency_list[71].push_back(neighbor(2, 2));
+                adjacency_list[2].push_back(neighbor(4, 2));
+                adjacency_list[4].push_back(neighbor(5, 2));
+                adjacency_list[5].push_back(neighbor(7, 2));
+                adjacency_list[7].push_back(neighbor(8, 2));
+                adjacency_list[8].push_back(neighbor(14, 2));
+                adjacency_list[14].push_back(neighbor(15, 2));
+                adjacency_list[15].push_back(neighbor(40, 2));
+                adjacency_list[40].push_back(neighbor(41, 2));
+                adjacency_list[41].push_back(neighbor(42, 2));
+                adjacency_list[42].push_back(neighbor(44, 2));
+                adjacency_list[42].push_back(neighbor(43, 2));
+
+
+            //calculate and output information
+            std::vector<weight_t> min_distance;
+            std::vector<vertex_t> previous;
+            DijkstraComputePaths(start, adjacency_list, min_distance, previous);
+            std::cout << "Distance from " << ui->originBox4->currentText().toStdString() << " to " << ui->destBox4->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
+            std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
+            //std::list<vertex_t> path = DijkstraGetShortestPathTo(ui->stoplineEdit2->text().toInt(), previous);
+            std::cout << ui->trainselectBox4->currentText().toStdString() <<" Path : ";
+            tableOperation(path);
+        }
+
+        else if(ui->originBox4->currentIndex() == 7)
+        {
+            //adjacency list 7 to everywhere
+            adjacency_list_t adjacency_list(150);
+
+            adjacency_list[69].push_back(neighbor(68, 2));
+            adjacency_list[68].push_back(neighbor(36, 2));
+            adjacency_list[36].push_back(neighbor(38, 2));
+            adjacency_list[38].push_back(neighbor(74, 2));
+            adjacency_list[74].push_back(neighbor(75, 2));
+            adjacency_list[75].push_back(neighbor(1, 2));
+            adjacency_list[1].push_back(neighbor(3, 2));
+            adjacency_list[3].push_back(neighbor(72, 2));
+            adjacency_list[72].push_back(neighbor(73, 2));
+            adjacency_list[73].push_back(neighbor(9, 2));
+            adjacency_list[9].push_back(neighbor(10, 2));
+            adjacency_list[10].push_back(neighbor(11, 2));
+            adjacency_list[10].push_back(neighbor(12, 2));
+            adjacency_list[11].push_back(neighbor(13, 2));
+            adjacency_list[12].push_back(neighbor(16, 2));
+            adjacency_list[16].push_back(neighbor(17, 2));
+            adjacency_list[17].push_back(neighbor(19, 2));
+            adjacency_list[19].push_back(neighbor(6, 2));
+            adjacency_list[6].push_back(neighbor(4, 2));
+            adjacency_list[4].push_back(neighbor(2, 2));
+            adjacency_list[2].push_back(neighbor(0, 2));
+            adjacency_list[0].push_back(neighbor(39, 2));
+            adjacency_list[39].push_back(neighbor(37, 2));
+            adjacency_list[37].push_back(neighbor(34, 2));
+            adjacency_list[34].push_back(neighbor(32, 2));
+            adjacency_list[32].push_back(neighbor(31, 2));
+            adjacency_list[31].push_back(neighbor(30, 2));
+            adjacency_list[30].push_back(neighbor(29, 2));
+            adjacency_list[29].push_back(neighbor(28, 2));
+            adjacency_list[28].push_back(neighbor(26, 2));
+            adjacency_list[26].push_back(neighbor(51, 2));
+            adjacency_list[51].push_back(neighbor(55, 2));
+            adjacency_list[51].push_back(neighbor(52, 2));
+            adjacency_list[52].push_back(neighbor(54, 2));
+            adjacency_list[52].push_back(neighbor(53, 2));
+            adjacency_list[3].push_back(neighbor(5, 2));
+            adjacency_list[5].push_back(neighbor(7, 2));
+            adjacency_list[7].push_back(neighbor(8, 2));
+            adjacency_list[8].push_back(neighbor(14, 2));
+            adjacency_list[14].push_back(neighbor(15, 2));
+            adjacency_list[15].push_back(neighbor(40, 2));
+            adjacency_list[40].push_back(neighbor(41, 2));
+            adjacency_list[41].push_back(neighbor(42, 2));
+            adjacency_list[42].push_back(neighbor(44, 2));
+            adjacency_list[42].push_back(neighbor(43, 2));
+
+
+            //calculate and output information
+            std::vector<weight_t> min_distance;
+            std::vector<vertex_t> previous;
+            DijkstraComputePaths(start, adjacency_list, min_distance, previous);
+            std::cout << "Distance from " << ui->originBox4->currentText().toStdString() << " to " << ui->destBox4->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
+            std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
+            //std::list<vertex_t> path = DijkstraGetShortestPathTo(ui->stoplineEdit2->text().toInt(), previous);
+            std::cout << ui->trainselectBox4->currentText().toStdString() <<" Path : ";
+            tableOperation(path);
+        }
     }
     //if radio button un-checked then un-greyout line 4
     else
@@ -1900,71 +2081,85 @@ void MainWindow::greyOut5()
         ui->throttleBox5->setDisabled(true);
         ui->facingBox5->setDisabled(true);
         ui->headingBox5->setDisabled(true);
+        ui->setButton5->setDisabled(true);
         ui->trainimageButton5->show();
         ui->routeInfo5->show();
-        //adjacency list selected based on heading
-        if (ui->headingBox5->currentIndex() == 1)
-        {
-        //adjacency list east
-        adjacency_list_t adjacency_list(100);
 
-        adjacency_list[0].push_back(neighbor(39, 9));
-        adjacency_list[1].push_back(neighbor(0, 9));
-        adjacency_list[2].push_back(neighbor(4, 9));
-        adjacency_list[3].push_back(neighbor(1, 9));
-        adjacency_list[4].push_back(neighbor(72, 9));
-        adjacency_list[5].push_back(neighbor(3, 9));
-        adjacency_list[7].push_back(neighbor(5, 9));
-        adjacency_list[8].push_back(neighbor(7, 9));
-        adjacency_list[9].push_back(neighbor(10, 9));
-        adjacency_list[10].push_back(neighbor(11, 9));
-        adjacency_list[11].push_back(neighbor(13, 9));
-        adjacency_list[14].push_back(neighbor(8, 9));
-        adjacency_list[15].push_back(neighbor(14, 9));
-        adjacency_list[26].push_back(neighbor(51, 9));
-        adjacency_list[28].push_back(neighbor(26, 9));
-        adjacency_list[29].push_back(neighbor(28, 9));
-        adjacency_list[30].push_back(neighbor(29, 9));
-        adjacency_list[31].push_back(neighbor(70, 9));
-        adjacency_list[31].push_back(neighbor(30, 9));
-        adjacency_list[32].push_back(neighbor(31, 9));
-        adjacency_list[33].push_back(neighbor(32, 9));
-        adjacency_list[35].push_back(neighbor(33, 9));
-        adjacency_list[36].push_back(neighbor(35, 9));
-        adjacency_list[36].push_back(neighbor(68, 9));
-        adjacency_list[38].push_back(neighbor(36, 9));
-        adjacency_list[39].push_back(neighbor(38, 9));
-        adjacency_list[40].push_back(neighbor(15, 9));
-        adjacency_list[41].push_back(neighbor(40, 9));
-        adjacency_list[42].push_back(neighbor(41, 9));
-        adjacency_list[43].push_back(neighbor(42, 9));
-        adjacency_list[44].push_back(neighbor(42, 9));
-        adjacency_list[51].push_back(neighbor(52, 9));
-        adjacency_list[52].push_back(neighbor(53, 9));
-        adjacency_list[52].push_back(neighbor(54, 9));
-        adjacency_list[51].push_back(neighbor(55, 9));
-        adjacency_list[68].push_back(neighbor(69, 9));
-        adjacency_list[70].push_back(neighbor(71, 9));
-        adjacency_list[71].push_back(neighbor(2, 9));
-        adjacency_list[72].push_back(neighbor(73, 9));
-        adjacency_list[73].push_back(neighbor(9, 9));
+        if((ui->originBox5->currentIndex() == 1 ||
+            ui->originBox5->currentIndex() == 2) &&
+           (ui->destBox5->currentIndex() == 3 ||
+            ui->destBox5->currentIndex() == 4 ||
+            ui->destBox5->currentIndex() == 5 ||
+            ui->destBox5->currentIndex() == 6 ||
+            ui->destBox5->currentIndex() == 7))
+        {
+        //adjacency list from 1 & 2 to everywhere else
+
+            adjacency_list_t adjacency_listeast(100);
+
+            adjacency_listeast[0].push_back(neighbor(39, 3));
+            adjacency_listeast[1].push_back(neighbor(0, 2));
+            adjacency_listeast[2].push_back(neighbor(4, 9));
+            adjacency_listeast[3].push_back(neighbor(1, 1));
+            adjacency_listeast[4].push_back(neighbor(72, 9));
+            adjacency_listeast[5].push_back(neighbor(3, 9));
+            adjacency_listeast[7].push_back(neighbor(5, 8));
+            adjacency_listeast[8].push_back(neighbor(7, 7));
+            adjacency_listeast[9].push_back(neighbor(10, 9));
+            adjacency_listeast[10].push_back(neighbor(11, 9));
+            adjacency_listeast[11].push_back(neighbor(13, 9));
+            adjacency_listeast[14].push_back(neighbor(8, 6));
+            adjacency_listeast[15].push_back(neighbor(14, 5));
+            adjacency_listeast[26].push_back(neighbor(51, 4));
+            adjacency_listeast[28].push_back(neighbor(26, 3));
+            adjacency_listeast[29].push_back(neighbor(28, 2));
+            adjacency_listeast[30].push_back(neighbor(29, 1));
+            adjacency_listeast[31].push_back(neighbor(70, 9));
+            adjacency_listeast[31].push_back(neighbor(30, 8));
+            adjacency_listeast[32].push_back(neighbor(31, 7));
+            adjacency_listeast[33].push_back(neighbor(32, 6));
+            adjacency_listeast[35].push_back(neighbor(33, 5));
+            adjacency_listeast[36].push_back(neighbor(35, 4));
+            adjacency_listeast[36].push_back(neighbor(68, 9));
+            adjacency_listeast[38].push_back(neighbor(36, 5));
+            adjacency_listeast[39].push_back(neighbor(38, 4));
+            adjacency_listeast[40].push_back(neighbor(15, 4));
+            adjacency_listeast[41].push_back(neighbor(40, 3));
+            adjacency_listeast[42].push_back(neighbor(41, 2));
+            adjacency_listeast[43].push_back(neighbor(42, 1));
+            adjacency_listeast[44].push_back(neighbor(42, 9));
+            adjacency_listeast[51].push_back(neighbor(52, 3));
+            adjacency_listeast[52].push_back(neighbor(53, 4));
+            adjacency_listeast[52].push_back(neighbor(54, 9));
+            adjacency_listeast[51].push_back(neighbor(55, 9));
+            adjacency_listeast[68].push_back(neighbor(69, 9));
+            adjacency_listeast[70].push_back(neighbor(71, 9));
+            adjacency_listeast[71].push_back(neighbor(2, 9));
+            adjacency_listeast[72].push_back(neighbor(73, 9));
+            adjacency_listeast[73].push_back(neighbor(9, 9));
+
 
         //calculate and output information
         std::vector<weight_t> min_distance;
         std::vector<vertex_t> previous;
-        DijkstraComputePaths(start, adjacency_list, min_distance, previous);
-        //DijkstraComputePaths(ui->startlineEdit1->text().toInt(), adjacency_list, min_distance, previous);
-        std::cout << "Distance from " << ui->originBox5->currentText().toStdString() << " to " << ui->destBox5->currentText().toStdString() <<  ": " << min_distance[end] << std::endl;
+        DijkstraComputePaths(start, adjacency_listeast, min_distance, previous);
+        std::cout << "Distance from " << ui->originBox5->currentText().toStdString() << " to " << ui->destBox5->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
         std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
-        //std::list<vertex_t> path = DijkstraGetShortestPathTo(ui->stoplineEdit2->text().toInt(), previous);
         std::cout << ui->trainselectBox5->currentText().toStdString() <<" Path : ";
-        std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
+        tableOperation(path);
+
+        //std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
         std::cout << std::endl;
         }
+
         //adjacency list selected based on heading
-        else if (ui->headingBox5->currentIndex() == 2)
+        else if ((ui->originBox5->currentIndex() == 3 ||
+                  ui->originBox5->currentIndex() == 4 ||
+                  ui->originBox5->currentIndex() == 5) &&
+                 (ui->destBox5->currentIndex() == 1 ||
+                  ui->destBox5->currentIndex() == 2))
         {
-            //adjacency list west
+            //adjacency list 3, 4 & 5 to 1 & 2
             adjacency_list_t adjacency_list(100);
 
             adjacency_list[53].push_back(neighbor(52, 9));
@@ -2015,15 +2210,188 @@ void MainWindow::greyOut5()
             std::vector<weight_t> min_distance;
             std::vector<vertex_t> previous;
             DijkstraComputePaths(start, adjacency_list, min_distance, previous);
-            //DijkstraComputePaths(ui->startlineEdit1->text().toInt(), adjacency_list, min_distance, previous);
-            std::cout << "Distance from " << ui->originBox5->currentText().toStdString() << " to " << ui->destBox5->currentText().toStdString() <<  ": " << min_distance[end] << std::endl;
+            std::cout << "Distance from " << ui->originBox5->currentText().toStdString() << " to " << ui->destBox5->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
             std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
             //std::list<vertex_t> path = DijkstraGetShortestPathTo(ui->stoplineEdit2->text().toInt(), previous);
             std::cout << ui->trainselectBox5->currentText().toStdString() <<" Path : ";
-            std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
-            std::cout << std::endl;
+            tableOperation(path);
+        }
+        else if((ui->originBox5->currentIndex() == 5 ||
+                ui->originBox5->currentIndex() == 4 ||
+                ui->originBox5->currentIndex() == 3) &&
+                (ui->destBox5->currentIndex() == 6 ||
+                ui->destBox5->currentIndex() == 7))
+        {
+            //adjacency list 3, 4 & 5 to 6 & 7
+            adjacency_list_t adjacency_lists(150);
+
+            adjacency_lists[53].push_back(neighbor(52, 2));
+            adjacency_lists[54].push_back(neighbor(52, 2));
+            adjacency_lists[55].push_back(neighbor(51, 2));
+            adjacency_lists[52].push_back(neighbor(51, 2));
+            adjacency_lists[51].push_back(neighbor(26, 2));
+            adjacency_lists[26].push_back(neighbor(28, 2));
+            adjacency_lists[28].push_back(neighbor(29, 2));
+            adjacency_lists[29].push_back(neighbor(30, 2));
+            adjacency_lists[30].push_back(neighbor(31, 2));
+            adjacency_lists[31].push_back(neighbor(32, 2));
+            adjacency_lists[32].push_back(neighbor(34, 2));
+            adjacency_lists[34].push_back(neighbor(37, 2));
+            adjacency_lists[37].push_back(neighbor(39, 2));
+            adjacency_lists[39].push_back(neighbor(0, 2));
+            adjacency_lists[0].push_back(neighbor(1, 2));
+            adjacency_lists[1].push_back(neighbor(3, 2));
+            adjacency_lists[3].push_back(neighbor(72, 2));
+            adjacency_lists[72].push_back(neighbor(73, 2));
+            adjacency_lists[73].push_back(neighbor(9, 2));
+            adjacency_lists[9].push_back(neighbor(10, 2));
+            adjacency_lists[10].push_back(neighbor(11, 2));
+            adjacency_lists[11].push_back(neighbor(13, 2));
+            adjacency_lists[10].push_back(neighbor(12, 2));
+            adjacency_lists[12].push_back(neighbor(16, 2));
+            adjacency_lists[16].push_back(neighbor(17, 2));
+            adjacency_lists[17].push_back(neighbor(19, 2));
+            adjacency_lists[19].push_back(neighbor(6, 2));
+            adjacency_lists[6].push_back(neighbor(4, 2));
+            adjacency_lists[4].push_back(neighbor(2, 2));
+            adjacency_lists[2].push_back(neighbor(75, 2));
+            adjacency_lists[75].push_back(neighbor(74, 2));
+            adjacency_lists[74].push_back(neighbor(38, 2));
+            adjacency_lists[38].push_back(neighbor(36, 2));
+            adjacency_lists[36].push_back(neighbor(68, 2));
+            adjacency_lists[68].push_back(neighbor(69, 2));
+
+            //calculate and output information
+            std::vector<weight_t> min_distance;
+            std::vector<vertex_t> previous;
+            DijkstraComputePaths(start, adjacency_lists, min_distance, previous);
+            std::cout << "Distance from " << ui->originBox5->currentText().toStdString() << " to " << ui->destBox5->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
+            std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
+            //std::list<vertex_t> path = DijkstraGetShortestPathTo(ui->stoplineEdit2->text().toInt(), previous);
+            std::cout << ui->trainselectBox5->currentText().toStdString() <<" Path : ";
+            tableOperation(path);
         }
 
+        else if(ui->originBox5->currentIndex() == 6)
+        {
+            //adjacency list 6 to everywhere
+            adjacency_list_t adjacency_list(150);
+
+                adjacency_list[13].push_back(neighbor(11, 2));
+                adjacency_list[11].push_back(neighbor(10, 2));
+                adjacency_list[10].push_back(neighbor(9, 2));
+                adjacency_list[9].push_back(neighbor(73, 2));
+                adjacency_list[73].push_back(neighbor(72, 2));
+                adjacency_list[72].push_back(neighbor(3, 2));
+                adjacency_list[3].push_back(neighbor(1, 2));
+                adjacency_list[1].push_back(neighbor(0, 2));
+                adjacency_list[0].push_back(neighbor(39, 2));
+                adjacency_list[39].push_back(neighbor(38, 2));
+                adjacency_list[38].push_back(neighbor(36, 2));
+                adjacency_list[36].push_back(neighbor(35, 2));
+                adjacency_list[36].push_back(neighbor(68, 2));
+                adjacency_list[68].push_back(neighbor(69, 2));
+                adjacency_list[35].push_back(neighbor(33, 2));
+                adjacency_list[33].push_back(neighbor(32, 2));
+                adjacency_list[32].push_back(neighbor(31, 2));
+                adjacency_list[31].push_back(neighbor(30, 2));
+                adjacency_list[30].push_back(neighbor(29, 2));
+                adjacency_list[29].push_back(neighbor(28, 2));
+                adjacency_list[28].push_back(neighbor(26, 2));
+                adjacency_list[26].push_back(neighbor(51, 2));
+                adjacency_list[51].push_back(neighbor(55, 2));
+                adjacency_list[51].push_back(neighbor(52, 2));
+                adjacency_list[52].push_back(neighbor(54, 2));
+                adjacency_list[52].push_back(neighbor(53, 2));
+                adjacency_list[31].push_back(neighbor(70, 2));
+                adjacency_list[70].push_back(neighbor(71, 2));
+                adjacency_list[71].push_back(neighbor(2, 2));
+                adjacency_list[2].push_back(neighbor(4, 2));
+                adjacency_list[4].push_back(neighbor(5, 2));
+                adjacency_list[5].push_back(neighbor(7, 2));
+                adjacency_list[7].push_back(neighbor(8, 2));
+                adjacency_list[8].push_back(neighbor(14, 2));
+                adjacency_list[14].push_back(neighbor(15, 2));
+                adjacency_list[15].push_back(neighbor(40, 2));
+                adjacency_list[40].push_back(neighbor(41, 2));
+                adjacency_list[41].push_back(neighbor(42, 2));
+                adjacency_list[42].push_back(neighbor(44, 2));
+                adjacency_list[42].push_back(neighbor(43, 2));
+
+
+            //calculate and output information
+            std::vector<weight_t> min_distance;
+            std::vector<vertex_t> previous;
+            DijkstraComputePaths(start, adjacency_list, min_distance, previous);
+            std::cout << "Distance from " << ui->originBox5->currentText().toStdString() << " to " << ui->destBox5->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
+            std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
+            //std::list<vertex_t> path = DijkstraGetShortestPathTo(ui->stoplineEdit2->text().toInt(), previous);
+            std::cout << ui->trainselectBox5->currentText().toStdString() <<" Path : ";
+            tableOperation(path);
+        }
+
+        else if(ui->originBox5->currentIndex() == 7)
+        {
+            //adjacency list 7 to everywhere
+            adjacency_list_t adjacency_list(150);
+
+            adjacency_list[69].push_back(neighbor(68, 2));
+            adjacency_list[68].push_back(neighbor(36, 2));
+            adjacency_list[36].push_back(neighbor(38, 2));
+            adjacency_list[38].push_back(neighbor(74, 2));
+            adjacency_list[74].push_back(neighbor(75, 2));
+            adjacency_list[75].push_back(neighbor(1, 2));
+            adjacency_list[1].push_back(neighbor(3, 2));
+            adjacency_list[3].push_back(neighbor(72, 2));
+            adjacency_list[72].push_back(neighbor(73, 2));
+            adjacency_list[73].push_back(neighbor(9, 2));
+            adjacency_list[9].push_back(neighbor(10, 2));
+            adjacency_list[10].push_back(neighbor(11, 2));
+            adjacency_list[10].push_back(neighbor(12, 2));
+            adjacency_list[11].push_back(neighbor(13, 2));
+            adjacency_list[12].push_back(neighbor(16, 2));
+            adjacency_list[16].push_back(neighbor(17, 2));
+            adjacency_list[17].push_back(neighbor(19, 2));
+            adjacency_list[19].push_back(neighbor(6, 2));
+            adjacency_list[6].push_back(neighbor(4, 2));
+            adjacency_list[4].push_back(neighbor(2, 2));
+            adjacency_list[2].push_back(neighbor(0, 2));
+            adjacency_list[0].push_back(neighbor(39, 2));
+            adjacency_list[39].push_back(neighbor(37, 2));
+            adjacency_list[37].push_back(neighbor(34, 2));
+            adjacency_list[34].push_back(neighbor(32, 2));
+            adjacency_list[32].push_back(neighbor(31, 2));
+            adjacency_list[31].push_back(neighbor(30, 2));
+            adjacency_list[30].push_back(neighbor(29, 2));
+            adjacency_list[29].push_back(neighbor(28, 2));
+            adjacency_list[28].push_back(neighbor(26, 2));
+            adjacency_list[26].push_back(neighbor(51, 2));
+            adjacency_list[51].push_back(neighbor(55, 2));
+            adjacency_list[51].push_back(neighbor(52, 2));
+            adjacency_list[52].push_back(neighbor(54, 2));
+            adjacency_list[52].push_back(neighbor(53, 2));
+            adjacency_list[3].push_back(neighbor(5, 2));
+            adjacency_list[5].push_back(neighbor(7, 2));
+            adjacency_list[7].push_back(neighbor(8, 2));
+            adjacency_list[8].push_back(neighbor(14, 2));
+            adjacency_list[14].push_back(neighbor(15, 2));
+            adjacency_list[15].push_back(neighbor(40, 2));
+            adjacency_list[40].push_back(neighbor(41, 2));
+            adjacency_list[41].push_back(neighbor(42, 2));
+            adjacency_list[42].push_back(neighbor(44, 2));
+            adjacency_list[42].push_back(neighbor(43, 2));
+
+
+            //calculate and output information
+            std::vector<weight_t> min_distance;
+            std::vector<vertex_t> previous;
+            DijkstraComputePaths(start, adjacency_list, min_distance, previous);
+            std::cout << "Distance from " << ui->originBox5->currentText().toStdString() << " to " << ui->destBox5->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
+            std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
+            //std::list<vertex_t> path = DijkstraGetShortestPathTo(ui->stoplineEdit2->text().toInt(), previous);
+            std::cout << ui->trainselectBox5->currentText().toStdString() <<" Path : ";
+            tableOperation(path);
+        }
     }
     //if radio button un-checked then un-greyout line 5
     else

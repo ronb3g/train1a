@@ -2,11 +2,14 @@
 #define SAVE_LOADINI_H
 #include <mainwindow.h>
 #include <ui_mainwindow.h>
+#include <QFileDialog>
 
 //Function to save current configuration
 void MainWindow::saveText()
 {
-    QSettings settings(".mytrainsettings.ini",QSettings::IniFormat);
+    QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"), ".ini", tr("Config (*.ini)"));
+
+    QSettings settings(fileName,QSettings::IniFormat);
     settings.setValue("def/trainselectBox1", ui->trainselectBox1->currentIndex());
     settings.setValue("def/trainselectBox2", ui->trainselectBox2->currentIndex());
     settings.setValue("def/trainselectBox3", ui->trainselectBox3->currentIndex());
@@ -42,37 +45,50 @@ void MainWindow::saveText()
 
 void MainWindow::loadText()
 {
-    QSettings settings(".mytrainsettings.ini",QSettings::IniFormat);
-    ui->trainselectBox1->setCurrentIndex(settings.value("def/trainselectBox1").toInt());
-    ui->trainselectBox2->setCurrentIndex(settings.value("def/trainselectBox2").toInt());
-    ui->trainselectBox3->setCurrentIndex(settings.value("def/trainselectBox3").toInt());
-    ui->trainselectBox4->setCurrentIndex(settings.value("def/trainselectBox4").toInt());
-    ui->trainselectBox5->setCurrentIndex(settings.value("def/trainselectBox5").toInt());
-    ui->facingBox1->setCurrentIndex(settings.value("def/facingBox1").toInt());
-    ui->facingBox2->setCurrentIndex(settings.value("def/facingBox2").toInt());
-    ui->facingBox3->setCurrentIndex(settings.value("def/facingBox3").toInt());
-    ui->facingBox4->setCurrentIndex(settings.value("def/facingBox4").toInt());
-    ui->facingBox5->setCurrentIndex(settings.value("def/facingBox5").toInt());
-    ui->originBox1->setCurrentIndex(settings.value("def/originBox1").toInt());
-    ui->originBox2->setCurrentIndex(settings.value("def/originBox2").toInt());
-    ui->originBox3->setCurrentIndex(settings.value("def/originBox3").toInt());
-    ui->originBox4->setCurrentIndex(settings.value("def/originBox4").toInt());
-    ui->originBox5->setCurrentIndex(settings.value("def/originBox5").toInt());
-    ui->headingBox1->setCurrentIndex(settings.value("def/headingBox1").toInt());
-    ui->headingBox2->setCurrentIndex(settings.value("def/headingBox2").toInt());
-    ui->headingBox3->setCurrentIndex(settings.value("def/headingBox3").toInt());
-    ui->headingBox4->setCurrentIndex(settings.value("def/headingBox4").toInt());
-    ui->headingBox5->setCurrentIndex(settings.value("def/headingBox5").toInt());
-    ui->destBox1->setCurrentIndex(settings.value("def/destBox1").toInt());
-    ui->destBox2->setCurrentIndex(settings.value("def/destBox2").toInt());
-    ui->destBox3->setCurrentIndex(settings.value("def/destBox3").toInt());
-    ui->destBox4->setCurrentIndex(settings.value("def/destBox4").toInt());
-    ui->destBox5->setCurrentIndex(settings.value("def/destBox5").toInt());
-    ui->throttleBox1->setCurrentIndex(settings.value("def/throttleBox1").toInt());
-    ui->throttleBox2->setCurrentIndex(settings.value("def/throttleBox2").toInt());
-    ui->throttleBox3->setCurrentIndex(settings.value("def/throttleBox3").toInt());
-    ui->throttleBox4->setCurrentIndex(settings.value("def/throttleBox4").toInt());
-    ui->throttleBox5->setCurrentIndex(settings.value("def/throttleBox5").toInt());
+    QString filename = QFileDialog::getOpenFileName(this, tr("Open File"), "./", tr("Config (*.ini)"));
+       QFile someFile(filename);
+       if( !someFile.exists())
+       {
+           qDebug() << "Error -- File does not exist";
+       }
+       else if (!someFile.open(QIODevice::ReadOnly | QIODevice::Text))
+       {
+           qDebug() << "Error -- unable to open file for input";
+       }
+       else
+       {
+            QSettings settings(filename,QSettings::IniFormat);
+            ui->trainselectBox1->setCurrentIndex(settings.value("def/trainselectBox1").toInt());
+            ui->trainselectBox2->setCurrentIndex(settings.value("def/trainselectBox2").toInt());
+            ui->trainselectBox3->setCurrentIndex(settings.value("def/trainselectBox3").toInt());
+            ui->trainselectBox4->setCurrentIndex(settings.value("def/trainselectBox4").toInt());
+            ui->trainselectBox5->setCurrentIndex(settings.value("def/trainselectBox5").toInt());
+            ui->facingBox1->setCurrentIndex(settings.value("def/facingBox1").toInt());
+            ui->facingBox2->setCurrentIndex(settings.value("def/facingBox2").toInt());
+            ui->facingBox3->setCurrentIndex(settings.value("def/facingBox3").toInt());
+            ui->facingBox4->setCurrentIndex(settings.value("def/facingBox4").toInt());
+            ui->facingBox5->setCurrentIndex(settings.value("def/facingBox5").toInt());
+            ui->originBox1->setCurrentIndex(settings.value("def/originBox1").toInt());
+            ui->originBox2->setCurrentIndex(settings.value("def/originBox2").toInt());
+            ui->originBox3->setCurrentIndex(settings.value("def/originBox3").toInt());
+            ui->originBox4->setCurrentIndex(settings.value("def/originBox4").toInt());
+            ui->originBox5->setCurrentIndex(settings.value("def/originBox5").toInt());
+            ui->headingBox1->setCurrentIndex(settings.value("def/headingBox1").toInt());
+            ui->headingBox2->setCurrentIndex(settings.value("def/headingBox2").toInt());
+            ui->headingBox3->setCurrentIndex(settings.value("def/headingBox3").toInt());
+            ui->headingBox4->setCurrentIndex(settings.value("def/headingBox4").toInt());
+            ui->headingBox5->setCurrentIndex(settings.value("def/headingBox5").toInt());
+            ui->destBox1->setCurrentIndex(settings.value("def/destBox1").toInt());
+            ui->destBox2->setCurrentIndex(settings.value("def/destBox2").toInt());
+            ui->destBox3->setCurrentIndex(settings.value("def/destBox3").toInt());
+            ui->destBox4->setCurrentIndex(settings.value("def/destBox4").toInt());
+            ui->destBox5->setCurrentIndex(settings.value("def/destBox5").toInt());
+            ui->throttleBox1->setCurrentIndex(settings.value("def/throttleBox1").toInt());
+            ui->throttleBox2->setCurrentIndex(settings.value("def/throttleBox2").toInt());
+            ui->throttleBox3->setCurrentIndex(settings.value("def/throttleBox3").toInt());
+            ui->throttleBox4->setCurrentIndex(settings.value("def/throttleBox4").toInt());
+            ui->throttleBox5->setCurrentIndex(settings.value("def/throttleBox5").toInt());
+       }
 }
 
 

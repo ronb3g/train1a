@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui sql
+QT       += core gui sql multimedia
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -22,7 +22,10 @@ HEADERS  += mainwindow.h \
     Q_DebugStream.h \
     Dijkstra.h \
     save_loadIni.h \
-    switchFunctions.h
+    switchFunctions.h \
+    tableOperations.h \
+    sql_tables.h \
+    timedelay.h
 
 FORMS    += mainwindow.ui
 
