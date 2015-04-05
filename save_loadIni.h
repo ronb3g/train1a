@@ -10,6 +10,7 @@ void MainWindow::saveText()
     QString fileName = QFileDialog::getSaveFileName(this, tr("Save File"), ".ini", tr("Config (*.ini)"));
 
     QSettings settings(fileName,QSettings::IniFormat);
+
     settings.setValue("def/trainselectBox1", ui->trainselectBox1->currentIndex());
     settings.setValue("def/trainselectBox2", ui->trainselectBox2->currentIndex());
     settings.setValue("def/trainselectBox3", ui->trainselectBox3->currentIndex());
@@ -25,11 +26,11 @@ void MainWindow::saveText()
     settings.setValue("def/originBox3", ui->originBox3->currentIndex());
     settings.setValue("def/originBox4", ui->originBox4->currentIndex());
     settings.setValue("def/originBox5", ui->originBox5->currentIndex());
-    settings.setValue("def/headingBox1", ui->headingBox1->currentIndex());
-    settings.setValue("def/headingBox2", ui->headingBox2->currentIndex());
-    settings.setValue("def/headingBox3", ui->headingBox3->currentIndex());
-    settings.setValue("def/headingBox4", ui->headingBox4->currentIndex());
-    settings.setValue("def/headingBox5", ui->headingBox5->currentIndex());
+    //settings.setValue("def/headingBox1", ui->headingBox1->currentIndex());
+    //settings.setValue("def/headingBox2", ui->headingBox2->currentIndex());
+    //settings.setValue("def/headingBox3", ui->headingBox3->currentIndex());
+    //settings.setValue("def/headingBox4", ui->headingBox4->currentIndex());
+    //settings.setValue("def/headingBox5", ui->headingBox5->currentIndex());
     settings.setValue("def/destBox1", ui->destBox1->currentIndex());
     settings.setValue("def/destBox2", ui->destBox2->currentIndex());
     settings.setValue("def/destBox3", ui->destBox3->currentIndex());
@@ -40,6 +41,17 @@ void MainWindow::saveText()
     settings.setValue("def/throttleBox3", ui->throttleBox3->currentIndex());
     settings.setValue("def/throttleBox4", ui->throttleBox4->currentIndex());
     settings.setValue("def/throttleBox5", ui->throttleBox5->currentIndex());
+    settings.setValue("def/spinBox1_1", ui->spinBox1_1->value());
+    settings.setValue("def/spinBox1_2", ui->spinBox1_2->value());
+    settings.setValue("def/spinBox2_1", ui->spinBox2_1->value());
+    settings.setValue("def/spinBox2_2", ui->spinBox2_2->value());
+    settings.setValue("def/spinBox3_1", ui->spinBox3_1->value());
+    settings.setValue("def/spinBox3_2", ui->spinBox3_2->value());
+    settings.setValue("def/spinBox4_1", ui->spinBox4_1->value());
+    settings.setValue("def/spinBox4_2", ui->spinBox4_2->value());
+    settings.setValue("def/spinBox5_1", ui->spinBox5_1->value());
+    settings.setValue("def/spinBox5_2", ui->spinBox5_2->value());
+
 
 }
 
@@ -73,11 +85,11 @@ void MainWindow::loadText()
             ui->originBox3->setCurrentIndex(settings.value("def/originBox3").toInt());
             ui->originBox4->setCurrentIndex(settings.value("def/originBox4").toInt());
             ui->originBox5->setCurrentIndex(settings.value("def/originBox5").toInt());
-            ui->headingBox1->setCurrentIndex(settings.value("def/headingBox1").toInt());
-            ui->headingBox2->setCurrentIndex(settings.value("def/headingBox2").toInt());
-            ui->headingBox3->setCurrentIndex(settings.value("def/headingBox3").toInt());
-            ui->headingBox4->setCurrentIndex(settings.value("def/headingBox4").toInt());
-            ui->headingBox5->setCurrentIndex(settings.value("def/headingBox5").toInt());
+            //ui->headingBox1->setCurrentIndex(settings.value("def/headingBox1").toInt());
+            //ui->headingBox2->setCurrentIndex(settings.value("def/headingBox2").toInt());
+            //ui->headingBox3->setCurrentIndex(settings.value("def/headingBox3").toInt());
+            //ui->headingBox4->setCurrentIndex(settings.value("def/headingBox4").toInt());
+            //ui->headingBox5->setCurrentIndex(settings.value("def/headingBox5").toInt());
             ui->destBox1->setCurrentIndex(settings.value("def/destBox1").toInt());
             ui->destBox2->setCurrentIndex(settings.value("def/destBox2").toInt());
             ui->destBox3->setCurrentIndex(settings.value("def/destBox3").toInt());
@@ -88,6 +100,16 @@ void MainWindow::loadText()
             ui->throttleBox3->setCurrentIndex(settings.value("def/throttleBox3").toInt());
             ui->throttleBox4->setCurrentIndex(settings.value("def/throttleBox4").toInt());
             ui->throttleBox5->setCurrentIndex(settings.value("def/throttleBox5").toInt());
+            ui->spinBox1_1->setValue(settings.value("def/spinBox1_1").toInt());
+            ui->spinBox1_2->setValue(settings.value("def/spinBox1_2").toInt());
+            ui->spinBox2_1->setValue(settings.value("def/spinBox2_1").toInt());
+            ui->spinBox2_2->setValue(settings.value("def/spinBox2_2").toInt());
+            ui->spinBox3_1->setValue(settings.value("def/spinBox3_1").toInt());
+            ui->spinBox3_2->setValue(settings.value("def/spinBox3_2").toInt());
+            ui->spinBox4_1->setValue(settings.value("def/spinBox4_1").toInt());
+            ui->spinBox4_2->setValue(settings.value("def/spinBox4_2").toInt());
+            ui->spinBox5_1->setValue(settings.value("def/spinBox5_1").toInt());
+            ui->spinBox5_2->setValue(settings.value("def/spinBox5_2").toInt());
        }
 }
 

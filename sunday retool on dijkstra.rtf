@@ -1,0 +1,541 @@
+{\rtf1\ansi\ansicpg1252\deff0\deflang1033{\fonttbl{\f0\fnil\fcharset0 Calibri;}}
+{\*\generator Msftedit 5.41.21.2510;}\viewkind4\uc1\pard\sa200\sl276\slmult1\lang9\f0\fs22 #ifndef DIJKSTRA_H\par
+#define DIJKSTRA_H\par
+#include <climits>\par
+#include <QDebug>\par
+//#include <dijkstraswitchcheck.h>\par
+long dijcheckSwitches(long dcN, long dnN);\par
+int forbiddenTurn(int oldestU, int oldU, int recentU,int u, int v);\par
+using namespace std;\par
+typedef long vertex_t;\par
+typedef long weight_t;\par
+\par
+const weight_t max_weight = LONG_MAX;\par
+\par
+struct neighbor\par
+\{\par
+    vertex_t target;\par
+    weight_t weight;\par
+    neighbor(vertex_t arg_target, weight_t arg_weight)\par
+        : target(arg_target), weight(arg_weight) \{ \}\par
+\};\par
+typedef std::vector<std::vector<neighbor> > adjacency_list_t;\par
+\par
+void DijkstraComputePaths(vertex_t source,\par
+    const adjacency_list_t &adjacency_list,\par
+        std::vector<weight_t> &min_distance,\par
+            std::vector<vertex_t> &previous)\par
+\{\par
+    int forbidden;\par
+    int oldestU, oldU, recentU = -1;\par
+    int oldererSw, oldestSw, oldSw, lastSw, currentSw = 0;\par
+    //long switchNumber = 0;\par
+    int n = adjacency_list.size();\par
+    min_distance.clear();\par
+    min_distance.resize(n, max_weight);\par
+    min_distance[source] = 0;\par
+    previous.clear();\par
+    previous.resize(n, -1);\par
+    std::set<std::pair<weight_t, vertex_t> > vertex_queue;\par
+        vertex_queue.insert(std::make_pair(min_distance[source], source));\par
+\par
+    while (!vertex_queue.empty())\par
+    \{\par
+        weight_t dist = vertex_queue.begin()->first;\par
+        vertex_t u = vertex_queue.begin()->second;\par
+        vertex_queue.erase(vertex_queue.begin());\par
+\par
+        // Visit each edge exiting u\par
+        long switchNumber = 0;\par
+        const std::vector<neighbor> &neighbors = adjacency_list[u];\par
+        for (std::vector<neighbor>::const_iterator neighbor_iter = neighbors.begin();\par
+        neighbor_iter != neighbors.end();\par
+        neighbor_iter++)\par
+        \{\par
+            vertex_t v = neighbor_iter->target;\par
+            weight_t weight = neighbor_iter->weight;\par
+            weight_t distance_through_u = dist + weight;\par
+        \par
+            //Does reject go here?\par
+            //if statement to determine if switch was used\par
+            //qDebug() << "checked " << u << v << endl;\par
+            //long switchNumber = 0;\par
+\par
+\par
+            //qDebug() << oldestU << oldU << recentU << u << v << endl;\par
+            //qDebug() << forbidden << endl;\par
+            /*forbidden = forbiddenTurn(oldestU, oldU, recentU, u, v);\par
+            switchNumber = dijcheckSwitches(u, v);\par
+            oldestU = oldU;\par
+            oldU = recentU;\par
+            recentU = u;\par
+\par
+            oldererSw = oldestSw;\par
+            oldestSw = oldSw;\par
+            oldSw = lastSw;\par
+            lastSw = currentSw;\par
+            currentSw = switchNumber;\par
+*/\par
+\par
+            //qDebug() << "Switch: " << oldererSw << oldestSw << oldSw << lastSw << currentSw << endl;\par
+\par
+            //make the following statement else\par
+\par
+            /*if (forbidden == 1 && (oldererSw == switchNumber ||\par
+                                   oldestSw ==  switchNumber ||\par
+                                   oldSw == switchNumber||\par
+                                   lastSw == switchNumber))\{\par
+                qDebug() << "skipped" << endl;\par
+            \}\par
+\par
+            else\par
+            \{*/\par
+             if (distance_through_u < min_distance[v])\par
+            \{\par
+                vertex_queue.erase(std::make_pair(min_distance[v], v));\par
+                min_distance[v] = distance_through_u;\par
+                previous[v] = u;\par
+\par
+                vertex_queue.insert(std::make_pair(min_distance[v], v));\par
+                //long switchNumber = 0;\par
+                //qDebug() << "used " << u << v << endl;\par
+\}\par
+\par
+\par
+\par
+            //\}\par
+        \}\par
+    \}\par
+\par
+\}\par
+\par
+std::list<vertex_t> DijkstraGetShortestPathTo(vertex_t vertex, const std::vector<vertex_t> &previous)\par
+\{\par
+\par
+    std::list<vertex_t> path;\par
+    for (; vertex != -1; vertex = previous[vertex])\par
+        path.push_front(vertex);\par
+    return path;\par
+\}\par
+/*\par
+int forbiddenTurn(int oldestU, int oldU, int recentU,int u, int v)\par
+\{\par
+    if ((oldestU == 15 || oldU == 15 || recentU == 15) && u == 14 && v == 16)\par
+        return 1;\par
+    else if ((oldestU == 16 || oldU == 16 || recentU == 16) && u == 14 && v == 15)\par
+        return 1;\par
+    else if ((oldestU == 43 || oldU == 43 || recentU == 43) && u == 42 && v == 44)\par
+        return 1;\par
+    else if ((oldestU == 44 || oldU == 44 || recentU == 44) && u == 42 && v == 43)\par
+        return 1;\par
+    else if ((oldestU == 42 || oldU == 42 || recentU == 42) && u == 41 && v == 46)\par
+        return 1;\par
+    else if ((oldestU == 46 || oldU == 46 || recentU == 46) && u == 41 && v == 42)\par
+        return 1;\par
+    else if ((oldestU == 41 || oldU == 41 || recentU == 41) && u == 40 && v == 45)\par
+        return 1;\par
+    else if ((oldestU == 45 || oldU == 45 || recentU == 45) && u == 40 && v == 41)\par
+        return 1;\par
+    else if ((oldestU == 8 || oldU == 8 || recentU == 8) && u == 7 && v == 9)\par
+        return 1;\par
+    else if ((oldestU == 9 || oldU == 9 || recentU == 9) && u == 7 && v == 8)\par
+        return 1;\par
+    else if ((oldestU == 14 || oldU == 14 || recentU == 14) && u == 16 && v == 12)\par
+        return 1;\par
+    else if ((oldestU == 12 || oldU == 12 || recentU == 12) && u == 16 && v == 14)\par
+        return 1;\par
+    else if ((oldestU == 11 || oldU == 11 || recentU == 11) && u == 10 && v == 12)\par
+        return 1;\par
+    else if ((oldestU == 12 || oldU == 12 || recentU == 12) && u == 10 && v == 11)\par
+        return 1;\par
+    else if ((oldestU == 18 || oldU == 18 || recentU == 18) && u == 17 && v == 19)\par
+        return 1;\par
+    else if ((oldestU == 19 || oldU == 19 || recentU == 19) && u == 17 && v == 18)\par
+        return 1;\par
+    else if ((oldestU == 3 || oldU == 3 || recentU == 3) && u == 5 && v == 4)\par
+        return 1;\par
+    else if ((oldestU == 4 || oldU == 4 || recentU == 4) && u == 5 && v == 3)\par
+        return 1;\par
+    else if ((oldestU == 5 || oldU == 5 || recentU == 5) && u == 4 && v == 6)\par
+        return 1;\par
+    else if ((oldestU == 6 || oldU == 6 || recentU == 6) && u == 4 && v == 5)\par
+        return 1;\par
+    else if ((oldestU == 21 || oldU == 21 || recentU == 21) && u == 20 && v == 22)\par
+        return 1;\par
+    else if ((oldestU == 22 || oldU == 22 || recentU == 22) && u == 20 && v == 21)\par
+        return 1;\par
+    else if ((oldestU == 23 || oldU == 23 || recentU == 23) && u == 22 && v == 24)\par
+        return 1;\par
+    else if ((oldestU == 24 || oldU == 24 || recentU == 24) && u == 22 && v == 23)\par
+        return 1;\par
+    else\par
+        return 0;\par
+\}\par
+\par
+long dijcheckSwitches(long dcN, long dnN)\par
+\{\par
+    int switchUsed = 0;\par
+    if (dcN == 36)\par
+    \{\par
+        if(dnN == 35)\par
+            switchUsed = 11;\par
+        else if(dnN == 68)\par
+           switchUsed = 11;\par
+\par
+\par
+           return switchUsed;\par
+    \}\par
+    else if (dcN == 39)\par
+    \{\par
+        if(dnN == 38)\par
+            switchUsed = 21;\par
+        else if(dnN == 37)\par
+           switchUsed = 21;\par
+\par
+           return switchUsed;\par
+    \}\par
+\par
+    else if (dcN == 65)\par
+    \{\par
+        if(dnN == 66)\par
+            switchUsed = 43;\par
+        else if(dnN == 67)\par
+           switchUsed = 43;\par
+           return switchUsed;\par
+    \}\par
+    else if (dcN == 31)\par
+    \{\par
+        if(dnN == 70)\par
+            switchUsed = 42;\par
+        else if(dnN == 30)\par
+           switchUsed = 42;\par
+           return switchUsed;\par
+    \}\par
+    else if (dcN == 32)\par
+    \{\par
+        if(dnN == 33)\par
+            switchUsed = 13;\par
+        else if(dnN == 34)\par
+           switchUsed = 13;\par
+           return switchUsed;\par
+    \}\par
+    else if (dcN == 34)\par
+    \{\par
+        if(dnN == 50)\par
+            switchUsed = 12;\par
+        else if(dnN == 32)\par
+            switchUsed = 12;\par
+           return switchUsed;\par
+    \}\par
+    else if (dcN == 0)\par
+    \{\par
+        if(dnN == 1)\par
+            switchUsed = 22;\par
+        else if(dnN == 2)\par
+            switchUsed = 22;\par
+           return switchUsed;\par
+    \}\par
+    else if (dcN == 2)\par
+    \{\par
+        if(dnN == 71)\par
+            switchUsed = 23;\par
+        else if(dnN == 0)\par
+            switchUsed = 23;\par
+           return switchUsed;\par
+    \}\par
+    else if (dcN == 29)\par
+    \{\par
+        if(dnN == 21)\par
+            switchUsed = 24;\par
+        else if(dnN == 28)\par
+            switchUsed = 24;\par
+           return switchUsed;\par
+    \}\par
+    else if (dcN == 28)\par
+    \{\par
+        if(dnN == 26)\par
+            switchUsed = 34;\par
+        else if(dnN == 27)\par
+           switchUsed = 34;\par
+        else if(dnN == 29)\par
+           switchUsed = 24;\par
+           return switchUsed;\par
+    \}\par
+    else if (dcN == 26)\par
+    \{\par
+        if(dnN == 51)\par
+            switchUsed = 33;\par
+        else if(dnN == 25)\par
+           switchUsed = 33;\par
+        else if(dnN == 28)\par
+            switchUsed = 34;\par
+           return switchUsed;\par
+    \}\par
+    else if (dcN == 51)\par
+    \{\par
+        if(dnN == 52)\par
+           switchUsed = 32;\par
+        else if(dnN == 55)\par
+           switchUsed = 32;\par
+        else if(dnN == 26)\par
+            switchUsed = 33;\par
+           return switchUsed;\par
+    \}\par
+    else if (dcN == 52)\par
+    \{\par
+        if(dnN == 53)\par
+            switchUsed = 31;\par
+        else if(dnN == 54)\par
+           switchUsed = 31;\par
+        else if(dnN == 51)\par
+            switchUsed = 32;\par
+           return switchUsed;\par
+    \}\par
+    else if (dcN == 49)\par
+    \{\par
+        if(dnN == 47)\par
+            switchUsed = 41;\par
+        else if(dnN == 48)\par
+           switchUsed = 41;\par
+           return switchUsed;\par
+    \}\par
+    else if (dcN == 56)\par
+    \{\par
+        if(dnN == 57)\par
+           switchUsed = 14;\par
+        else if(dnN == 58)\par
+           switchUsed = 14;\par
+           return switchUsed;\par
+    \}\par
+    else if (dcN == 42)\par
+    \{\par
+        if(dnN == 43)\par
+            switchUsed = 63;\par
+        else if(dnN == 44)\par
+           switchUsed = 63;\par
+        else if(dnN == 41)\par
+           switchUsed = 62;\par
+           return switchUsed;\par
+    \}\par
+    else if (dcN == 41)\par
+    \{\par
+        if(dnN == 42)\par
+            switchUsed = 62;\par
+        else if(dnN == 46)\par
+           switchUsed = 62;\par
+        else if(dnN == 40)\par
+            switchUsed = 61;\par
+           return switchUsed;\par
+    \}\par
+    else if (dcN == 40)\par
+    \{\par
+        if(dnN == 41)\par
+            switchUsed = 61;\par
+        else if(dnN == 45)\par
+           switchUsed = 61;\par
+           return switchUsed;\par
+    \}\par
+    else if (dcN == 61)\par
+    \{\par
+        if(dnN == 59)\par
+            switchUsed = 84;\par
+        else if(dnN == 60)\par
+           switchUsed = 84;\par
+           return switchUsed;\par
+    \}\par
+    else if (dcN == 22)\par
+    \{\par
+        if(dnN == 24)\par
+            switchUsed = 64;\par
+        else if(dnN == 23)\par
+           switchUsed = 64;\par
+        else if(dnN == 20)\par
+            switchUsed = 75;\par
+           return switchUsed;\par
+    \}\par
+    else if (dcN == 20)\par
+    \{\par
+        if(dnN == 21)\par
+            switchUsed = 74;\par
+        else if(dnN == 22)\par
+           switchUsed = 74;\par
+           return switchUsed;\par
+    \}\par
+    else if (dcN == 4)\par
+    \{\par
+        if(dnN == 6)\par
+            switchUsed = 73;\par
+        else if(dnN == 5)\par
+           switchUsed = 73;\par
+           return switchUsed;\par
+    \}\par
+    else if (dcN == 5)\par
+    \{\par
+        if(dnN == 3)\par
+            switchUsed = 72;\par
+        else if(dnN == 4)\par
+           switchUsed = 72;\par
+           return switchUsed;\par
+    \}\par
+    else if (dcN == 7)\par
+    \{\par
+        if(dnN == 9)\par
+            switchUsed = 71;\par
+        else if(dnN == 8)\par
+           switchUsed = 71;\par
+           return switchUsed;\par
+    \}\par
+    else if (dcN == 62)\par
+    \{\par
+        if(dnN == 63)\par
+            switchUsed = 52;\par
+        else if(dnN == 64)\par
+           switchUsed = 52;\par
+           return switchUsed;\par
+    \}\par
+    else if (dcN == 17)\par
+    \{\par
+        if(dnN == 19)\par
+            switchUsed = 51;\par
+        else if(dnN == 18)\par
+           switchUsed = 51;\par
+           return switchUsed;\par
+    \}\par
+    else if (dcN == 16)\par
+    \{\par
+        if(dnN == 12)\par
+            switchUsed = 83;\par
+        else if(dnN == 14)\par
+           switchUsed = 83;\par
+           return switchUsed;\par
+    \}\par
+    else if (dcN == 14)\par
+    \{\par
+        if(dnN == 15)\par
+            switchUsed = 82;\par
+\par
+        else if(dnN == 16)\par
+           switchUsed = 82;\par
+           return switchUsed;\par
+    \}\par
+    else if (dcN == 10)\par
+    \{\par
+        if(dnN == 12)\par
+            switchUsed = 81;\par
+        else if(dnN == 11)\par
+            switchUsed = 81;\par
+            return switchUsed;\par
+    \}\par
+    else if (dcN == 35 && dnN == 36)\par
+        switchUsed = 11;\par
+    else if (dcN == 38 && dnN == 39)\par
+        switchUsed = 21;\par
+    else if (dcN == 66 && dnN == 65)\par
+        switchUsed = 43;\par
+    else if (dcN == 70 && dnN == 31)\par
+        switchUsed = 42;\par
+    else if (dcN == 33 && dnN == 32)\par
+        switchUsed = 13;\par
+    else if (dcN == 50 && dnN == 34)\par
+        switchUsed = 12;\par
+    else if (dcN == 1 && dnN == 0)\par
+        switchUsed = 22;\par
+    else if (dcN == 71 && dnN == 2)\par
+        switchUsed = 23;\par
+    else if (dcN == 53 && dnN == 52)\par
+        switchUsed = 31;\par
+    else if (dcN == 47 && dnN == 49)\par
+        switchUsed = 41;\par
+    else if (dcN == 57 && dnN == 56)\par
+        switchUsed = 14;\par
+    else if (dcN == 43 && dnN == 42)\par
+        switchUsed = 63;\par
+    else if (dcN == 59 && dnN == 61)\par
+        switchUsed = 84;\par
+    else if (dcN == 24 && dnN == 22)\par
+        switchUsed = 64;\par
+    else if (dcN == 6 && dnN == 4)\par
+        switchUsed = 73;\par
+    else if (dcN == 3 && dnN == 5)\par
+        switchUsed = 72;\par
+    else if (dcN == 9 && dnN == 7)\par
+        switchUsed = 71;\par
+    else if (dcN == 63 && dnN == 62)\par
+        switchUsed = 52;\par
+    else if (dcN == 19 && dnN == 17)\par
+        switchUsed = 51;\par
+    else if (dcN == 15 && dnN == 14)\par
+        switchUsed = 82;\par
+\par
+\par
+    else if(dcN == 21)\par
+    \{\par
+        if (dnN == 20)\par
+            switchUsed = 74;\par
+        else if (dnN == 29)\par
+            switchUsed = 24;\par
+\par
+        return switchUsed;\par
+    \}\par
+    else if(dcN == 12)\par
+    \{\par
+        if (dnN == 16)\par
+            switchUsed = 83;\par
+        else if (dnN == 10)\par
+            switchUsed = 81;\par
+\par
+        return switchUsed;\par
+    \}\par
+    else if (dcN == 68 && dnN == 36)\par
+        switchUsed = 11;\par
+    else if (dcN == 37 && dnN == 39)\par
+        switchUsed = 21;\par
+    else if (dcN == 67 && dnN == 65)\par
+        switchUsed = 43;\par
+    else if (dcN == 30 && dnN == 31)\par
+        switchUsed = 42;\par
+    else if (dcN == 27 && dnN == 28)\par
+        switchUsed = 34;\par
+    else if (dcN == 25 && dnN == 26)\par
+        switchUsed = 33;\par
+    else if (dcN == 55 && dnN == 51)\par
+        switchUsed = 32;\par
+    else if (dcN == 54 && dnN == 52)\par
+        switchUsed = 31;\par
+    else if (dcN == 48 && dnN == 49)\par
+        switchUsed = 41;\par
+    else if (dcN == 58 && dnN == 56)\par
+        switchUsed = 14;\par
+    else if (dcN == 44 && dnN == 42)\par
+        switchUsed = 63;\par
+\par
+    else if (dcN == 46 && dnN == 41)\par
+        switchUsed = 62;\par
+    else if (dcN == 45 && dnN == 40)\par
+        switchUsed = 61;\par
+    else if (dcN == 60 && dnN == 61)\par
+        switchUsed = 84;\par
+    else if (dcN == 23 && dnN == 22)\par
+        switchUsed = 64;\par
+    else if (dcN == 8 && dnN == 7)\par
+        switchUsed = 71;\par
+    else if (dcN == 64 && dnN == 62)\par
+        switchUsed = 52;\par
+    else if (dcN == 18 && dnN == 17)\par
+        switchUsed = 51;\par
+    else if (dcN == 11 && dnN == 10)\par
+        switchUsed = 81;\par
+    else\par
+        switchUsed = 0000;\par
+        return switchUsed;\par
+\par
+\par
+\}\par
+*/\par
+\par
+\par
+\par
+\par
+#endif // DIJKSTRA_H\par
+}
+ 

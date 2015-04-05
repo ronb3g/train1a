@@ -60,6 +60,31 @@ public:
 private:
     Ui::MainWindow *ui;
     QSqlDatabase ldb;
+        int* Eng1;
+    int* Eng2;
+    int* Eng3;
+    int* Eng4;
+    int* Eng5;
+    int E1S;
+    int E2S;
+    int E3S;
+    int E4S;
+    int E5S;
+    int Eng1Speed; //Engine 1 travels 1 unit in 1 second.
+    int Eng2Speed; //Engine 2 travels 1 unit in 2 seconds.
+    int Eng3Speed; //Engine 3 travels 1 unit in 3 seconds.
+    int Eng4Speed; //Engine 4 travels 1 unit in 2 seconds.
+    int Eng5Speed; //Engine 5 travels 1 unit in 1 second.
+    int i1; //Itterator for Comparison
+    int i2; //Itterator for Comparison
+    int i3; //Itterator for Comparison
+    int i4; //Itterator for Comparison
+    int i5; //Itterator for Comparison
+    int* comparisonArray;
+    int* comparisonArray2;
+    int* comparisonArray3;
+    int* comparisonArray4;
+    int* comparisonArray5;
 
 private slots:
 
@@ -79,7 +104,7 @@ private slots:
     void checkSwitches(QString cN, QString nN);
     void setSwitch(QString sN, QString sM);
     void viewTable();
-    void tableOperation(std::list<vertex_t> somePath);
+    void tableOperation(std::list<vertex_t> path, int trainsel);
     void traininfoTable();
     void throttleTable();
     void pathinfoTable();
@@ -96,7 +121,19 @@ private slots:
     void setgreyOut4();
     void setgreyOut5();
     void stop1();
-
+    int checkPaths(int trainS);
+    int trackLength(int trackNum);
+    void Eng1Time();
+    void Eng2Time();
+    void Eng3Time();
+    void Eng4Time();
+    void Eng5Time();
+    int compare2(int a[], int b[], int a1, int b1);
+    int compare3(int a[], int b[], int c[], int a1, int b1, int c1);
+    int longPathroute(int start, int end);
+    QString oursTotheirs(int number);//Convert our integer adjacency to their string
+    int theirsToours(QString string);//Convert their string adjacency to our int
+    void createDBtables();
 
 
 };

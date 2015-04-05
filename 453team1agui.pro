@@ -26,6 +26,7 @@ HEADERS  += mainwindow.h \
     tableOperations.h \
     sql_tables.h \
     timedelay.h
+    checkPaths.h
 
 FORMS    += mainwindow.ui
 
