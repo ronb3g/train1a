@@ -15,6 +15,7 @@
 #include <QString>
 #include <QMessageBox>
 #include <QGraphicsScene>
+#include <reroute.h>
 
 typedef long vertex_t;
 
@@ -80,11 +81,13 @@ private:
     int i3; //Itterator for Comparison
     int i4; //Itterator for Comparison
     int i5; //Itterator for Comparison
-    int* comparisonArray;
-    int* comparisonArray2;
-    int* comparisonArray3;
-    int* comparisonArray4;
-    int* comparisonArray5;
+    std::vector<int>  comparisonArray;
+    std::vector<int>  comparisonArray2;
+    std::vector<int>  comparisonArray3;
+    std::vector<int>  comparisonArray4;
+    std::vector<int> comparisonArray5;
+    std::list<vertex_t> backupPath;
+
 
 private slots:
 
@@ -104,7 +107,7 @@ private slots:
     void checkSwitches(QString cN, QString nN);
     void setSwitch(QString sN, QString sM);
     void viewTable();
-    void tableOperation(std::list<vertex_t> path, int trainsel);
+    void tableOperation(std::list<vertex_t> path, int trainsel, int testInt);
     void traininfoTable();
     void throttleTable();
     void pathinfoTable();
@@ -128,8 +131,8 @@ private slots:
     void Eng3Time();
     void Eng4Time();
     void Eng5Time();
-    int compare2(int a[], int b[], int a1, int b1);
-    int compare3(int a[], int b[], int c[], int a1, int b1, int c1);
+    int compare2(std::vector<int>  a, std::vector<int>  b, int a1, int b1);
+    int compare3(std::vector<int> a, std::vector<int>  b, std::vector<int>  c, int a1, int b1, int c1);
     int longPathroute(int start, int end);
     QString oursTotheirs(int number);//Convert our integer adjacency to their string
     int theirsToours(QString string);//Convert their string adjacency to our int
