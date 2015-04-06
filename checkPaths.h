@@ -568,6 +568,7 @@ int MainWindow::trackLength(int trackNum)
 void MainWindow::Eng1Time()
 {
 
+    comparisonArray.clear();
     int len = 0; //length * speed of current piece of track
     int j = 0;
     for (int i=0; i<E1S; i++)
@@ -575,15 +576,81 @@ void MainWindow::Eng1Time()
        len = trackLength(Eng1[i]) * Eng1Speed;
         for(int k=0; k<len; k++)
         {
-           comparisonArray[j] = Eng1[i];
+           comparisonArray.push_back(Eng1[i]);
             j++;
         }
+    }
+
+    if(Eng1[0] == 53 || Eng1[0] == 54 || Eng1[0] == 55)
+    {
+
+    if(comparisonArray5.size() !=0 && ( comparisonArray5[0] == 53 || comparisonArray5[0] == 54 || comparisonArray5[0] == 55) )
+    {
+        for (int k=0; k<5; k++)
+        {
+            comparisonArray.insert(comparisonArray.begin(), Eng1[0]);
+        }
+    }
+    else if(comparisonArray2.size() !=0 && ( comparisonArray2[0] == 53 || comparisonArray2[0] == 54 || comparisonArray2[0] == 55) )
+    {
+        for (int k=0; k<5; k++)
+        {
+            comparisonArray.insert(comparisonArray.begin(), Eng1[0]);
+        }
+    }
+    else if(comparisonArray3.size() !=0 && ( comparisonArray3[0] == 53 || comparisonArray3[0] == 54 || comparisonArray3[0] == 55) )
+    {
+        for (int k=0; k<5; k++)
+        {
+            comparisonArray.insert(comparisonArray.begin(), Eng1[0]);
+        }
+    }
+    else if(comparisonArray4.size() !=0 && ( comparisonArray4[0] == 53 || comparisonArray4[0] == 54 || comparisonArray4[0] == 55) )
+    {
+        for (int k=0; k<5; k++)
+        {
+            comparisonArray.insert(comparisonArray.begin(), Eng1[0]);
+        }
+    }
+    }
+    else if(Eng1[0] == 44 || Eng1[0] == 43)
+    {
+
+    if(comparisonArray5.size() !=0 && ( comparisonArray5[0] == 43 || comparisonArray5[0] == 44 ))
+    {
+        for (int k=0; k<5; k++)
+        {
+            comparisonArray.insert(comparisonArray.begin(), Eng1[0]);
+        }
+    }
+    else if(comparisonArray2.size() !=0 && ( comparisonArray2[0] == 43 || comparisonArray2[0] == 44) )
+    {
+        for (int k=0; k<5; k++)
+        {
+            comparisonArray.insert(comparisonArray.begin(), Eng1[0]);
+        }
+    }
+    else if(comparisonArray3.size() !=0 && ( comparisonArray3[0] == 43 || comparisonArray3[0] == 44) )
+    {
+        for (int k=0; k<5; k++)
+        {
+            comparisonArray.insert(comparisonArray.begin(), Eng1[0]);
+        }
+    }
+    else if(comparisonArray4.size() !=0 && ( comparisonArray4[0] == 43 || comparisonArray4[0] == 44) )
+    {
+        for (int k=0; k<5; k++)
+        {
+            comparisonArray.insert(comparisonArray.begin(), Eng1[0]);
+        }
+    }
     }
 
 }
 
 void MainWindow::Eng2Time()
 {
+    comparisonArray2.clear();
     int len = 0; //length * speed of current piece of track
     int j = 0;
     for (int i=0; i<E2S; i++)
@@ -591,15 +658,81 @@ void MainWindow::Eng2Time()
         len = trackLength(Eng2[i]) * Eng2Speed;
         for(int k=0; k<len; k++)
         {
-            comparisonArray2[j] = Eng2[i];
+            comparisonArray2.push_back(Eng2[i]);
             j++;
         }
+    }
+
+    if(Eng2[0] == 53 || Eng2[0] == 54 || Eng2[0] == 55)
+    {
+
+    if(comparisonArray.size() !=0 && ( comparisonArray[0] == 53 || comparisonArray[0] == 54 || comparisonArray[0] == 55) )
+    {
+        for (int k=0; k<5; k++)
+        {
+            comparisonArray2.insert(comparisonArray2.begin(), Eng2[0]);
+        }
+    }
+    else if(comparisonArray5.size() !=0 && ( comparisonArray5[0] == 53 || comparisonArray5[0] == 54 || comparisonArray5[0] == 55) )
+    {
+        for (int k=0; k<5; k++)
+        {
+            comparisonArray2.insert(comparisonArray2.begin(), Eng2[0]);
+        }
+    }
+    else if(comparisonArray3.size() !=0 && ( comparisonArray3[0] == 53 || comparisonArray3[0] == 54 || comparisonArray3[0] == 55) )
+    {
+        for (int k=0; k<5; k++)
+        {
+            comparisonArray2.insert(comparisonArray2.begin(), Eng2[0]);
+        }
+    }
+    else if(comparisonArray4.size() !=0 && ( comparisonArray4[0] == 53 || comparisonArray4[0] == 54 || comparisonArray4[0] == 55) )
+    {
+        for (int k=0; k<5; k++)
+        {
+            comparisonArray2.insert(comparisonArray2.begin(), Eng2[0]);
+        }
+    }
+    }
+    else if(Eng2[0] == 44 || Eng2[0] == 43)
+    {
+
+    if(comparisonArray.size() !=0 && ( comparisonArray[0] == 43 || comparisonArray[0] == 44 ))
+    {
+        for (int k=0; k<5; k++)
+        {
+            comparisonArray2.insert(comparisonArray2.begin(), Eng2[0]);
+        }
+    }
+    else if(comparisonArray5.size() !=0 && ( comparisonArray5[0] == 43 || comparisonArray5[0] == 44) )
+    {
+        for (int k=0; k<5; k++)
+        {
+            comparisonArray2.insert(comparisonArray2.begin(), Eng2[0]);
+        }
+    }
+    else if(comparisonArray3.size() !=0 && ( comparisonArray3[0] == 43 || comparisonArray3[0] == 44) )
+    {
+        for (int k=0; k<5; k++)
+        {
+            comparisonArray2.insert(comparisonArray2.begin(), Eng2[0]);
+        }
+    }
+    else if(comparisonArray4.size() !=0 && ( comparisonArray4[0] == 43 || comparisonArray4[0] == 44) )
+    {
+        for (int k=0; k<5; k++)
+        {
+            comparisonArray2.insert(comparisonArray2.begin(), Eng2[0]);
+        }
+    }
     }
 
 }
 
 void MainWindow::Eng3Time()
 {
+    comparisonArray3.clear();
     int len = 0; //length * speed of current piece of track
     int j = 0;
     for (int i=0; i<E3S; i++)
@@ -607,14 +740,81 @@ void MainWindow::Eng3Time()
         len = trackLength(Eng3[i]) * Eng3Speed;
         for(int k=0; k<len; k++)
         {
-            comparisonArray3[j] = Eng3[i];
+            comparisonArray3.push_back(Eng3[i]);
             j++;
         }
     }
+
+    if(Eng3[0] == 53 || Eng3[0] == 54 || Eng3[0] == 55)
+    {
+
+    if(comparisonArray.size() !=0 && ( comparisonArray[0] == 53 || comparisonArray[0] == 54 || comparisonArray[0] == 55) )
+    {
+        for (int k=0; k<5; k++)
+        {
+            comparisonArray3.insert(comparisonArray3.begin(), Eng3[0]);
+        }
+    }
+    else if(comparisonArray2.size() !=0 && ( comparisonArray2[0] == 53 || comparisonArray2[0] == 54 || comparisonArray2[0] == 55) )
+    {
+        for (int k=0; k<5; k++)
+        {
+            comparisonArray3.insert(comparisonArray3.begin(), Eng3[0]);
+        }
+    }
+    else if(comparisonArray5.size() !=0 && ( comparisonArray5[0] == 53 || comparisonArray5[0] == 54 || comparisonArray5[0] == 55) )
+    {
+        for (int k=0; k<5; k++)
+        {
+            comparisonArray3.insert(comparisonArray3.begin(), Eng3[0]);
+        }
+    }
+    else if(comparisonArray4.size() !=0 && ( comparisonArray4[0] == 53 || comparisonArray4[0] == 54 || comparisonArray4[0] == 55) )
+    {
+        for (int k=0; k<5; k++)
+        {
+            comparisonArray3.insert(comparisonArray3.begin(), Eng3[0]);
+        }
+    }
+    }
+    else if(Eng3[0] == 44 || Eng3[0] == 43)
+    {
+
+    if(comparisonArray.size() !=0 && ( comparisonArray[0] == 43 || comparisonArray[0] == 44 ))
+    {
+        for (int k=0; k<5; k++)
+        {
+            comparisonArray3.insert(comparisonArray3.begin(), Eng3[0]);
+        }
+    }
+    else if(comparisonArray2.size() !=0 && ( comparisonArray2[0] == 43 || comparisonArray2[0] == 44) )
+    {
+        for (int k=0; k<5; k++)
+        {
+            comparisonArray3.insert(comparisonArray3.begin(), Eng3[0]);
+        }
+    }
+    else if(comparisonArray5.size() !=0 && ( comparisonArray5[0] == 43 || comparisonArray5[0] == 44) )
+    {
+        for (int k=0; k<5; k++)
+        {
+            comparisonArray3.insert(comparisonArray3.begin(), Eng3[0]);
+        }
+    }
+    else if(comparisonArray4.size() !=0 && ( comparisonArray4[0] == 43 || comparisonArray4[0] == 44) )
+    {
+        for (int k=0; k<5; k++)
+        {
+            comparisonArray3.insert(comparisonArray3.begin(), Eng3[0]);
+        }
+    }
+    }
+
 }
 
 void MainWindow::Eng4Time()
 {
+    comparisonArray4.clear();
     int len = 0; //length * speed of current piece of track
     int j = 0;
     for (int i=0; i<E4S; i++)
@@ -622,14 +822,81 @@ void MainWindow::Eng4Time()
         len = trackLength(Eng4[i]) * Eng4Speed;
         for(int k=0; k<len; k++)
         {
-            comparisonArray4[j] = Eng4[i];
+            comparisonArray4.push_back(Eng4[i]);
             j++;
         }
     }
+
+    if(Eng4[0] == 53 || Eng4[0] == 54 || Eng4[0] == 55)
+    {
+
+    if(comparisonArray.size() !=0 && ( comparisonArray[0] == 53 || comparisonArray[0] == 54 || comparisonArray[0] == 55) )
+    {
+        for (int k=0; k<5; k++)
+        {
+            comparisonArray4.insert(comparisonArray4.begin(), Eng4[0]);
+        }
+    }
+    else if(comparisonArray2.size() !=0 && ( comparisonArray2[0] == 53 || comparisonArray2[0] == 54 || comparisonArray2[0] == 55) )
+    {
+        for (int k=0; k<5; k++)
+        {
+            comparisonArray4.insert(comparisonArray4.begin(), Eng4[0]);
+        }
+    }
+    else if(comparisonArray3.size() !=0 && ( comparisonArray3[0] == 53 || comparisonArray3[0] == 54 || comparisonArray3[0] == 55) )
+    {
+        for (int k=0; k<5; k++)
+        {
+            comparisonArray4.insert(comparisonArray4.begin(), Eng4[0]);
+        }
+    }
+    else if(comparisonArray5.size() !=0 && ( comparisonArray5[0] == 53 || comparisonArray5[0] == 54 || comparisonArray5[0] == 55) )
+    {
+        for (int k=0; k<5; k++)
+        {
+            comparisonArray4.insert(comparisonArray4.begin(), Eng4[0]);
+        }
+    }
+    }
+    else if(Eng5[0] == 44 || Eng5[0] == 43)
+    {
+
+    if(comparisonArray.size() !=0 && ( comparisonArray[0] == 43 || comparisonArray[0] == 44 ))
+    {
+        for (int k=0; k<5; k++)
+        {
+            comparisonArray4.insert(comparisonArray4.begin(), Eng4[0]);
+        }
+    }
+    else if(comparisonArray2.size() !=0 && ( comparisonArray2[0] == 43 || comparisonArray2[0] == 44) )
+    {
+        for (int k=0; k<5; k++)
+        {
+            comparisonArray4.insert(comparisonArray4.begin(), Eng4[0]);
+        }
+    }
+    else if(comparisonArray3.size() !=0 && ( comparisonArray3[0] == 43 || comparisonArray3[0] == 44) )
+    {
+        for (int k=0; k<5; k++)
+        {
+            comparisonArray4.insert(comparisonArray4.begin(), Eng4[0]);
+        }
+    }
+    else if(comparisonArray5.size() !=0 && ( comparisonArray5[0] == 43 || comparisonArray5[0] == 44) )
+    {
+        for (int k=0; k<5; k++)
+        {
+            comparisonArray4.insert(comparisonArray4.begin(), Eng4[0]);
+        }
+    }
+    }
+
 }
 
 void MainWindow::Eng5Time()
 {
+    comparisonArray5.clear();
     int len = 0; //length * speed of current piece of track
     int j = 0;
     for (int i=0; i<E5S; i++)
@@ -637,9 +904,73 @@ void MainWindow::Eng5Time()
         len = trackLength(Eng5[i]) * Eng5Speed;
         for(int k=0; k<len; k++)
         {
-            comparisonArray5[j] = Eng5[i];
+            comparisonArray5.push_back(Eng5[i]);
             j++;
         }
+    }
+    if(Eng5[0] == 53 || Eng5[0] == 54 || Eng5[0] == 55)
+    {
+
+    if(comparisonArray.size() !=0 && ( comparisonArray[0] == 53 || comparisonArray[0] == 54 || comparisonArray[0] == 55) )
+    {
+        for (int k=0; k<5; k++)
+        {
+            comparisonArray5.insert(comparisonArray5.begin(), Eng5[0]);
+        }
+    }
+    else if(comparisonArray2.size() !=0 && ( comparisonArray2[0] == 53 || comparisonArray2[0] == 54 || comparisonArray2[0] == 55) )
+    {
+        for (int k=0; k<5; k++)
+        {
+            comparisonArray5.insert(comparisonArray5.begin(), Eng5[0]);
+        }
+    }
+    else if(comparisonArray3.size() !=0 && ( comparisonArray3[0] == 53 || comparisonArray3[0] == 54 || comparisonArray3[0] == 55) )
+    {
+        for (int k=0; k<5; k++)
+        {
+            comparisonArray5.insert(comparisonArray5.begin(), Eng5[0]);
+        }
+    }
+    else if(comparisonArray4.size() !=0 && ( comparisonArray4[0] == 53 || comparisonArray4[0] == 54 || comparisonArray4[0] == 55) )
+    {
+        for (int k=0; k<5; k++)
+        {
+            comparisonArray5.insert(comparisonArray5.begin(), Eng5[0]);
+        }
+    }
+    }
+    else if(Eng5[0] == 44 || Eng5[0] == 43)
+    {
+
+    if(comparisonArray.size() !=0 && ( comparisonArray[0] == 43 || comparisonArray[0] == 44 ))
+    {
+        for (int k=0; k<5; k++)
+        {
+            comparisonArray5.insert(comparisonArray5.begin(), Eng5[0]);
+        }
+    }
+    else if(comparisonArray2.size() !=0 && ( comparisonArray2[0] == 43 || comparisonArray2[0] == 44) )
+    {
+        for (int k=0; k<5; k++)
+        {
+            comparisonArray5.insert(comparisonArray5.begin(), Eng5[0]);
+        }
+    }
+    else if(comparisonArray3.size() !=0 && ( comparisonArray3[0] == 43 || comparisonArray3[0] == 44) )
+    {
+        for (int k=0; k<5; k++)
+        {
+            comparisonArray5.insert(comparisonArray5.begin(), Eng5[0]);
+        }
+    }
+    else if(comparisonArray4.size() !=0 && ( comparisonArray4[0] == 43 || comparisonArray4[0] == 44) )
+    {
+        for (int k=0; k<5; k++)
+        {
+            comparisonArray5.insert(comparisonArray5.begin(), Eng5[0]);
+        }
+    }
     }
 }
 
