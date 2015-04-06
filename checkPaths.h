@@ -974,7 +974,7 @@ void MainWindow::Eng5Time()
     }
 }
 
-int MainWindow::compare2(int a[], int b[], int c, int d)
+int MainWindow::compare2(std::vector<int>  a, std::vector<int>  b, int c, int d)
 {
 
 
@@ -1006,7 +1006,7 @@ int MainWindow::compare2(int a[], int b[], int c, int d)
 }
 
 
-int MainWindow::compare3(int a[], int b[], int c[], int a1, int b1, int c1)
+int MainWindow::compare3(std::vector<int>  a, std::vector<int>  b, std::vector<int>  c, int a1, int b1, int c1)
 {
 int i = 0;
     if(a1 >= b1 && b1 >= c1)
@@ -1154,6 +1154,636 @@ int i = 0;
         }
     }
     return -1;
+}
+
+
+void MainWindow::reroute(int trainSel, int tVal)
+{
+
+    adjacency_list_t adjacency_list(100);
+
+    if(tVal != 0)
+    {
+        adjacency_list[0].push_back(neighbor(1, 2));
+        adjacency_list[0].push_back(neighbor(2, 2));
+        adjacency_list[0].push_back(neighbor(39, 2));
+    }
+    if(tVal != 1)
+    {
+        adjacency_list[1].push_back(neighbor(81, 2));
+        adjacency_list[1].push_back(neighbor(0, 2));
+    }
+    if(tVal != 2)
+    {
+         adjacency_list[2].push_back(neighbor(71, 2));
+         adjacency_list[2].push_back(neighbor(0, 2));
+         adjacency_list[2].push_back(neighbor(4, 2));
+    }
+    if(tVal != 3)
+    {
+        adjacency_list[3].push_back(neighbor(81, 2));
+        adjacency_list[3].push_back(neighbor(5, 2));
+    }
+    if(tVal != 4)
+    {
+        adjacency_list[4].push_back(neighbor(2, 2));
+        adjacency_list[4].push_back(neighbor(6, 2));
+        adjacency_list[4].push_back(neighbor(5, 2));
+    }
+    if(tVal != 5)
+    {
+        adjacency_list[5].push_back(neighbor(7, 2));
+        adjacency_list[5].push_back(neighbor(3, 2));
+    }
+    if(tVal != 6)
+    {
+        adjacency_list[6].push_back(neighbor(4, 2));
+    }
+    if(tVal != 7)
+    {
+        adjacency_list[7].push_back(neighbor(8, 2));
+        adjacency_list[7].push_back(neighbor(9, 2));
+        adjacency_list[7].push_back(neighbor(5, 2));
+    }
+    if(tVal != 8)
+    {
+        adjacency_list[8].push_back(neighbor(80, 2));
+        adjacency_list[8].push_back(neighbor(7, 2));
+    }
+    if(tVal != 9)
+    {
+        adjacency_list[9].push_back(neighbor(7, 2));
+        adjacency_list[9].push_back(neighbor(98, 2));
+    }
+    if(tVal != 10)
+    {
+        adjacency_list[10].push_back(neighbor(11, 2));
+        adjacency_list[10].push_back(neighbor(12, 2));
+        adjacency_list[10].push_back(neighbor(98, 2));
+    }
+    if(tVal != 11)
+    {
+        adjacency_list[11].push_back(neighbor(10, 2));
+        adjacency_list[11].push_back(neighbor(13, 2));
+    }
+    if(tVal != 12)
+    {
+        adjacency_list[12].push_back(neighbor(82, 2));
+        adjacency_list[12].push_back(neighbor(10, 2));
+    }
+    if(tVal != 13)
+    {
+        adjacency_list[13].push_back(neighbor(11, 2));
+    }
+    if(tVal != 14)
+    {
+        adjacency_list[14].push_back(neighbor(15, 2));
+        adjacency_list[14].push_back(neighbor(16, 2));
+        adjacency_list[14].push_back(neighbor(79, 2));
+    }
+    if(tVal != 15)
+    {
+        adjacency_list[15].push_back(neighbor(40, 2));
+        adjacency_list[15].push_back(neighbor(14, 2));
+    }
+    if(tVal != 16)
+    {
+        adjacency_list[16].push_back(neighbor(17, 2));
+        adjacency_list[16].push_back(neighbor(82, 2));
+        adjacency_list[16].push_back(neighbor(14, 2));
+    }
+    if(tVal != 17)
+    {
+        adjacency_list[17].push_back(neighbor(19, 2));
+        adjacency_list[17].push_back(neighbor(16, 2));
+        adjacency_list[17].push_back(neighbor(18, 2));
+    }
+    if(tVal != 18)
+    {
+        adjacency_list[18].push_back(neighbor(17, 2));
+        adjacency_list[18].push_back(neighbor(20, 2));
+    }
+    if(tVal != 19)
+    {
+        adjacency_list[19].push_back(neighbor(6, 2));
+        adjacency_list[19].push_back(neighbor(17, 2));
+    }
+    if(tVal != 20)
+    {
+        adjacency_list[20].push_back(neighbor(18, 2));
+        adjacency_list[20].push_back(neighbor(22, 2));
+        adjacency_list[20].push_back(neighbor(21, 2));
+    }
+    if(tVal != 21)
+    {
+        adjacency_list[21].push_back(neighbor(20, 2));
+        adjacency_list[21].push_back(neighbor(83, 2));
+    }
+    if(tVal != 22)
+    {
+        adjacency_list[22].push_back(neighbor(24, 2));
+        adjacency_list[22].push_back(neighbor(20, 2));
+        adjacency_list[22].push_back(neighbor(23, 2));
+    }
+    if(tVal != 23)
+    {
+        adjacency_list[23].push_back(neighbor(22, 2));
+        adjacency_list[23].push_back(neighbor(27, 2));
+    }
+    if(tVal != 24)
+    {
+        adjacency_list[24].push_back(neighbor(22, 2));
+        adjacency_list[24].push_back(neighbor(25, 2));
+    }
+    if(tVal != 25)
+    {
+        adjacency_list[25].push_back(neighbor(24, 2));
+        adjacency_list[25].push_back(neighbor(26, 2));
+    }
+    if(tVal != 26)
+    {
+        adjacency_list[26].push_back(neighbor(28, 2));
+        adjacency_list[26].push_back(neighbor(51, 2));
+        adjacency_list[26].push_back(neighbor(25, 2));
+    }
+    if(tVal != 27)
+    {
+        adjacency_list[27].push_back(neighbor(23, 2));
+        adjacency_list[27].push_back(neighbor(28, 2));
+    }
+    if(tVal != 28)
+    {
+        adjacency_list[28].push_back(neighbor(29, 2));
+        adjacency_list[28].push_back(neighbor(26, 2));
+        adjacency_list[28].push_back(neighbor(27, 2));
+    }
+    if(tVal != 29)
+    {
+        adjacency_list[29].push_back(neighbor(84, 2));
+        adjacency_list[29].push_back(neighbor(28, 2));
+        adjacency_list[29].push_back(neighbor(30, 2));
+    }
+    if(tVal != 30)
+    {
+        adjacency_list[30].push_back(neighbor(31, 2));
+        adjacency_list[30].push_back(neighbor(29, 2));
+    }
+    if(tVal != 31)
+    {
+        adjacency_list[31].push_back(neighbor(30, 2));
+        adjacency_list[31].push_back(neighbor(32, 2));
+        adjacency_list[31].push_back(neighbor(70, 2));
+    }
+    if(tVal != 32)
+    {
+        adjacency_list[32].push_back(neighbor(34, 2));
+        adjacency_list[32].push_back(neighbor(33, 2));
+        adjacency_list[32].push_back(neighbor(31, 2));
+    }
+    if(tVal != 33)
+    {
+        adjacency_list[33].push_back(neighbor(32, 2));
+        adjacency_list[33].push_back(neighbor(90, 2));
+    }
+    if(tVal != 34)
+    {
+        adjacency_list[34].push_back(neighbor(89, 2));
+        adjacency_list[34].push_back(neighbor(50, 2));
+        adjacency_list[34].push_back(neighbor(32, 2));
+    }
+    if(tVal != 35)
+    {
+        adjacency_list[35].push_back(neighbor(90, 2));
+        adjacency_list[35].push_back(neighbor(36, 2));
+    }
+    if(tVal != 36)
+    {
+        adjacency_list[36].push_back(neighbor(35, 2));
+        adjacency_list[36].push_back(neighbor(68, 2));
+        adjacency_list[36].push_back(neighbor(91, 2));
+    }
+    if(tVal != 37)
+    {
+        adjacency_list[37].push_back(neighbor(39, 2));
+        adjacency_list[37].push_back(neighbor(88, 2));
+    }
+    if(tVal != 38)
+    {
+        adjacency_list[38].push_back(neighbor(39, 2));
+        adjacency_list[38].push_back(neighbor(91, 2));
+    }
+    if(tVal != 39)
+    {
+        adjacency_list[39].push_back(neighbor(0, 2));
+        adjacency_list[39].push_back(neighbor(38, 2));
+        adjacency_list[39].push_back(neighbor(37, 2));
+    }
+    if(tVal != 40)
+    {
+        adjacency_list[40].push_back(neighbor(15, 2));
+        adjacency_list[40].push_back(neighbor(41, 2));
+        adjacency_list[40].push_back(neighbor(45, 2));
+    }
+    if(tVal != 41)
+    {
+        adjacency_list[41].push_back(neighbor(46, 2));
+        adjacency_list[41].push_back(neighbor(40, 2));
+        adjacency_list[41].push_back(neighbor(42, 2));
+    }
+    if(tVal != 42)
+    {
+        adjacency_list[42].push_back(neighbor(75, 2));
+        adjacency_list[42].push_back(neighbor(76, 2));
+        adjacency_list[42].push_back(neighbor(41, 2));
+    }
+    if(tVal != 43)
+    {
+        adjacency_list[43].push_back(neighbor(75, 2));
+    }
+    if(tVal != 44)
+    {
+        adjacency_list[44].push_back(neighbor(76, 2));
+
+    }
+    if(tVal != 45)
+    {
+        adjacency_list[45].push_back(neighbor(40, 2));
+        adjacency_list[45].push_back(neighbor(78, 2));
+    }
+    if(tVal != 46)
+    {
+        adjacency_list[46].push_back(neighbor(41, 2));
+        adjacency_list[46].push_back(neighbor(77, 2));
+    }
+    if(tVal != 47)
+    {
+        adjacency_list[47].push_back(neighbor(78, 2));
+        adjacency_list[47].push_back(neighbor(49, 2));
+    }
+    if(tVal != 48)
+    {
+        adjacency_list[48].push_back(neighbor(77, 2));
+        adjacency_list[48].push_back(neighbor(49, 2));
+    }
+    if(tVal != 49)
+    {
+        adjacency_list[49].push_back(neighbor(47, 2));
+        adjacency_list[49].push_back(neighbor(48, 2));
+        adjacency_list[49].push_back(neighbor(50, 2));
+
+    }
+    if(tVal != 50)
+    {
+        adjacency_list[50].push_back(neighbor(34, 2));
+        adjacency_list[50].push_back(neighbor(49, 2));
+    }
+    if(tVal != 51)
+    {
+        adjacency_list[51].push_back(neighbor(26, 2));
+        adjacency_list[51].push_back(neighbor(52, 2));
+        adjacency_list[51].push_back(neighbor(87, 2));
+    }
+    if(tVal != 52)
+    {
+        adjacency_list[52].push_back(neighbor(51, 2));
+        adjacency_list[52].push_back(neighbor(85, 2));
+        adjacency_list[52].push_back(neighbor(86, 2));
+    }
+    if(tVal != 53)
+    {
+        adjacency_list[53].push_back(neighbor(85, 2));
+
+    }
+    if(tVal != 54)
+    {
+        adjacency_list[54].push_back(neighbor(86, 2));
+
+    }
+    if(tVal != 55)
+    {
+        adjacency_list[55].push_back(neighbor(87, 2));
+
+    }
+    if(tVal != 68)
+    {
+        adjacency_list[68].push_back(neighbor(36, 2));
+        adjacency_list[68].push_back(neighbor(69, 2));
+    }
+    if(tVal != 69)
+    {
+        adjacency_list[69].push_back(neighbor(68, 2));
+    }
+    if(tVal != 70)
+    {
+        adjacency_list[70].push_back(neighbor(31, 2));
+        adjacency_list[70].push_back(neighbor(71, 2));
+    }
+    if(tVal != 71)
+    {
+        adjacency_list[71].push_back(neighbor(70, 2));
+        adjacency_list[71].push_back(neighbor(2, 2));
+    }
+    if(tVal != 75)
+    {
+        adjacency_list[75].push_back(neighbor(43, 2));
+        adjacency_list[75].push_back(neighbor(42, 2));
+    }
+    if(tVal != 76)
+    {
+        adjacency_list[76].push_back(neighbor(42, 2));
+        adjacency_list[76].push_back(neighbor(44, 2));
+    }
+    if(tVal != 77)
+    {
+        adjacency_list[77].push_back(neighbor(46, 2));
+        adjacency_list[77].push_back(neighbor(48, 2));
+    }
+    if(tVal != 78)
+    {
+        adjacency_list[78].push_back(neighbor(45, 2));
+        adjacency_list[78].push_back(neighbor(47, 2));
+    }
+    if(tVal != 79)
+    {
+        adjacency_list[79].push_back(neighbor(14, 2));
+        adjacency_list[79].push_back(neighbor(80, 2));
+    }
+    if(tVal != 80)
+    {
+        adjacency_list[80].push_back(neighbor(79, 2));
+        adjacency_list[80].push_back(neighbor(8, 2));
+    }
+    if(tVal != 81)
+    {
+        adjacency_list[81].push_back(neighbor(3, 2));
+        adjacency_list[81].push_back(neighbor(1, 2));
+    }
+    if(tVal != 82)
+    {
+        adjacency_list[82].push_back(neighbor(16, 2));
+        adjacency_list[82].push_back(neighbor(12, 2));
+    }
+    if(tVal != 83)
+    {
+        adjacency_list[83].push_back(neighbor(21, 2));
+        adjacency_list[83].push_back(neighbor(84, 2));
+    }
+    if(tVal != 84)
+    {
+        adjacency_list[84].push_back(neighbor(83, 2));
+        adjacency_list[84].push_back(neighbor(29, 2));
+    }
+    if(tVal != 85)
+    {
+        adjacency_list[85].push_back(neighbor(52, 2));
+        adjacency_list[85].push_back(neighbor(53, 2));
+    }
+    if(tVal != 86)
+    {
+        adjacency_list[86].push_back(neighbor(52, 2));
+        adjacency_list[86].push_back(neighbor(54, 2));
+    }
+    if(tVal != 87)
+    {
+        adjacency_list[87].push_back(neighbor(51, 2));
+        adjacency_list[87].push_back(neighbor(55, 2));
+    }
+    if(tVal != 88)
+    {
+        adjacency_list[88].push_back(neighbor(37, 2));
+        adjacency_list[88].push_back(neighbor(89, 2));
+    }
+    if(tVal != 89)
+    {
+        adjacency_list[89].push_back(neighbor(88, 2));
+        adjacency_list[89].push_back(neighbor(34, 2));
+    }
+    if(tVal != 90)
+    {
+        adjacency_list[90].push_back(neighbor(33, 2));
+        adjacency_list[90].push_back(neighbor(35, 2));
+    }
+    if(tVal != 91)
+    {
+        adjacency_list[91].push_back(neighbor(38, 2));
+        adjacency_list[91].push_back(neighbor(36, 2));
+    }
+
+    if(tVal != 98)
+    {
+        adjacency_list[98].push_back(neighbor(10, 2));
+        adjacency_list[98].push_back(neighbor(9, 2));
+    }
+
+
+
+    //unused: 65-67, 72-74, 92-97, 99
+
+    int start;
+    int end;
+if(trainSel == 1)
+{
+    //translate origin box
+    if (ui->originBox1->currentIndex() == 1)
+        start = 43;
+    else if (ui->originBox1->currentIndex() == 2)
+        start = 44;
+    else if (ui->originBox1->currentIndex() == 3)
+        start = 55;
+    else if (ui->originBox1->currentIndex() == 4)
+        start = 54;
+    else if (ui->originBox1->currentIndex() == 5)
+        start = 53;
+    else if (ui->originBox1->currentIndex() == 6)
+        start = 13;
+    else if (ui->originBox1->currentIndex() == 7)
+        start = 69;
+    //translate destination box
+    if (ui->destBox1->currentIndex() == 1)
+        end = 43;
+    else if (ui->destBox1->currentIndex() == 2)
+        end = 44;
+    else if (ui->destBox1->currentIndex() == 3)
+        end = 55;
+    else if (ui->destBox1->currentIndex() == 4)
+        end = 54;
+    else if (ui->destBox1->currentIndex() == 5)
+        end = 53;
+    else if (ui->destBox1->currentIndex() == 6)
+        end = 13;
+    else if (ui->destBox1->currentIndex() == 7)
+        end = 69;
+}
+else if(trainSel == 2)
+{
+    //translate origin box
+    if (ui->originBox2->currentIndex() == 1)
+        start = 43;
+    else if (ui->originBox2->currentIndex() == 2)
+        start = 44;
+    else if (ui->originBox2->currentIndex() == 3)
+        start = 55;
+    else if (ui->originBox2->currentIndex() == 4)
+        start = 54;
+    else if (ui->originBox2->currentIndex() == 5)
+        start = 53;
+    else if (ui->originBox2->currentIndex() == 6)
+        start = 13;
+    else if (ui->originBox2->currentIndex() == 7)
+        start = 69;
+    //translate destination box
+    if (ui->destBox2->currentIndex() == 1)
+        end = 43;
+    else if (ui->destBox2->currentIndex() == 2)
+        end = 44;
+    else if (ui->destBox2->currentIndex() == 3)
+        end = 55;
+    else if (ui->destBox2->currentIndex() == 4)
+        end = 54;
+    else if (ui->destBox2->currentIndex() == 5)
+        end = 53;
+    else if (ui->destBox2->currentIndex() == 6)
+        end = 13;
+    else if (ui->destBox2->currentIndex() == 7)
+        end = 69;
+}
+else if(trainSel == 3)
+{
+    //translate origin box
+    if (ui->originBox3->currentIndex() == 1)
+        start = 43;
+    else if (ui->originBox3->currentIndex() == 2)
+        start = 44;
+    else if (ui->originBox3->currentIndex() == 3)
+        start = 55;
+    else if (ui->originBox3->currentIndex() == 4)
+        start = 54;
+    else if (ui->originBox3->currentIndex() == 5)
+        start = 53;
+    else if (ui->originBox3->currentIndex() == 6)
+        start = 13;
+    else if (ui->originBox3->currentIndex() == 7)
+        start = 69;
+    //translate destination box
+    if (ui->destBox3->currentIndex() == 1)
+        end = 43;
+    else if (ui->destBox3->currentIndex() == 2)
+        end = 44;
+    else if (ui->destBox3->currentIndex() == 3)
+        end = 55;
+    else if (ui->destBox3->currentIndex() == 4)
+        end = 54;
+    else if (ui->destBox3->currentIndex() == 5)
+        end = 53;
+    else if (ui->destBox3->currentIndex() == 6)
+        end = 13;
+    else if (ui->destBox3->currentIndex() == 7)
+        end = 69;
+}
+else if(trainSel == 4)
+{
+    //translate origin box
+    if (ui->originBox4->currentIndex() == 1)
+        start = 43;
+    else if (ui->originBox4->currentIndex() == 2)
+        start = 44;
+    else if (ui->originBox4->currentIndex() == 3)
+        start = 55;
+    else if (ui->originBox4->currentIndex() == 4)
+        start = 54;
+    else if (ui->originBox4->currentIndex() == 5)
+        start = 53;
+    else if (ui->originBox4->currentIndex() == 6)
+        start = 13;
+    else if (ui->originBox4->currentIndex() == 7)
+        start = 69;
+    //translate destination box
+    if (ui->destBox4->currentIndex() == 1)
+        end = 43;
+    else if (ui->destBox4->currentIndex() == 2)
+        end = 44;
+    else if (ui->destBox4->currentIndex() == 3)
+        end = 55;
+    else if (ui->destBox4->currentIndex() == 4)
+        end = 54;
+    else if (ui->destBox4->currentIndex() == 5)
+        end = 53;
+    else if (ui->destBox4->currentIndex() == 6)
+        end = 13;
+    else if (ui->destBox4->currentIndex() == 7)
+        end = 69;
+}
+if(trainSel == 5)
+{
+    //translate origin box
+    if (ui->originBox5->currentIndex() == 1)
+        start = 43;
+    else if (ui->originBox5->currentIndex() == 2)
+        start = 44;
+    else if (ui->originBox5->currentIndex() == 3)
+        start = 55;
+    else if (ui->originBox5->currentIndex() == 4)
+        start = 54;
+    else if (ui->originBox5->currentIndex() == 5)
+        start = 53;
+    else if (ui->originBox5->currentIndex() == 6)
+        start = 13;
+    else if (ui->originBox5->currentIndex() == 7)
+        start = 69;
+    //translate destination box
+    if (ui->destBox5->currentIndex() == 1)
+        end = 43;
+    else if (ui->destBox5->currentIndex() == 2)
+        end = 44;
+    else if (ui->destBox5->currentIndex() == 3)
+        end = 55;
+    else if (ui->destBox5->currentIndex() == 4)
+        end = 54;
+    else if (ui->destBox5->currentIndex() == 5)
+        end = 53;
+    else if (ui->destBox5->currentIndex() == 6)
+        end = 13;
+    else if (ui->destBox5->currentIndex() == 7)
+        end = 69;
+}
+
+
+    std::vector<weight_t> min_distance;
+    std::vector<vertex_t> previous;
+    DijkstraComputePaths(start, adjacency_list, min_distance, previous);
+
+    if (trainSel == 1)
+    {
+    std::cout << "Rerouted Distance from " << ui->originBox1->currentText().toStdString() << " to " << ui->destBox1->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
+    backupPath = DijkstraGetShortestPathTo(end, previous);
+    std::cout << ui->trainselectBox1->currentText().toStdString() <<" Path : ";
+    }
+    else if (trainSel == 2)
+    {
+    std::cout << "Rerouted Distance from " << ui->originBox2->currentText().toStdString() << " to " << ui->destBox2->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
+    backupPath = DijkstraGetShortestPathTo(end, previous);
+    std::cout << ui->trainselectBox2->currentText().toStdString() <<" Path : ";
+    }
+    else if (trainSel == 3)
+    {
+    std::cout << "Rerouted Distance from " << ui->originBox3->currentText().toStdString() << " to " << ui->destBox3->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
+    backupPath = DijkstraGetShortestPathTo(end, previous);
+    std::cout << ui->trainselectBox3->currentText().toStdString() <<" Path : ";
+    }
+    else if (trainSel == 4)
+    {
+        std::cout << "Rerouted Distance from " << ui->originBox4->currentText().toStdString() << " to " << ui->destBox4->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
+        backupPath = DijkstraGetShortestPathTo(end, previous);
+        std::cout << ui->trainselectBox4->currentText().toStdString() <<" Path : ";
+    }
+    else if (trainSel == 5)
+    {
+    std::cout << "Rerouted Distance from " << ui->originBox5->currentText().toStdString() << " to " << ui->destBox5->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
+    backupPath = DijkstraGetShortestPathTo(end, previous);
+    std::cout << ui->trainselectBox5->currentText().toStdString() <<" Path : ";
+    }
+
+
 }
 
 
