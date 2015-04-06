@@ -670,6 +670,110 @@ void MainWindow::tableOperation(std::list<vertex_t> path, int trainsel, int test
     int itt2 = 0;
 
 
+
+//    //Demo output code: Disable the section below to use.
+//    if(flag == 1)
+//    {
+//        cout << tmpstr << " starting at location " << comparisonArray[0] << endl;
+//        usleep(1000000);
+//        for(;comparisonArray.size() > 0;comparisonArray.erase(comparisonArray.begin()))
+//        {
+//            if(comparisonArray[0] == comparisonArray[1])
+//            {
+//                cout << tmpstr<< " still at track segment " << comparisonArray[0] << endl;
+//            }
+//            else
+//            {
+//                checkSwitches(comparisonArray[0], comparisonArray[1]);
+//                cout << tmpstr << " moved to track segment " << comparisonArray[1];
+//            }
+//            usleep(1000000);
+//        }
+
+
+//    }
+//    else if (flag == 2)
+//    {
+
+//        cout << tmpstr << " starting at location " << comparisonArray2[0] << endl;
+//        usleep(1000000);
+//        for(;comparisonArray2.size() > 0;comparisonArray2.erase(comparisonArray2.begin()))
+//        {
+//            if(comparisonArray2[0] == comparisonArray2[1])
+//            {
+//                cout << tmpstr<< " still at track segment " << comparisonArray2[0] << endl;
+//            }
+//            else
+//            {
+//                checkSwitches(comparisonArray2[0], comparisonArray2[1]);
+//                cout << tmpstr << " moved to track segment " << comparisonArray2[1];
+//            }
+//            usleep(1000000);
+//        }
+
+//    }
+//    else if (flag == 3)
+//    {
+
+//        cout << tmpstr << " starting at location " << comparisonArray3[0] << endl;
+//        usleep(1000000);
+//        for(;comparisonArray3.size() > 0;comparisonArray3.erase(comparisonArray3.begin()))
+//        {
+//            if(comparisonArray3[0] == comparisonArray3[1])
+//            {
+//                cout << tmpstr<< " still at track segment " << comparisonArray3[0] << endl;
+//            }
+//            else
+//            {
+//                checkSwitches(comparisonArray3[0], comparisonArray3[1]);
+//                cout << tmpstr << " moved to track segment " << comparisonArray3[1];
+//            }
+//            usleep(1000000);
+//        }
+
+//    }
+//    else if (flag == 4)
+//    {
+
+//        cout << tmpstr << " starting at location " << comparisonArray4[0] << endl;
+//        usleep(1000000);
+//        for(;comparisonArray4.size() > 0;comparisonArray4.erase(comparisonArray4.begin()))
+//        {
+//            if(comparisonArray4[0] == comparisonArray4[1])
+//            {
+//                cout << tmpstr<< " still at track segment " << comparisonArray4[0] << endl;
+//            }
+//            else
+//            {
+//                checkSwitches(comparisonArray4[0], comparisonArray4[1]);
+//                cout << tmpstr << " moved to track segment " << comparisonArray4[1];
+//            }
+//            usleep(1000000);
+//        }
+
+//    }
+//    else if (flag == 5)
+//    {
+
+//        cout << tmpstr << " starting at location " << comparisonArray5[0] << endl;
+//        usleep(1000000);
+//        for(;comparisonArray5.size() > 0;comparisonArray5.erase(comparisonArray5.begin()))
+//        {
+//            if(comparisonArray5[0] == comparisonArray5[1])
+//            {
+//                cout << tmpstr<< " still at track segment " << comparisonArray5[0] << endl;
+//            }
+//            else
+//            {
+//                checkSwitches(comparisonArray5[0], comparisonArray5[1]);
+//                cout << tmpstr << " moved to track segment " << comparisonArray5[1];
+//            }
+//            usleep(1000000);
+//        }
+
+//    }
+
+
     //for(int i=0; i<3; i++)
     while( itt2 == 0)
     {
