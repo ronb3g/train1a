@@ -669,203 +669,230 @@ void MainWindow::tableOperation(std::list<vertex_t> path, int trainsel, int test
 
     int itt2 = 0;
 
-
-
-//    //Demo output code: Disable the section below to use.
-//    if(flag == 1)
-//    {
-//        cout << tmpstr << " starting at location " << comparisonArray[0] << endl;
-//        usleep(1000000);
-//        for(;comparisonArray.size() > 0;comparisonArray.erase(comparisonArray.begin()))
-//        {
-//            if(comparisonArray[0] == comparisonArray[1])
-//            {
-//                cout << tmpstr<< " still at track segment " << comparisonArray[0] << endl;
-//            }
-//            else
-//            {
-//                checkSwitches(comparisonArray[0], comparisonArray[1]);
-//                cout << tmpstr << " moved to track segment " << comparisonArray[1];
-//            }
-//            usleep(1000000);
-//        }
-
-
-//    }
-//    else if (flag == 2)
-//    {
-
-//        cout << tmpstr << " starting at location " << comparisonArray2[0] << endl;
-//        usleep(1000000);
-//        for(;comparisonArray2.size() > 0;comparisonArray2.erase(comparisonArray2.begin()))
-//        {
-//            if(comparisonArray2[0] == comparisonArray2[1])
-//            {
-//                cout << tmpstr<< " still at track segment " << comparisonArray2[0] << endl;
-//            }
-//            else
-//            {
-//                checkSwitches(comparisonArray2[0], comparisonArray2[1]);
-//                cout << tmpstr << " moved to track segment " << comparisonArray2[1];
-//            }
-//            usleep(1000000);
-//        }
-
-//    }
-//    else if (flag == 3)
-//    {
-
-//        cout << tmpstr << " starting at location " << comparisonArray3[0] << endl;
-//        usleep(1000000);
-//        for(;comparisonArray3.size() > 0;comparisonArray3.erase(comparisonArray3.begin()))
-//        {
-//            if(comparisonArray3[0] == comparisonArray3[1])
-//            {
-//                cout << tmpstr<< " still at track segment " << comparisonArray3[0] << endl;
-//            }
-//            else
-//            {
-//                checkSwitches(comparisonArray3[0], comparisonArray3[1]);
-//                cout << tmpstr << " moved to track segment " << comparisonArray3[1];
-//            }
-//            usleep(1000000);
-//        }
-
-//    }
-//    else if (flag == 4)
-//    {
-
-//        cout << tmpstr << " starting at location " << comparisonArray4[0] << endl;
-//        usleep(1000000);
-//        for(;comparisonArray4.size() > 0;comparisonArray4.erase(comparisonArray4.begin()))
-//        {
-//            if(comparisonArray4[0] == comparisonArray4[1])
-//            {
-//                cout << tmpstr<< " still at track segment " << comparisonArray4[0] << endl;
-//            }
-//            else
-//            {
-//                checkSwitches(comparisonArray4[0], comparisonArray4[1]);
-//                cout << tmpstr << " moved to track segment " << comparisonArray4[1];
-//            }
-//            usleep(1000000);
-//        }
-
-//    }
-//    else if (flag == 5)
-//    {
-
-//        cout << tmpstr << " starting at location " << comparisonArray5[0] << endl;
-//        usleep(1000000);
-//        for(;comparisonArray5.size() > 0;comparisonArray5.erase(comparisonArray5.begin()))
-//        {
-//            if(comparisonArray5[0] == comparisonArray5[1])
-//            {
-//                cout << tmpstr<< " still at track segment " << comparisonArray5[0] << endl;
-//            }
-//            else
-//            {
-//                checkSwitches(comparisonArray5[0], comparisonArray5[1]);
-//                cout << tmpstr << " moved to track segment " << comparisonArray5[1];
-//            }
-//            usleep(1000000);
-//        }
-
-//    }
-
-
-    //for(int i=0; i<3; i++)
-    while( itt2 == 0)
+    //Demo output code: Disable the section below to use.
+    if(flag == 1)
     {
-        int tLoop = 0;
+        ui->routeInfo1->show();
+        cout << tmpstr.toStdString() << " starting at location " << oursTotheirs(comparisonArray[0]).toStdString() << endl;
+        usleep(50000);
+        for(;comparisonArray.size() > 0;comparisonArray.erase(comparisonArray.begin()))
+        {
+            if(comparisonArray[0] == comparisonArray[1])
+            {
+                cout << tmpstr.toStdString()<< " still at track segment " << oursTotheirs(comparisonArray[0]).toStdString() << endl;
+            }
+            else
+            {
+                QString str = oursTotheirs(comparisonArray[0]);
+                QString str2 = oursTotheirs(comparisonArray[1]);
+                checkSwitches(str, str2);
+                cout << tmpstr.toStdString() << " moved to track segment " << oursTotheirs(comparisonArray[1]).toStdString() << endl;
+            }
+            qApp->processEvents();
+            usleep(50000);
+        }
 
-        //checkSwitches(currentLoc, nextLoc);
-        //cout << tmpstr.toStdString() << " Moved from " << currentLoc.toStdString() << " to " << endLoc.toStdString() << endl;
-        //currentLoc = nextLoc;
 
-    if(path2 != NULL){
+    }
+    else if (flag == 2)
+    {
 
-        //for(;tLoop)
+        ui->routeInfo2->show();
+        cout << tmpstr.toStdString()<< " starting at location " << oursTotheirs(comparisonArray2[0]).toStdString() << endl;
+        usleep(50000);
+        for(;comparisonArray2.size() > 0;comparisonArray2.erase(comparisonArray2.begin()))
+        {
+            if(comparisonArray2[0] == comparisonArray2[1])
+            {
+                cout << tmpstr.toStdString()<< " still at track segment " << oursTotheirs(comparisonArray2[0]).toStdString() << endl;
+            }
+            else
+            {
+                QString str = oursTotheirs(comparisonArray2[0]);
+                QString str2 = oursTotheirs(comparisonArray2[1]);
+                checkSwitches(str, str2);
+                cout << tmpstr.toStdString()<< " moved to track segment " << oursTotheirs(comparisonArray2[1]).toStdString() << endl;
+            }
+            qApp->processEvents();
+            usleep(50000);
+        }
 
-        nextLoc = path2;
-        checkSwitches(currentLoc, path2);
+    }
+    else if (flag == 3)
+    {
 
-        cout << tmpstr.toStdString() << " Moved from " << currentLoc.toStdString() << " to " << path2.toStdString() << endl;
-        currentLoc = nextLoc;
-        //call to check for occupied track sections ahead and delay
+        ui->routeInfo3->show();
+        cout << tmpstr.toStdString()<< " starting at location " << oursTotheirs(comparisonArray3[0]).toStdString() << endl;
+        usleep(50000);
+        for(;comparisonArray3.size() > 0;comparisonArray3.erase(comparisonArray3.begin()))
+        {
+            if(comparisonArray3[0] == comparisonArray3[1])
+            {
+                cout << tmpstr.toStdString()<< " still at track segment " << oursTotheirs(comparisonArray3[0]).toStdString() << endl;
+            }
+            else
+            {
+                QString str = oursTotheirs(comparisonArray3[0]);
+                QString str2 = oursTotheirs(comparisonArray3[1]);
+                checkSwitches(str, str2);
+                cout << tmpstr.toStdString()<< " moved to track segment " << oursTotheirs(comparisonArray3[1]).toStdString() << endl;
+            }
+            qApp->processEvents();
+            usleep(50000);
+        }
+
+    }
+    else if (flag == 4)
+    {
+
+        ui->routeInfo4->show();
+        cout << tmpstr.toStdString()<< " starting at location " << oursTotheirs(comparisonArray4[0]).toStdString() << endl;
+        usleep(50000);
+        for(;comparisonArray4.size() > 0;comparisonArray4.erase(comparisonArray4.begin()))
+        {
+            if(comparisonArray4[0] == comparisonArray4[1])
+            {
+                cout << tmpstr.toStdString()<< " still at track segment " << oursTotheirs(comparisonArray4[0]).toStdString() << endl;
+            }
+            else
+            {
+                QString str = oursTotheirs(comparisonArray4[0]);
+                QString str2 = oursTotheirs(comparisonArray4[1]);
+                checkSwitches(str, str2);
+                cout << tmpstr.toStdString()<< " moved to track segment " << oursTotheirs(comparisonArray4[1]).toStdString() << endl;
+            }
+            qApp->processEvents();
+            usleep(50000);
+        }
+
+    }
+    else if (flag == 5)
+    {
+
+        ui->routeInfo5->show();
+        cout << tmpstr.toStdString()<< " starting at location " << oursTotheirs(comparisonArray5[0]).toStdString() << endl;
+        usleep(50000);
+        for(;comparisonArray5.size() > 0;comparisonArray5.erase(comparisonArray5.begin()))
+        {
+            if(comparisonArray5[0] == comparisonArray5[1])
+            {
+                cout << tmpstr.toStdString()<< " still at track segment " << oursTotheirs(comparisonArray5[0]).toStdString() << endl;
+            }
+            else
+            {
+                QString str = oursTotheirs(comparisonArray5[0]);
+                QString str2 = oursTotheirs(comparisonArray5[1]);
+                checkSwitches(str, str2);
+                cout << tmpstr.toStdString()<< " moved to track segment " << oursTotheirs(comparisonArray5[1]).toStdString() << endl;
+            }
+            qApp->processEvents();
+            usleep(50000);
+        }
+
     }
 
-    if(path3 != NULL){
-        nextLoc = path3;
-        checkSwitches(currentLoc, path3);
-        cout << tmpstr.toStdString() << " Moved from " << currentLoc.toStdString() << " to " << path3.toStdString() << endl;
-        currentLoc = nextLoc;
-        //call to check for occupied track sections ahead and delay
-    }
 
-     if(path4 != NULL){
-        nextLoc = path4;
-        checkSwitches(currentLoc, path4);
-        cout << tmpstr.toStdString() << " Moved from " << currentLoc.toStdString() << " to " << path4.toStdString() << endl;
-        currentLoc = nextLoc;
-        //call to check for occupied track sections ahead and delay
-     }
 
-      if(path5 != NULL){
-        nextLoc = path5;
-        checkSwitches(currentLoc, path5);
-        cout << tmpstr.toStdString() << " Moved from " << currentLoc.toStdString() << " to " << path5.toStdString() << endl;
-        currentLoc = nextLoc;
-        //call to check for occupied track sections ahead and delay
-      }
 
-      if(path6 != NULL){
-        nextLoc = path6;
-        checkSwitches(currentLoc, path6);
-        cout << tmpstr.toStdString() << " Moved from " << currentLoc.toStdString() << " to " << path6.toStdString() << endl;
-        currentLoc = nextLoc;
-        //call to check for occupied track sections ahead and delay
-      }
 
-      if(path7 != NULL){
-        nextLoc = path7;
-        checkSwitches(currentLoc, path7);
-        cout << tmpstr.toStdString() << " Moved from " << currentLoc.toStdString() << " to " << path7.toStdString() << endl;
-        currentLoc = nextLoc;
-        //call to check for occupied track sections ahead and delay
-      }
 
-      if(path8 != NULL){
-        nextLoc = path8;
-        checkSwitches(currentLoc, path8);
-        cout << tmpstr.toStdString() << " Moved from " << currentLoc.toStdString() << " to " << path8.toStdString() << endl;
-        currentLoc = nextLoc;
-        //call to check for occupied track sections ahead and delay
-      }
 
-      if(path9 != NULL){
-        nextLoc = path9;
-        checkSwitches(currentLoc, path9);
-        cout << tmpstr.toStdString() << " Moved from " << currentLoc.toStdString() << " to " << path9.toStdString() << endl;
-        currentLoc = nextLoc;
-        //call to check for occupied track sections ahead and delay
-      }
 
-      if(path10 != NULL){
-        nextLoc = path10;
-        checkSwitches(currentLoc, path10);
-        cout << tmpstr.toStdString() << " Moved from " << currentLoc.toStdString() << " to " << path10.toStdString() << endl;
-        currentLoc = nextLoc;
-        //call to check for occupied track sections ahead and delay
-      }
 
-      if(path11 != NULL){
-        nextLoc = path11;
-        checkSwitches(currentLoc, path11);
-        cout << tmpstr.toStdString() << " Moved from " << currentLoc.toStdString() << " to " << path11.toStdString() << endl;
-        currentLoc = nextLoc;
-        //call to check for occupied track sections ahead and delay
-    }
+
+
+//    //for(int i=0; i<3; i++)
+//    while( itt2 == 0)
+//    {
+//        int tLoop = 0;
+
+//        //checkSwitches(currentLoc, nextLoc);
+//        //cout << tmpstr.toStdString() << " Moved from " << currentLoc.toStdString() << " to " << endLoc.toStdString() << endl;
+//        //currentLoc = nextLoc;
+
+//    if(path2 != NULL){
+
+//        //for(;tLoop)
+
+//        nextLoc = path2;
+//        checkSwitches(currentLoc, path2);
+
+//        cout << tmpstr.toStdString() << " Moved from " << currentLoc.toStdString() << " to " << path2.toStdString() << endl;
+//        currentLoc = nextLoc;
+//        //call to check for occupied track sections ahead and delay
+//    }
+
+//    if(path3 != NULL){
+//        nextLoc = path3;
+//        checkSwitches(currentLoc, path3);
+//        cout << tmpstr.toStdString() << " Moved from " << currentLoc.toStdString() << " to " << path3.toStdString() << endl;
+//        currentLoc = nextLoc;
+//        //call to check for occupied track sections ahead and delay
+//    }
+
+//     if(path4 != NULL){
+//        nextLoc = path4;
+//        checkSwitches(currentLoc, path4);
+//        cout << tmpstr.toStdString() << " Moved from " << currentLoc.toStdString() << " to " << path4.toStdString() << endl;
+//        currentLoc = nextLoc;
+//        //call to check for occupied track sections ahead and delay
+//     }
+
+//      if(path5 != NULL){
+//        nextLoc = path5;
+//        checkSwitches(currentLoc, path5);
+//        cout << tmpstr.toStdString() << " Moved from " << currentLoc.toStdString() << " to " << path5.toStdString() << endl;
+//        currentLoc = nextLoc;
+//        //call to check for occupied track sections ahead and delay
+//      }
+
+//      if(path6 != NULL){
+//        nextLoc = path6;
+//        checkSwitches(currentLoc, path6);
+//        cout << tmpstr.toStdString() << " Moved from " << currentLoc.toStdString() << " to " << path6.toStdString() << endl;
+//        currentLoc = nextLoc;
+//        //call to check for occupied track sections ahead and delay
+//      }
+
+//      if(path7 != NULL){
+//        nextLoc = path7;
+//        checkSwitches(currentLoc, path7);
+//        cout << tmpstr.toStdString() << " Moved from " << currentLoc.toStdString() << " to " << path7.toStdString() << endl;
+//        currentLoc = nextLoc;
+//        //call to check for occupied track sections ahead and delay
+//      }
+
+//      if(path8 != NULL){
+//        nextLoc = path8;
+//        checkSwitches(currentLoc, path8);
+//        cout << tmpstr.toStdString() << " Moved from " << currentLoc.toStdString() << " to " << path8.toStdString() << endl;
+//        currentLoc = nextLoc;
+//        //call to check for occupied track sections ahead and delay
+//      }
+
+//      if(path9 != NULL){
+//        nextLoc = path9;
+//        checkSwitches(currentLoc, path9);
+//        cout << tmpstr.toStdString() << " Moved from " << currentLoc.toStdString() << " to " << path9.toStdString() << endl;
+//        currentLoc = nextLoc;
+//        //call to check for occupied track sections ahead and delay
+//      }
+
+//      if(path10 != NULL){
+//        nextLoc = path10;
+//        checkSwitches(currentLoc, path10);
+//        cout << tmpstr.toStdString() << " Moved from " << currentLoc.toStdString() << " to " << path10.toStdString() << endl;
+//        currentLoc = nextLoc;
+//        //call to check for occupied track sections ahead and delay
+//      }
+
+//      if(path11 != NULL){
+//        nextLoc = path11;
+//        checkSwitches(currentLoc, path11);
+//        cout << tmpstr.toStdString() << " Moved from " << currentLoc.toStdString() << " to " << path11.toStdString() << endl;
+//        currentLoc = nextLoc;
+//        //call to check for occupied track sections ahead and delay
+//    }
 
       if(nextTab != NULL){
 
@@ -892,7 +919,7 @@ void MainWindow::tableOperation(std::list<vertex_t> path, int trainsel, int test
               path9 = q.value(9).toString();
               path10 = q.value(10).toString();
               path11 = q.value(11).toString();
-          }
+          //}
 
 
 
@@ -910,13 +937,12 @@ void MainWindow::tableOperation(std::list<vertex_t> path, int trainsel, int test
           }
 
     }
+      }
       else
-          itt2++;
+         itt2++;
 
 
 }
-}
-
 
 
 #endif // TABLEOPERATIONS_H
