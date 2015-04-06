@@ -6,8 +6,15 @@
 
 
 
-void MainWindow::tableOperation(std::list<vertex_t> path, int trainsel)
+void MainWindow::tableOperation(std::list<vertex_t> path, int trainsel, int testInt)
 {
+            
+            testInt++;
+    if(testInt >= 4)
+    {
+        cout<< "rerouting failed 4 times. Aborting." << endl;
+               return;
+    }
 
             // test code for reading the vector to a database
             int pathSize = path.size();
@@ -461,6 +468,10 @@ void MainWindow::tableOperation(std::list<vertex_t> path, int trainsel)
               {
                //cout << "possible collision detected at track segment " << check <<". Rerouting";
 
+               reroute(trainsel, check);
+               cout << " rerouted!" << endl;
+               tableOperation(backupPath, trainsel, testInt);
+               return;
                //insert code to reroute or slow down train here. I have the rerouting code partially working, but the throttle controls are currently unavailable, so am leaving this blank for now. The rerouting function is currently unconnected.
 
               }
