@@ -131,6 +131,7 @@ private slots:
     void Eng3Time();
     void Eng4Time();
     void Eng5Time();
+    void reroute(int tNum, int tVal);
     int compare2(std::vector<int>  a, std::vector<int>  b, int a1, int b1);
     int compare3(std::vector<int> a, std::vector<int>  b, std::vector<int>  c, int a1, int b1, int c1);
     int longPathroute(int start, int end);
