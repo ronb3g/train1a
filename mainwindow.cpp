@@ -29,6 +29,7 @@
 #include <timedelay.h>
 #include <fstream>
 #include <QSound>
+#include <reroute.h>
 
 
 
@@ -58,38 +59,54 @@ MainWindow::MainWindow(QWidget *parent) :
         i3 = 0; //Itterator for Comparison
         i4 = 0; //Itterator for Comparison
         i5 = 0; //Itterator for Comparison
-        comparisonArray = NULL;
-        comparisonArray2 = NULL;
-        comparisonArray3 = NULL;
-        comparisonArray4 = NULL;
-        comparisonArray5 = NULL;
+        //comparisonArray = NULL;
+        //comparisonArray2 = NULL;
+       // comparisonArray3 = NULL;
+        //comparisonArray4 = NULL;
+        //comparisonArray5 = NULL;
+        m_timer.start(250, this);
 
     ldb = QSqlDatabase::addDatabase("QSQLITE", "ldb");
     ldb.setDatabaseName( "train.db" );
     if(!ldb.open())
-       {
-        qDebug() << "Error: Unable to connect due to above error";
-        qDebug() << ldb.lastError();
-        }
-
-    //createDBtables();
+       { qDebug() << ldb.lastError();}
 
     ui->setupUi(this);
 
+
     //Start and Start button graphics
-    startIcon = new QIcon(":/startbutton/startbutton.png");
-    stopIcon = new QIcon(":/startbutton/stop.jpg");
+    startIcon = new QIcon("startbutton.png");
+    stopIcon = new QIcon("stop.jpg");
     ui->startButton->setIcon(*startIcon);
     ui->startButton->setIconSize(QSize(65,65));
     ui->stopButton->setIcon(*stopIcon);
     ui->stopButton->setIconSize(QSize(35,35));
 
+    /*
+    mapIcon = new QIcon("MasterTracknumbered1.jpg");
+    //ui->graphicsView->setScene(scene);
+    QGraphicsView* w = new QGraphicsView();
+    QGraphicsScene *scn = new QGraphicsScene( w );
+     scn->setSceneRect( w->rect() );
+     w->setScene( scn );
+     w->scale(.1, .1);
+     //w->setAlignment(Qt::AlignCenter);
+     //w->setDragMode(QGraphicsView::ScrollHandDrag);
+     w->viewport();
+     //w->addScrollBarWidget(w, Qt::AlignCenter);
+     //w->setFixedSize( 400, 400 );
+    QPixmap pix( "MasterTracknumbered1.jpg" );
+    scn->addPixmap(pix);
+    w->show();
+*/
+
+
     //create train image icons
-    engine1Icon = new QIcon(":/startbutton/engine1.jpg");
-    engine2Icon = new QIcon(":/startbutton/engine2.jpg");
-    engine3Icon = new QIcon(":/startbutton/engine3.jpg");
-    engine4Icon = new QIcon(":/startbutton/engine4.jpg");
-    engine5Icon = new QIcon(":/startbutton/engine5.jpg");
+    engine1Icon = new QIcon("engine1.jpg");
+    engine2Icon = new QIcon("engine2.jpg");
+    engine3Icon = new QIcon("engine3.jpg");
+    engine4Icon = new QIcon("engine4.jpg");
+    engine5Icon = new QIcon("engine5.jpg");
 
     //train image and route info hidden until selected
     ui->trainimageButton1->hide();
@@ -125,7 +142,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //randomly selected destination for testing route algorithm
     connect(ui->destButton, SIGNAL(clicked()), this, SLOT(destNode()));
 
-    connect(ui->queryButton, SIGNAL(clicked()), this, SLOT(createDBtables()));
+    connect(ui->queryButton, SIGNAL(clicked()), this, SLOT(viewTable()));
 
     //Clock feature added to enable delayed train departures
     QTimer *timer = new QTimer(this);
@@ -321,7 +338,7 @@ void MainWindow::calculateRoute()
 {
 
     ui->startButton->setDisabled(true); //disabled start button to avoid throwing timer off
-    QSound::play(":/startbutton/train-depart-with-whistle-01.wav");
+    QSound::play("train-depart-with-whistle-01.wav");
 
     if(ui->setButton1->isChecked() == true)
         greyOut1();
@@ -384,35 +401,35 @@ void MainWindow::setgreyOut1()
 {
     ui->setButton1->click();
     greyOut1();
-    QSound::play(":/startbutton/american_train.wav");
+    QSound::play("american_train.wav");
 }
 
 void MainWindow::setgreyOut2()
 {
     ui->setButton2->click();
     greyOut2();
-    QSound::play(":/startbutton/american_train_whistle_blow.wav");
+    QSound::play("american_train_whistle_blow.wav");
 }
 
 void MainWindow::setgreyOut3()
 {
     ui->setButton3->click();
     greyOut3();
-    QSound::play(":/startbutton/amtrak_passenger_train_whistle_blow_exterior_long.wav");
+    QSound::play("amtrak_passenger_train_whistle_blow_exterior_long.wav");
 }
 
 void MainWindow::setgreyOut4()
 {
     ui->setButton4->click();
     greyOut4();
-    QSound::play(":/startbutton/vintage_steam_train_double_whistle.wav");
+    QSound::play("vintage_steam_train_double_whistle.wav");
 }
 
 void MainWindow::setgreyOut5()
 {
     ui->setButton5->click();
     greyOut5();
-    QSound::play(":/startbutton/vintage_steam_train_single_whistle.wav");
+    QSound::play("vintage_steam_train_single_whistle.wav");
 }
 //lock in and calculate route for line 1
 void MainWindow::greyOut1()
@@ -503,6 +520,7 @@ void MainWindow::greyOut1()
         ui->setButton1->setDisabled(true);
         ui->trainimageButton1->show();
         ui->routeInfo1->show();
+
 
 
         int shortorLong =  longPathroute(start, end);
@@ -691,7 +709,7 @@ void MainWindow::greyOut1()
                         std::cout << "Distance from " << ui->originBox1->currentText().toStdString() << " to " << ui->destBox1->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
                         std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
                         std::cout << ui->trainselectBox1->currentText().toStdString() <<" Path : ";
-                        tableOperation(path, 1);
+                        tableOperation(path, 1, 0);
 
                         //std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
                         std::cout << std::endl;
@@ -886,7 +904,7 @@ void MainWindow::greyOut1()
                         std::cout << "Distance from " << ui->originBox1->currentText().toStdString() << " to " << ui->destBox1->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
                         std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
                         std::cout << ui->trainselectBox1->currentText().toStdString() <<" Path : ";
-                        tableOperation(path, 1);
+                        tableOperation(path, 1, 0);
 
                         //std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
                         std::cout << std::endl;
@@ -1085,7 +1103,7 @@ void MainWindow::greyOut1()
                                 std::cout << "Distance from " << ui->originBox1->currentText().toStdString() << " to " << ui->destBox1->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
                                 std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
                                 std::cout << ui->trainselectBox1->currentText().toStdString() <<" Path : ";
-                                tableOperation(path, 1);
+                                tableOperation(path, 1, 0);
 
                                 //std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
                                 std::cout << std::endl;
@@ -1114,7 +1132,7 @@ void MainWindow::greyOut1()
 void MainWindow::greyOut2()
 {
     new Q_DebugStream(std::cout, ui->routeInfo2); //Redirect Console output to textBrowser2
-    Q_DebugStream::registerQDebugMessageHandler(); //Redirect qDebug() output to textBrowser2
+    //Q_DebugStream::registerQDebugMessageHandler(); //Redirect qDebug() output to textBrowser2
 
     //Determine which image to display
     if(ui->trainselectBox2->currentIndex() == 1)
@@ -1190,6 +1208,7 @@ void MainWindow::greyOut2()
         ui->setButton2->setDisabled(true);
         ui->trainimageButton2->show();
         ui->routeInfo2->show();
+
 
         int shortorLong =  longPathroute(start, end);
 
@@ -1377,7 +1396,7 @@ void MainWindow::greyOut2()
                         std::cout << "Distance from " << ui->originBox2->currentText().toStdString() << " to " << ui->destBox2->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
                         std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
                         std::cout << ui->trainselectBox2->currentText().toStdString() <<" Path : ";
-                        tableOperation(path, 2);
+                        tableOperation(path, 2, 0);
 
                         //std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
                         std::cout << std::endl;
@@ -1572,7 +1591,7 @@ void MainWindow::greyOut2()
                         std::cout << "Distance from " << ui->originBox2->currentText().toStdString() << " to " << ui->destBox2->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
                         std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
                         std::cout << ui->trainselectBox2->currentText().toStdString() <<" Path : ";
-                        tableOperation(path, 2);
+                        tableOperation(path, 2, 0);
 
                         //std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
                         std::cout << std::endl;
@@ -1771,7 +1790,7 @@ void MainWindow::greyOut2()
                                 std::cout << "Distance from " << ui->originBox2->currentText().toStdString() << " to " << ui->destBox2->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
                                 std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
                                 std::cout << ui->trainselectBox2->currentText().toStdString() <<" Path : ";
-                                tableOperation(path, 2);
+                                tableOperation(path, 2, 0);
 
                                 //std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
                                 std::cout << std::endl;
@@ -1800,7 +1819,7 @@ void MainWindow::greyOut2()
 void MainWindow::greyOut3()
 {
     new Q_DebugStream(std::cout, ui->routeInfo3); //Redirect Console output to textBrowser2
-    Q_DebugStream::registerQDebugMessageHandler(); //Redirect qDebug() output to textBrowser2
+    //Q_DebugStream::registerQDebugMessageHandler(); //Redirect qDebug() output to textBrowser2
 
     //Determine which image to display
     if(ui->trainselectBox3->currentIndex() == 1)
@@ -1876,6 +1895,7 @@ void MainWindow::greyOut3()
         ui->setButton3->setDisabled(true);
         ui->trainimageButton3->show();
         ui->routeInfo3->show();
+
 
         int shortorLong =  longPathroute(start, end);
 
@@ -2063,7 +2083,7 @@ void MainWindow::greyOut3()
                         std::cout << "Distance from " << ui->originBox3->currentText().toStdString() << " to " << ui->destBox3->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
                         std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
                         std::cout << ui->trainselectBox3->currentText().toStdString() <<" Path : ";
-                        tableOperation(path, 3);
+                        tableOperation(path, 3, 0);
 
                         //std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
                         std::cout << std::endl;
@@ -2258,7 +2278,7 @@ void MainWindow::greyOut3()
                         std::cout << "Distance from " << ui->originBox3->currentText().toStdString() << " to " << ui->destBox3->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
                         std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
                         std::cout << ui->trainselectBox3->currentText().toStdString() <<" Path : ";
-                        tableOperation(path, 3);
+                        tableOperation(path, 3, 0);
 
                         //std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
                         std::cout << std::endl;
@@ -2457,7 +2477,7 @@ void MainWindow::greyOut3()
                                 std::cout << "Distance from " << ui->originBox3->currentText().toStdString() << " to " << ui->destBox3->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
                                 std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
                                 std::cout << ui->trainselectBox3->currentText().toStdString() <<" Path : ";
-                                tableOperation(path, 3);
+                                tableOperation(path, 3, 0);
 
                                 //std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
                                 std::cout << std::endl;
@@ -2486,7 +2506,7 @@ void MainWindow::greyOut3()
 void MainWindow::greyOut4()
 {
     new Q_DebugStream(std::cout, ui->routeInfo4); //Redirect Console output to textBrowser2
-    Q_DebugStream::registerQDebugMessageHandler(); //Redirect qDebug() output to textBrowser2
+   // Q_DebugStream::registerQDebugMessageHandler(); //Redirect qDebug() output to textBrowser2
 
     //Determine which image to display
     if(ui->trainselectBox4->currentIndex() == 1)
@@ -2562,7 +2582,6 @@ void MainWindow::greyOut4()
         ui->setButton4->setDisabled(true);
         ui->trainimageButton4->show();
         ui->routeInfo4->show();
-
         int shortorLong =  longPathroute(start, end);
 
                 if (shortorLong == 0)
@@ -2749,7 +2768,7 @@ void MainWindow::greyOut4()
                         std::cout << "Distance from " << ui->originBox4->currentText().toStdString() << " to " << ui->destBox4->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
                         std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
                         std::cout << ui->trainselectBox4->currentText().toStdString() <<" Path : ";
-                        tableOperation(path, 4);
+                        tableOperation(path, 1, 0);
 
                         //std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
                         std::cout << std::endl;
@@ -2944,7 +2963,7 @@ void MainWindow::greyOut4()
                         std::cout << "Distance from " << ui->originBox4->currentText().toStdString() << " to " << ui->destBox4->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
                         std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
                         std::cout << ui->trainselectBox4->currentText().toStdString() <<" Path : ";
-                        tableOperation(path, 4);
+                        tableOperation(path, 1, 0);
 
                         //std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
                         std::cout << std::endl;
@@ -3143,7 +3162,7 @@ void MainWindow::greyOut4()
                                 std::cout << "Distance from " << ui->originBox4->currentText().toStdString() << " to " << ui->destBox4->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
                                 std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
                                 std::cout << ui->trainselectBox4->currentText().toStdString() <<" Path : ";
-                                tableOperation(path, 4);
+                                tableOperation(path, 1, 0);
 
                                 //std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
                                 std::cout << std::endl;
@@ -3248,6 +3267,7 @@ void MainWindow::greyOut5()
         ui->setButton5->setDisabled(true);
         ui->trainimageButton5->show();
         ui->routeInfo5->show();
+
 
         int shortorLong =  longPathroute(start, end);
 
@@ -3435,7 +3455,7 @@ void MainWindow::greyOut5()
                         std::cout << "Distance from " << ui->originBox5->currentText().toStdString() << " to " << ui->destBox5->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
                         std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
                         std::cout << ui->trainselectBox5->currentText().toStdString() <<" Path : ";
-                        tableOperation(path, 5);
+                        tableOperation(path, 1, 0);
 
                         //std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
                         std::cout << std::endl;
@@ -3630,7 +3650,7 @@ void MainWindow::greyOut5()
                         std::cout << "Distance from " << ui->originBox5->currentText().toStdString() << " to " << ui->destBox5->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
                         std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
                         std::cout << ui->trainselectBox5->currentText().toStdString() <<" Path : ";
-                        tableOperation(path, 5);
+                        tableOperation(path, 1, 0);
 
                         //std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
                         std::cout << std::endl;
@@ -3829,7 +3849,7 @@ void MainWindow::greyOut5()
                                 std::cout << "Distance from " << ui->originBox5->currentText().toStdString() << " to " << ui->destBox5->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
                                 std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
                                 std::cout << ui->trainselectBox5->currentText().toStdString() <<" Path : ";
-                                tableOperation(path, 5);
+                                tableOperation(path, 1, 0);
 
                                 //std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
                                 std::cout << std::endl;
@@ -3854,3 +3874,108 @@ void MainWindow::greyOut5()
     }
 }
 
+void MainWindow::timerEvent(QTimerEvent * ev)
+{
+
+    {
+        if(ev->timerId() != m_timer.timerId())
+        {
+            QMainWindow::timerEvent(ev);
+            return;
+        }
+
+        if(comparisonArray.size() != 0)
+        {
+            new Q_DebugStream(std::cout, ui->routeInfo1); //Redirect Console output to textBrowser2
+            if(comparisonArray[0] == comparisonArray[1])
+            {
+                cout << tmpstr.toStdString()<< " still at track segment " << oursTotheirs(comparisonArray[0]).toStdString() << endl;
+            }
+            else
+            {
+                QString str = oursTotheirs(comparisonArray[0]);
+                QString str2 = oursTotheirs(comparisonArray[1]);
+                checkSwitches(str, str2);
+                cout << tmpstr.toStdString() << " moved to track segment " << oursTotheirs(comparisonArray[1]).toStdString() << endl;
+            }
+            comparisonArray.erase(comparisonArray.begin());
+            qApp->processEvents();
+
+        }
+        if(comparisonArray2.size() != 0)
+        {
+            new Q_DebugStream(std::cout, ui->routeInfo2);
+            if(comparisonArray2[0] == comparisonArray2[1])
+            {
+                cout << tmpstr.toStdString()<< " still at track segment " << oursTotheirs(comparisonArray2[0]).toStdString() << endl;
+            }
+            else
+            {
+                QString str = oursTotheirs(comparisonArray2[0]);
+                QString str2 = oursTotheirs(comparisonArray2[1]);
+                checkSwitches(str, str2);
+                cout << tmpstr.toStdString() << " moved to track segment " << oursTotheirs(comparisonArray2[1]).toStdString() << endl;
+            }
+            comparisonArray2.erase(comparisonArray2.begin());
+            qApp->processEvents();
+        }
+        if(comparisonArray3.size() != 0)
+        {
+            new Q_DebugStream(std::cout, ui->routeInfo3);
+            if(comparisonArray3[0] == comparisonArray3[1])
+            {
+                cout << tmpstr.toStdString()<< " still at track segment " << oursTotheirs(comparisonArray3[0]).toStdString() << endl;
+            }
+            else
+            {
+                QString str = oursTotheirs(comparisonArray3[0]);
+                QString str2 = oursTotheirs(comparisonArray3[1]);
+                checkSwitches(str, str2);
+                cout << tmpstr.toStdString() << " moved to track segment " << oursTotheirs(comparisonArray3[1]).toStdString() << endl;
+            }
+            comparisonArray3.erase(comparisonArray3.begin());
+            qApp->processEvents();
+        }
+        if(comparisonArray4.size() != 0)
+        {
+            new Q_DebugStream(std::cout, ui->routeInfo4);
+            if(comparisonArray4[0] == comparisonArray4[1])
+            {
+                cout << tmpstr.toStdString()<< " still at track segment " << oursTotheirs(comparisonArray4[0]).toStdString() << endl;
+            }
+            else
+            {
+                QString str = oursTotheirs(comparisonArray4[0]);
+                QString str2 = oursTotheirs(comparisonArray4[1]);
+                checkSwitches(str, str2);
+                cout << tmpstr.toStdString() << " moved to track segment " << oursTotheirs(comparisonArray4[1]).toStdString() << endl;
+            }
+            comparisonArray4.erase(comparisonArray4.begin());
+            qApp->processEvents();
+        }
+        if(comparisonArray5.size() != 0)
+        {
+            new Q_DebugStream(std::cout, ui->routeInfo5);
+            if(comparisonArray5[0] == comparisonArray5[1])
+            {
+                cout << tmpstr.toStdString()<< " still at track segment " << oursTotheirs(comparisonArray5[0]).toStdString() << endl;
+            }
+            else
+            {
+                QString str = oursTotheirs(comparisonArray5[0]);
+                QString str2 = oursTotheirs(comparisonArray5[1]);
+                checkSwitches(str, str2);
+                cout << tmpstr.toStdString() << " moved to track segment " << oursTotheirs(comparisonArray5[1]).toStdString() << endl;
+            }
+            comparisonArray5.erase(comparisonArray5.begin());
+            qApp->processEvents();
+        }
+
+
+
+
+
+    }
+
+
+}
