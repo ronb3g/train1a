@@ -3,18 +3,23 @@
 #include <mainwindow.h>
 #include <checkPaths.h>
 #include <unistd.h>
+#include <QString>
+#include <ui_mainwindow.h>
+
+
 
 
 
 void MainWindow::tableOperation(std::list<vertex_t> path, int trainsel, int testInt)
 {
-            
-            testInt++;
+testInt++;
     if(testInt >= 4)
     {
         cout<< "rerouting failed 4 times. Aborting." << endl;
                return;
     }
+
+    int flag = 0;
 
             // test code for reading the vector to a database
             int pathSize = path.size();
@@ -31,7 +36,7 @@ void MainWindow::tableOperation(std::list<vertex_t> path, int trainsel, int test
             }
             for (int i=0; i<pathSize; i++)
             {
-                cout << to_string(copyarray[i]) << " ";
+                cout << oursTotheirs(copyarray[i]).toStdString() << " ";
             }
             cout << endl;
 
@@ -45,6 +50,7 @@ void MainWindow::tableOperation(std::list<vertex_t> path, int trainsel, int test
             {
             if(ui->trainselectBox1->currentText() == "Engine 1")
             {
+             flag = 1;
              Eng1 = new int[pathSize];
              E1S = pathSize;
 
@@ -58,9 +64,11 @@ void MainWindow::tableOperation(std::list<vertex_t> path, int trainsel, int test
              {
                  Eng1[i] = copyarray[i];
              }
+             Eng1Start = Eng1[0];
             }
             else if(ui->trainselectBox1->currentText() == "Engine 2")
             {
+                flag = 2;
                 Eng2 = new int[pathSize];
                 E2S = pathSize;
 
@@ -74,9 +82,11 @@ void MainWindow::tableOperation(std::list<vertex_t> path, int trainsel, int test
                 {
                     Eng2[i] = copyarray[i];
                 }
+                Eng2Start = Eng2[0];
             }
             else if(ui->trainselectBox1->currentText() == "Engine 3")
             {
+                flag = 3;
                 Eng3 = new int[pathSize];
                 E3S = pathSize;
 
@@ -90,9 +100,11 @@ void MainWindow::tableOperation(std::list<vertex_t> path, int trainsel, int test
                 {
                     Eng3[i] = copyarray[i];
                 }
+                Eng3Start = Eng3[0];
             }
             else if(ui->trainselectBox1->currentText() == "Engine 4")
             {
+                flag = 4;
                 Eng4 = new int[pathSize];
                 E4S = pathSize;
 
@@ -106,9 +118,11 @@ void MainWindow::tableOperation(std::list<vertex_t> path, int trainsel, int test
                 {
                     Eng4[i] = copyarray[i];
                 }
+                Eng4Start = Eng4[0];
             }
             else if(ui->trainselectBox1->currentText() == "Engine 5")
             {
+                flag = 5;
                 Eng5 = new int[pathSize];
                 E5S = pathSize;
 
@@ -122,6 +136,7 @@ void MainWindow::tableOperation(std::list<vertex_t> path, int trainsel, int test
                 {
                     Eng5[i] = copyarray[i];
                 }
+                Eng5Start = Eng5[0];
             }
             }
 
@@ -129,6 +144,7 @@ void MainWindow::tableOperation(std::list<vertex_t> path, int trainsel, int test
             {
             if(ui->trainselectBox2->currentText() == "Engine 1")
             {
+                flag = 1;
              Eng1 = new int[pathSize];
              E1S = pathSize;
 
@@ -142,12 +158,13 @@ void MainWindow::tableOperation(std::list<vertex_t> path, int trainsel, int test
              {
                  Eng1[i] = copyarray[i];
              }
+             Eng1Start = Eng1[0];
             }
             else if(ui->trainselectBox2->currentText() == "Engine 2")
             {
+                flag = 2;
                 Eng2 = new int[pathSize];
                 E2S = pathSize;
-
                 for(int i=0; i<pathSize; i++)
                 {
                     ArSz = ArSz + trackLength(copyarray[i]);
@@ -158,9 +175,11 @@ void MainWindow::tableOperation(std::list<vertex_t> path, int trainsel, int test
                 {
                     Eng2[i] = copyarray[i];
                 }
+                Eng2Start = Eng2[0];
             }
             else if(ui->trainselectBox2->currentText() == "Engine 3")
             {
+                flag = 3;
                 Eng3 = new int[pathSize];
                 E3S = pathSize;
 
@@ -174,9 +193,11 @@ void MainWindow::tableOperation(std::list<vertex_t> path, int trainsel, int test
                 {
                     Eng3[i] = copyarray[i];
                 }
+                Eng3Start = Eng3[0];
             }
             else if(ui->trainselectBox2->currentText() == "Engine 4")
             {
+                flag = 4;
                 Eng4 = new int[pathSize];
                 E4S = pathSize;
 
@@ -190,9 +211,11 @@ void MainWindow::tableOperation(std::list<vertex_t> path, int trainsel, int test
                 {
                     Eng4[i] = copyarray[i];
                 }
+                Eng4Start = Eng4[0];
             }
             else if(ui->trainselectBox2->currentText() == "Engine 5")
             {
+                flag = 5;
                 Eng5 = new int[pathSize];
                 E5S = pathSize;
 
@@ -206,12 +229,14 @@ void MainWindow::tableOperation(std::list<vertex_t> path, int trainsel, int test
                 {
                     Eng5[i] = copyarray[i];
                 }
+                Eng5Start = Eng5[0];
             }
             }
             else if(trainsel == 3)
             {
             if(ui->trainselectBox3->currentText() == "Engine 1")
             {
+                flag = 1;
              Eng1 = new int[pathSize];
              E1S = pathSize;
 
@@ -225,9 +250,11 @@ void MainWindow::tableOperation(std::list<vertex_t> path, int trainsel, int test
              {
                  Eng1[i] = copyarray[i];
              }
+             Eng1Start = Eng1[0];
             }
             else if(ui->trainselectBox3->currentText() == "Engine 2")
             {
+                flag = 2;
                 Eng2 = new int[pathSize];
                 E2S = pathSize;
 
@@ -241,9 +268,11 @@ void MainWindow::tableOperation(std::list<vertex_t> path, int trainsel, int test
                 {
                     Eng2[i] = copyarray[i];
                 }
+                Eng2Start = Eng2[0];
             }
             else if(ui->trainselectBox3->currentText() == "Engine 3")
             {
+                flag = 3;
                 Eng3 = new int[pathSize];
                 E3S = pathSize;
 
@@ -257,9 +286,11 @@ void MainWindow::tableOperation(std::list<vertex_t> path, int trainsel, int test
                 {
                     Eng3[i] = copyarray[i];
                 }
+                Eng3Start = Eng3[0];
             }
             else if(ui->trainselectBox3->currentText() == "Engine 4")
             {
+                flag = 4;
                 Eng4 = new int[pathSize];
                 E4S = pathSize;
 
@@ -273,9 +304,11 @@ void MainWindow::tableOperation(std::list<vertex_t> path, int trainsel, int test
                 {
                     Eng4[i] = copyarray[i];
                 }
+                Eng4Start = Eng4[0];
             }
             else if(ui->trainselectBox3->currentText() == "Engine 5")
             {
+                flag = 5;
                 Eng5 = new int[pathSize];
                 E5S = pathSize;
 
@@ -289,12 +322,14 @@ void MainWindow::tableOperation(std::list<vertex_t> path, int trainsel, int test
                 {
                     Eng5[i] = copyarray[i];
                 }
+                Eng5Start = Eng5[0];
             }
             }
             else if(trainsel == 4)
             {
             if(ui->trainselectBox4->currentText() == "Engine 1")
             {
+                flag = 1;
              Eng1 = new int[pathSize];
              E1S = pathSize;
 
@@ -308,9 +343,11 @@ void MainWindow::tableOperation(std::list<vertex_t> path, int trainsel, int test
              {
                  Eng1[i] = copyarray[i];
              }
+             Eng1Start = Eng1[0];
             }
             else if(ui->trainselectBox4->currentText() == "Engine 2")
             {
+                flag = 2;
                 Eng2 = new int[pathSize];
                 E2S = pathSize;
 
@@ -324,9 +361,11 @@ void MainWindow::tableOperation(std::list<vertex_t> path, int trainsel, int test
                 {
                     Eng2[i] = copyarray[i];
                 }
+                Eng2Start = Eng2[0];
             }
             else if(ui->trainselectBox4->currentText() == "Engine 3")
             {
+                flag = 3;
                 Eng3 = new int[pathSize];
                 E3S = pathSize;
 
@@ -340,9 +379,11 @@ void MainWindow::tableOperation(std::list<vertex_t> path, int trainsel, int test
                 {
                     Eng3[i] = copyarray[i];
                 }
+                Eng3Start = Eng3[0];
             }
             else if(ui->trainselectBox4->currentText() == "Engine 4")
             {
+                flag = 4;
                 Eng4 = new int[pathSize];
                 E4S = pathSize;
 
@@ -356,9 +397,11 @@ void MainWindow::tableOperation(std::list<vertex_t> path, int trainsel, int test
                 {
                     Eng4[i] = copyarray[i];
                 }
+                Eng4Start = Eng4[0];
             }
             else if(ui->trainselectBox4->currentText() == "Engine 5")
             {
+                flag = 5;
                 Eng5 = new int[pathSize];
                 E5S = pathSize;
 
@@ -372,12 +415,13 @@ void MainWindow::tableOperation(std::list<vertex_t> path, int trainsel, int test
                 {
                     Eng5[i] = copyarray[i];
                 }
+                Eng5Start = Eng5[0];
             }
             }
             else if(trainsel == 5)
             {
             if(ui->trainselectBox5->currentText() == "Engine 1")
-            {
+            { flag = 1;
              Eng1 = new int[pathSize];
              E1S = pathSize;
 
@@ -391,9 +435,11 @@ void MainWindow::tableOperation(std::list<vertex_t> path, int trainsel, int test
              {
                  Eng1[i] = copyarray[i];
              }
+             Eng1Start = Eng1[0];
             }
             else if(ui->trainselectBox5->currentText() == "Engine 2")
             {
+                flag = 2;
                 Eng2 = new int[pathSize];
                 E2S = pathSize;
 
@@ -407,9 +453,11 @@ void MainWindow::tableOperation(std::list<vertex_t> path, int trainsel, int test
                 {
                     Eng2[i] = copyarray[i];
                 }
+                Eng2Start = Eng2[0];
             }
             else if(ui->trainselectBox5->currentText() == "Engine 3")
             {
+                flag = 3;
                 Eng3 = new int[pathSize];
                 E3S = pathSize;
 
@@ -423,9 +471,11 @@ void MainWindow::tableOperation(std::list<vertex_t> path, int trainsel, int test
                 {
                     Eng3[i] = copyarray[i];
                 }
+                Eng3Start = Eng3[0];
             }
             else if(ui->trainselectBox5->currentText() == "Engine 4")
             {
+                flag = 4;
                 Eng4 = new int[pathSize];
                 E4S = pathSize;
 
@@ -439,9 +489,11 @@ void MainWindow::tableOperation(std::list<vertex_t> path, int trainsel, int test
                 {
                     Eng4[i] = copyarray[i];
                 }
+                Eng4Start = Eng4[0];
             }
             else if(ui->trainselectBox5->currentText() == "Engine 5")
             {
+                flag = 5;
                 Eng5 = new int[pathSize];
                 E5S = pathSize;
 
@@ -455,23 +507,23 @@ void MainWindow::tableOperation(std::list<vertex_t> path, int trainsel, int test
                 {
                     Eng5[i] = copyarray[i];
                 }
+                Eng5Start = Eng5[0];
             }
             }
             //check for possible collisions before writing to table
-
-           int check = checkPaths(trainsel);
-
+           int check = 0;
+           check = checkPaths(trainsel);
 
            if(check == -1)
                cout << "no issues detected. Finalizing path" << endl;
            else
               {
-               //cout << "possible collision detected at track segment " << check <<". Rerouting";
 
                reroute(trainsel, check);
                cout << " rerouted!" << endl;
                tableOperation(backupPath, trainsel, testInt);
                return;
+
                //insert code to reroute or slow down train here. I have the rerouting code partially working, but the throttle controls are currently unavailable, so am leaving this blank for now. The rerouting function is currently unconnected.
 
               }
@@ -583,7 +635,7 @@ void MainWindow::tableOperation(std::list<vertex_t> path, int trainsel, int test
     //=======
         q.bindValue(3, numRows2);
 
-        QString tmpstr;
+        //QString tmpstr;
         if( trainsel == 1)
         {tmpstr = ui->trainselectBox1->currentText();}
         else if( trainsel == 2)
@@ -672,124 +724,124 @@ void MainWindow::tableOperation(std::list<vertex_t> path, int trainsel, int test
     //Demo output code: Disable the section below to use.
     if(flag == 1)
     {
-        ui->routeInfo1->show();
+        //ui->routeInfo1->show();
         cout << tmpstr.toStdString() << " starting at location " << oursTotheirs(comparisonArray[0]).toStdString() << endl;
-        usleep(50000);
-        for(;comparisonArray.size() > 0;comparisonArray.erase(comparisonArray.begin()))
-        {
-            if(comparisonArray[0] == comparisonArray[1])
-            {
-                cout << tmpstr.toStdString()<< " still at track segment " << oursTotheirs(comparisonArray[0]).toStdString() << endl;
-            }
-            else
-            {
-                QString str = oursTotheirs(comparisonArray[0]);
-                QString str2 = oursTotheirs(comparisonArray[1]);
-                checkSwitches(str, str2);
-                cout << tmpstr.toStdString() << " moved to track segment " << oursTotheirs(comparisonArray[1]).toStdString() << endl;
-            }
-            qApp->processEvents();
-            usleep(50000);
-        }
+//        //usleep(50000);
+//        for(;comparisonArray.size() > 0;comparisonArray.erase(comparisonArray.begin()))
+//        {
+//            if(comparisonArray[0] == comparisonArray[1])
+//            {
+//                cout << tmpstr.toStdString()<< " still at track segment " << oursTotheirs(comparisonArray[0]).toStdString() << endl;
+//            }
+//            else
+//            {
+//                QString str = oursTotheirs(comparisonArray[0]);
+//                QString str2 = oursTotheirs(comparisonArray[1]);
+//                checkSwitches(str, str2);
+//                cout << tmpstr.toStdString() << " moved to track segment " << oursTotheirs(comparisonArray[1]).toStdString() << endl;
+//            }
+//            qApp->processEvents();
+//            //usleep(50000);
+//        }
 
 
     }
     else if (flag == 2)
     {
 
-        ui->routeInfo2->show();
+        //ui->routeInfo2->show();
         cout << tmpstr.toStdString()<< " starting at location " << oursTotheirs(comparisonArray2[0]).toStdString() << endl;
-        usleep(50000);
-        for(;comparisonArray2.size() > 0;comparisonArray2.erase(comparisonArray2.begin()))
-        {
-            if(comparisonArray2[0] == comparisonArray2[1])
-            {
-                cout << tmpstr.toStdString()<< " still at track segment " << oursTotheirs(comparisonArray2[0]).toStdString() << endl;
-            }
-            else
-            {
-                QString str = oursTotheirs(comparisonArray2[0]);
-                QString str2 = oursTotheirs(comparisonArray2[1]);
-                checkSwitches(str, str2);
-                cout << tmpstr.toStdString()<< " moved to track segment " << oursTotheirs(comparisonArray2[1]).toStdString() << endl;
-            }
-            qApp->processEvents();
-            usleep(50000);
-        }
+//        usleep(50000);
+//        for(;comparisonArray2.size() > 0;comparisonArray2.erase(comparisonArray2.begin()))
+//        {
+//            if(comparisonArray2[0] == comparisonArray2[1])
+//            {
+//                cout << tmpstr.toStdString()<< " still at track segment " << oursTotheirs(comparisonArray2[0]).toStdString() << endl;
+//            }
+//            else
+//            {
+//                QString str = oursTotheirs(comparisonArray2[0]);
+//                QString str2 = oursTotheirs(comparisonArray2[1]);
+//                checkSwitches(str, str2);
+//                cout << tmpstr.toStdString()<< " moved to track segment " << oursTotheirs(comparisonArray2[1]).toStdString() << endl;
+//            }
+//            qApp->processEvents();
+//            usleep(50000);
+//        }
 
     }
     else if (flag == 3)
     {
 
-        ui->routeInfo3->show();
+       // ui->routeInfo3->show();
         cout << tmpstr.toStdString()<< " starting at location " << oursTotheirs(comparisonArray3[0]).toStdString() << endl;
-        usleep(50000);
-        for(;comparisonArray3.size() > 0;comparisonArray3.erase(comparisonArray3.begin()))
-        {
-            if(comparisonArray3[0] == comparisonArray3[1])
-            {
-                cout << tmpstr.toStdString()<< " still at track segment " << oursTotheirs(comparisonArray3[0]).toStdString() << endl;
-            }
-            else
-            {
-                QString str = oursTotheirs(comparisonArray3[0]);
-                QString str2 = oursTotheirs(comparisonArray3[1]);
-                checkSwitches(str, str2);
-                cout << tmpstr.toStdString()<< " moved to track segment " << oursTotheirs(comparisonArray3[1]).toStdString() << endl;
-            }
-            qApp->processEvents();
-            usleep(50000);
-        }
+//        usleep(50000);
+//        for(;comparisonArray3.size() > 0;comparisonArray3.erase(comparisonArray3.begin()))
+//        {
+//            if(comparisonArray3[0] == comparisonArray3[1])
+//            {
+//                cout << tmpstr.toStdString()<< " still at track segment " << oursTotheirs(comparisonArray3[0]).toStdString() << endl;
+//            }
+//            else
+//            {
+//                QString str = oursTotheirs(comparisonArray3[0]);
+//                QString str2 = oursTotheirs(comparisonArray3[1]);
+//                checkSwitches(str, str2);
+//                cout << tmpstr.toStdString()<< " moved to track segment " << oursTotheirs(comparisonArray3[1]).toStdString() << endl;
+//            }
+//            qApp->processEvents();
+//            usleep(50000);
+       // }
 
     }
     else if (flag == 4)
     {
 
-        ui->routeInfo4->show();
+        //ui->routeInfo4->show();
         cout << tmpstr.toStdString()<< " starting at location " << oursTotheirs(comparisonArray4[0]).toStdString() << endl;
-        usleep(50000);
-        for(;comparisonArray4.size() > 0;comparisonArray4.erase(comparisonArray4.begin()))
-        {
-            if(comparisonArray4[0] == comparisonArray4[1])
-            {
-                cout << tmpstr.toStdString()<< " still at track segment " << oursTotheirs(comparisonArray4[0]).toStdString() << endl;
-            }
-            else
-            {
-                QString str = oursTotheirs(comparisonArray4[0]);
-                QString str2 = oursTotheirs(comparisonArray4[1]);
-                checkSwitches(str, str2);
-                cout << tmpstr.toStdString()<< " moved to track segment " << oursTotheirs(comparisonArray4[1]).toStdString() << endl;
-            }
-            qApp->processEvents();
-            usleep(50000);
-        }
+//        usleep(50000);
+//        for(;comparisonArray4.size() > 0;comparisonArray4.erase(comparisonArray4.begin()))
+//        {
+//            if(comparisonArray4[0] == comparisonArray4[1])
+//            {
+//                cout << tmpstr.toStdString()<< " still at track segment " << oursTotheirs(comparisonArray4[0]).toStdString() << endl;
+//            }
+//            else
+//            {
+//                QString str = oursTotheirs(comparisonArray4[0]);
+//                QString str2 = oursTotheirs(comparisonArray4[1]);
+//                checkSwitches(str, str2);
+//                cout << tmpstr.toStdString()<< " moved to track segment " << oursTotheirs(comparisonArray4[1]).toStdString() << endl;
+//            }
+//            qApp->processEvents();
+//            usleep(50000);
+       // }
 
     }
     else if (flag == 5)
     {
 
-        ui->routeInfo5->show();
+        //ui->routeInfo5->show();
         cout << tmpstr.toStdString()<< " starting at location " << oursTotheirs(comparisonArray5[0]).toStdString() << endl;
-        usleep(50000);
-        for(;comparisonArray5.size() > 0;comparisonArray5.erase(comparisonArray5.begin()))
-        {
-            if(comparisonArray5[0] == comparisonArray5[1])
-            {
-                cout << tmpstr.toStdString()<< " still at track segment " << oursTotheirs(comparisonArray5[0]).toStdString() << endl;
-            }
-            else
-            {
-                QString str = oursTotheirs(comparisonArray5[0]);
-                QString str2 = oursTotheirs(comparisonArray5[1]);
-                checkSwitches(str, str2);
-                cout << tmpstr.toStdString()<< " moved to track segment " << oursTotheirs(comparisonArray5[1]).toStdString() << endl;
-            }
-            qApp->processEvents();
-            usleep(50000);
+//        usleep(50000);
+//        for(;comparisonArray5.size() > 0;comparisonArray5.erase(comparisonArray5.begin()))
+//        {
+//            if(comparisonArray5[0] == comparisonArray5[1])
+//            {
+//                cout << tmpstr.toStdString()<< " still at track segment " << oursTotheirs(comparisonArray5[0]).toStdString() << endl;
+//            }
+//            else
+//            {
+//                QString str = oursTotheirs(comparisonArray5[0]);
+//                QString str2 = oursTotheirs(comparisonArray5[1]);
+//                checkSwitches(str, str2);
+//                cout << tmpstr.toStdString()<< " moved to track segment " << oursTotheirs(comparisonArray5[1]).toStdString() << endl;
+//            }
+//            qApp->processEvents();
+//            usleep(50000);
         }
 
-    }
+    //}
 
 
 
@@ -943,6 +995,8 @@ void MainWindow::tableOperation(std::list<vertex_t> path, int trainsel, int test
 
 
 }
+
+
 
 
 #endif // TABLEOPERATIONS_H
