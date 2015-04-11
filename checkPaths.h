@@ -23,32 +23,34 @@ int MainWindow::checkPaths(int trainS)
     int f5 = 0;
 
 
+
     //Check to see which paths have been planned so far
     if ( Eng1 != NULL)
     {
         f1 = 1;
-        comparisonArray = new int[i1];
+        //comparisonArray = new int[i1];
     }
     if ( Eng2 != NULL)
     {
         f2 = 1;
-        comparisonArray2 = new int[i2];
+        //comparisonArray2 = new int[i2];
     }
     if ( Eng3 != NULL)
     {
         f3 = 1;
-        comparisonArray3 = new int[i3];
+       //comparisonArray3 = new int[i3];
     }
     if ( Eng4 != NULL)
     {
         f4 = 1;
-        comparisonArray4 = new int[i4];
+        //comparisonArray4 = new int[i4];
     }
     if ( Eng5 != NULL)
     {
         f5 = 1;
-        comparisonArray5 = new int[i5];
-    }
+       // comparisonArray5 = new int[i5];
+   }
+
 
 // delete comparisonArray;
  //delete comparisonArray2;
@@ -61,7 +63,27 @@ int MainWindow::checkPaths(int trainS)
 
     if ( (f1+f2+f3+f4+f5 == 1) || (f1+f2+f3+f4+f5 == 0))
     {
-        //No paths or only one path detected. No comparison needed
+        //No paths or only one path detected. No comparison needed (However, time still needs to be called.
+        if(f1 == 1)
+        {
+            Eng1Time();
+        }
+        else if (f2 == 1)
+        {
+            Eng2Time();
+        }
+        else if (f3 == 1)
+        {
+            Eng3Time();
+        }
+        else if (f4 == 1)
+        {
+            Eng4Time();
+        }
+        else if (f5 == 1)
+        {
+            Eng5Time();
+        }
         return -1;
     }
     else if (f1+f2+f3+f4+f5 == 2)
@@ -859,7 +881,7 @@ void MainWindow::Eng4Time()
         }
     }
     }
-    else if(Eng5[0] == 44 || Eng5[0] == 43)
+    else if(Eng4[0] == 44 || Eng4[0] == 43)
     {
 
     if(comparisonArray.size() !=0 && ( comparisonArray[0] == 43 || comparisonArray[0] == 44 ))
@@ -980,11 +1002,12 @@ int MainWindow::compare2(std::vector<int>  a, std::vector<int>  b, int c, int d)
 
     if (c >= d )
     {
+
       for(int i=0; i<d; i++)
       {
           if (a[i] == b[i])
           {
-              cout << "Collision detected at track segment" << to_string(a[i]) << endl;
+              cout << "Collision detected at track segment " << to_string(a[i]) << endl;
               return a[i];
           }
 
@@ -996,7 +1019,7 @@ int MainWindow::compare2(std::vector<int>  a, std::vector<int>  b, int c, int d)
         {
             if(a[i] == b[i])
             {
-                cout << "Collision detected at track segment" << to_string(a[i]) << endl;
+                cout << "Collision detected at track segment " << to_string(a[i]) << endl;
                 return a[i];
             }
         }
@@ -1015,18 +1038,23 @@ int i = 0;
         {
          if(a[i] == b[i] || a[i]==c[i] || b[i]==c[i])
          {
-             cout << "Paths intersect (Code 1). Returning" << endl;
+
                      if(a[i] == b[i] || a[i] == c[i])
+                     {
+                         cout << "Paths intersect at track section " << oursTotheirs(a[i]).toStdString() << "Returning" << endl;
                              return a[i];
-                     else
+                     }
+                     else{
+                      cout << "Paths intersect at track section " << oursTotheirs(a[i]).toStdString() << "Returning" << endl;
                             return b[i];
+                     }
          }
         }
         for(;i<b1;i++)
         {
             if(a[i]==b[i])
             {
-                cout << "Paths intersect (Code 2). Returning" << endl;
+                cout << "Paths intersect at track section " << oursTotheirs(a[i]).toStdString() << "Returning" << endl;
                 return a[i];
             }
         }
@@ -1039,18 +1067,21 @@ int i = 0;
         {
          if(a[i] == b[i] || a[i]==c[i] || b[i]==c[i])
          {
-             cout << "Paths intersect (Code 3). Returning" << endl;
-                     if(a[i] == b[i] || a[i] == c[i])
-                             return a[i];
-                     else
-                            return b[i];
+
+                     if(a[i] == b[i] || a[i] == c[i]){
+                            cout << "Paths intersect at track section " << oursTotheirs(a[i]).toStdString() << "Returning" << endl;
+                         return a[i];
+                     }
+                     else{
+                         cout << "Paths intersect at track section " << oursTotheirs(a[i]).toStdString() << "Returning" << endl;
+                            return b[i];}
          }
         }
         for(;i<c1;i++)
         {
             if(a[i]==c[i])
             {
-                cout << "Paths intersect (Code 4). Returning" << endl;
+                cout << "Paths intersect at track section " << oursTotheirs(a[i]).toStdString() << "Returning" << endl;
                 return a[i];
             }
         }
@@ -1064,18 +1095,23 @@ int i = 0;
         {
          if(a[i] == b[i] || a[i]==c[i] || b[i]==c[i])
          {
-             cout << "Paths intersect (Code 5). Returning" << endl;
-                     if(a[i] == b[i] || a[i] == c[i])
-                             return a[i];
-                     else
-                            return b[i];
+
+                     if(a[i] == b[i] || a[i] == c[i]){
+
+                     cout << "Paths intersect at track section " << oursTotheirs(a[i]).toStdString() << "Returning" << endl;
+                     return a[i];
+                     }
+                     else{
+
+                     cout << "Paths intersect at track section " << oursTotheirs(b[i]).toStdString() << "Returning" << endl;
+                     return b[i];}
          }
         }
         for(;i<a1;i++)
         {
             if(a[i]==b[i])
             {
-                cout << "Paths intersect (Code 12). Returning" << endl;
+                cout << "Paths intersect at track section " << oursTotheirs(a[i]).toStdString() << "Returning" << endl;
                 return a[i];
             }
         }
@@ -1088,18 +1124,23 @@ int i = 0;
         {
          if(a[i] == b[i] || a[i]==c[i] || b[i]==c[i])
          {
-             cout << "Paths intersect (Code 6). Returning" << endl;
+
                      if(a[i] == b[i] || a[i] == c[i])
-                             return a[i];
-                     else
+                             {
+                         cout << "Paths intersect at track section " << oursTotheirs(a[i]).toStdString() << "Returning" << endl;
+                         return a[i];
+                     }
+                     else{
                             return b[i];
+                     cout << "Paths intersect at track section " << oursTotheirs(b[i]).toStdString() << "Returning" << endl;
+                     }
          }
         }
         for(;i<c1;i++)
         {
             if(c[i]==b[i])
             {
-                cout << "Paths Intersect (Code 7). Returning" << endl;
+                cout << "Paths intersect at track section " << oursTotheirs(a[i]).toStdString() << "Returning" << endl;
                 return a[i];
             }
         }
@@ -1112,18 +1153,24 @@ int i = 0;
         {
          if(a[i] == b[i] || a[i]==c[i] || b[i]==c[i])
          {
-             cout << "Paths intersect (Code 8). Returning" << endl;
+
                      if(a[i] == b[i] || a[i] == c[i])
-                             return a[i];
+                     {
+                         cout << "Paths intersect at track section " << oursTotheirs(a[i]).toStdString() << "Returning" << endl;
+                         return a[i];
+                     }
                      else
+                     {
+                         cout << "Paths intersect at track section " << oursTotheirs(b[i]).toStdString() << "Returning" << endl;
                             return b[i];
+         }
          }
         }
         for(;i<a1;i++)
         {
             if(a[i]==c[i])
             {
-                cout << "Paths intersect (Code 9). Returning" << endl;
+                cout << "Paths intersect at track section " << oursTotheirs(a[i]).toStdString() << "Returning" << endl;
                 return a[i];
             }
         }
@@ -1137,18 +1184,24 @@ int i = 0;
         {
          if(a[i] == b[i] || a[i]==c[i] || b[i]==c[i])
          {
-             cout << "Paths intersect (Code 10). Returning" << endl;
+
                      if(a[i] == b[i] || a[i] == c[i])
+                     {
+                         cout << "Paths intersect at track section " << oursTotheirs(a[i]).toStdString() << "Returning" << endl;
                              return a[i];
-                     else
+                     }
+                      else
+                     {
+                         cout << "Paths intersect at track section " << oursTotheirs(b[i]).toStdString() << "Returning" << endl;
                             return b[i];
+         }
          }
         }
         for(;i<b1;i++)
         {
             if(a[i]==b[i])
             {
-                cout << "Paths intersect (Code 11). Returning" << endl;
+                cout << "Paths intersect at track section " << oursTotheirs(a[i]).toStdString() << "Returning" << endl;
                 return a[i];
             }
         }
