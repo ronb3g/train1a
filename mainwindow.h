@@ -16,6 +16,7 @@
 #include <QMessageBox>
 #include <QGraphicsScene>
 #include <reroute.h>
+#include <QBasicTimer>
 
 typedef long vertex_t;
 
@@ -56,12 +57,13 @@ public:
     QTimer* e;
     QAction* techsupport;
     QGraphicsScene* scene;
+    QBasicTimer m_timer;
 
 
 private:
     Ui::MainWindow *ui;
     QSqlDatabase ldb;
-        int* Eng1;
+    int* Eng1;
     int* Eng2;
     int* Eng3;
     int* Eng4;
@@ -71,6 +73,11 @@ private:
     int E3S;
     int E4S;
     int E5S;
+    int Eng1Start;
+    int Eng2Start;
+    int Eng3Start;
+    int Eng4Start;
+    int Eng5Start;
     int Eng1Speed; //Engine 1 travels 1 unit in 1 second.
     int Eng2Speed; //Engine 2 travels 1 unit in 2 seconds.
     int Eng3Speed; //Engine 3 travels 1 unit in 3 seconds.
@@ -87,7 +94,7 @@ private:
     std::vector<int>  comparisonArray4;
     std::vector<int> comparisonArray5;
     std::list<vertex_t> backupPath;
-
+    QString tmpstr;
 
 private slots:
 
@@ -137,7 +144,7 @@ private slots:
     int longPathroute(int start, int end);
     QString oursTotheirs(int number);//Convert our integer adjacency to their string
     int theirsToours(QString string);//Convert their string adjacency to our int
-    void createDBtables();
+    void timerEvent(QTimerEvent * ev);
 
 
 };
