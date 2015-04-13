@@ -29,7 +29,7 @@
 #include <timedelay.h>
 #include <fstream>
 #include <QSound>
-#include <reroute.h>
+
 
 
 
@@ -142,7 +142,7 @@ MainWindow::MainWindow(QWidget *parent) :
     //randomly selected destination for testing route algorithm
     connect(ui->destButton, SIGNAL(clicked()), this, SLOT(destNode()));
 
-    connect(ui->queryButton, SIGNAL(clicked()), this, SLOT(viewTable()));
+    connect(ui->queryButton, SIGNAL(clicked()), this, SLOT(createDBtables()));
 
     //Clock feature added to enable delayed train departures
     QTimer *timer = new QTimer(this);
