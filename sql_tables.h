@@ -166,7 +166,7 @@ void MainWindow::createDBtables()
     statusBar()->showMessage(tr("Create table was succesful"));
     }
     //QSqlQuery q(ldb);
-    q.prepare("CREATE TABLE pathinfo(pathID INTEGER,nextpath INTEGER,next2 TEXT,next3 TEXT,next4 TEXT,next5 TEXT,next6 TEXT,next7 TEXT,next8 TEXT,next9 TEXT,next10 TEXT);");
+    q.prepare("CREATE TABLE pathinfo(pathID INTEGER,nextpath INTEGER,next2 TEXT,next3 TEXT,next4 TEXT,next5 TEXT,next6 TEXT,next7 TEXT,next8 TEXT,next9 TEXT,next10 TEXT,next11 TEXT);");
     if ( !q.exec() )
     {
     statusBar()->showMessage(tr("Create table failed"));
