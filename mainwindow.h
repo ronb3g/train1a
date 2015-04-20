@@ -145,8 +145,8 @@ private slots:
     QString oursTotheirs(int number);//Convert our integer adjacency to their string
     int theirsToours(QString string);//Convert their string adjacency to our int
     void timerEvent(QTimerEvent * ev);
-
-
+    void createDBtables();
+    void initializeSwitchtable();
 };
 
 #endif // MAINWINDOW_H
