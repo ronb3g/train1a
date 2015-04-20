@@ -72,7 +72,8 @@ MainWindow::MainWindow(QWidget *parent) :
        { qDebug() << ldb.lastError();}
 
     ui->setupUi(this);
-
+    
+    initializeSwitchtable();
 
     //Start and Start button graphics
     startIcon = new QIcon("startbutton.png");
