@@ -297,4 +297,19 @@ void MainWindow::createDBtables()
     if ( !q.exec() ){qDebug() << q.lastError(); qDebug() << "Error on INSERT";}
 }
 
+void MainWindow::initializeSwitchtable()
+{
+    int switchArray[] = {11,12,13,14,21,22,23,24,31,32,33,34,41,42,43,51,52,61,62,63,64,71,72,73,74,81,82,83,84};
+    for(int i=0; i<29; i++)
+    {
+        int sN = switchArray[i];
+        QSqlQuery q(ldb);
+        q.prepare("UPDATE switches SET position='Pass' WHERE switchID=?");
+        q.bindValue(0, sN);
+        if(!q.exec())
+            {
+            cout << "Failed to update database";
+            }
+    }
+}
 #endif // SQL_TABLES_H
