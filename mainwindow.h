@@ -15,7 +15,6 @@
 #include <QString>
 #include <QMessageBox>
 #include <QGraphicsScene>
-#include <reroute.h>
 #include <QBasicTimer>
 
 typedef long vertex_t;
