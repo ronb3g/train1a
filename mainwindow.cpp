@@ -1196,12 +1196,12 @@ void MainWindow::greyOut2()
     //Determine which image to display
     if(ui->trainselectBox2->currentIndex() == 1)
     {
-        ui->trainimageButton2->setIcon(*engine1Icon);
+        ui->trainimageButton2->setIcon(*engine2Icon);
         ui->trainimageButton2->setIconSize(QSize(85,85));
     }
     else if(ui->trainselectBox2->currentIndex() == 2)
     {
-        ui->trainimageButton2->setIcon(*engine2Icon);
+        ui->trainimageButton2->setIcon(*engine1Icon);
         ui->trainimageButton2->setIconSize(QSize(85,85));
     }
     else if(ui->trainselectBox2->currentIndex() == 3)
@@ -1945,7 +1945,7 @@ void MainWindow::greyOut3()
     //Determine which image to display
     if(ui->trainselectBox3->currentIndex() == 1)
     {
-        ui->trainimageButton3->setIcon(*engine1Icon);
+        ui->trainimageButton3->setIcon(*engine3Icon);
         ui->trainimageButton3->setIconSize(QSize(85,85));
     }
     else if(ui->trainselectBox3->currentIndex() == 2)
@@ -1955,7 +1955,7 @@ void MainWindow::greyOut3()
     }
     else if(ui->trainselectBox3->currentIndex() == 3)
     {
-        ui->trainimageButton3->setIcon(*engine3Icon);
+        ui->trainimageButton3->setIcon(*engine1Icon);
         ui->trainimageButton3->setIconSize(QSize(85,85));
     }
     else if(ui->trainselectBox3->currentIndex() == 4)
@@ -2637,7 +2637,7 @@ void MainWindow::greyOut4()
     //Determine which image to display
     if(ui->trainselectBox4->currentIndex() == 1)
     {
-        ui->trainimageButton4->setIcon(*engine1Icon);
+        ui->trainimageButton4->setIcon(*engine4Icon);
         ui->trainimageButton4->setIconSize(QSize(85,85));
     }
     else if(ui->trainselectBox4->currentIndex() == 2)
@@ -2652,7 +2652,7 @@ void MainWindow::greyOut4()
     }
     else if(ui->trainselectBox4->currentIndex() == 4)
     {
-        ui->trainimageButton4->setIcon(*engine4Icon);
+        ui->trainimageButton4->setIcon(*engine1Icon);
         ui->trainimageButton4->setIconSize(QSize(85,85));
     }
     else if(ui->trainselectBox4->currentIndex() == 5)
@@ -3329,7 +3329,7 @@ void MainWindow::greyOut5()
     //Determine which image to display
     if(ui->trainselectBox5->currentIndex() == 1)
     {
-        ui->trainimageButton5->setIcon(*engine1Icon);
+        ui->trainimageButton5->setIcon(*engine5Icon);
         ui->trainimageButton5->setIconSize(QSize(85,85));
     }
     else if(ui->trainselectBox5->currentIndex() == 2)
@@ -3349,7 +3349,7 @@ void MainWindow::greyOut5()
     }
     else if(ui->trainselectBox5->currentIndex() == 5)
     {
-        ui->trainimageButton5->setIcon(*engine5Icon);
+        ui->trainimageButton5->setIcon(*engine1Icon);
         ui->trainimageButton5->setIconSize(QSize(85,85));
     }
     else
