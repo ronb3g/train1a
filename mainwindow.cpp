@@ -4039,8 +4039,8 @@ void MainWindow::timerEvent(QTimerEvent * ev)
             }
             else
             {
-                QString str = oursTotheirs(comparisonArray[0]);
-                QString str2 = oursTotheirs(comparisonArray[1]);
+                QString str = QString::fromStdString(to_string(comparisonArray[0]));
+                QString str2 = QString::fromStdString(to_string(comparisonArray[1]));
                 checkSwitches(str, str2);
                 cout << tmpstr.toStdString() << " moved to track segment " << oursTotheirs(comparisonArray[1]).toStdString() << endl;
             }
@@ -4057,8 +4057,8 @@ void MainWindow::timerEvent(QTimerEvent * ev)
             }
             else
             {
-                QString str = oursTotheirs(comparisonArray2[0]);
-                QString str2 = oursTotheirs(comparisonArray2[1]);
+                QString str = QString::fromStdString(to_string(comparisonArray2[0]));
+                QString str2 = QString::fromStdString(to_string(comparisonArray2[1]));
                 checkSwitches(str, str2);
                 cout << tmpstr.toStdString() << " moved to track segment " << oursTotheirs(comparisonArray2[1]).toStdString() << endl;
             }
@@ -4074,8 +4074,8 @@ void MainWindow::timerEvent(QTimerEvent * ev)
             }
             else
             {
-                QString str = oursTotheirs(comparisonArray3[0]);
-                QString str2 = oursTotheirs(comparisonArray3[1]);
+                QString str = QString::fromStdString(to_string(comparisonArray3[0]));
+                QString str2 = QString::fromStdString(to_string(comparisonArray3[1]));
                 checkSwitches(str, str2);
                 cout << tmpstr.toStdString() << " moved to track segment " << oursTotheirs(comparisonArray3[1]).toStdString() << endl;
             }
@@ -4091,8 +4091,8 @@ void MainWindow::timerEvent(QTimerEvent * ev)
             }
             else
             {
-                QString str = oursTotheirs(comparisonArray4[0]);
-                QString str2 = oursTotheirs(comparisonArray4[1]);
+                QString str = QString::fromStdString(to_string(comparisonArray4[0]));
+                QString str2 = QString::fromStdString(to_string(comparisonArray4[1]));
                 checkSwitches(str, str2);
                 cout << tmpstr.toStdString() << " moved to track segment " << oursTotheirs(comparisonArray4[1]).toStdString() << endl;
             }
@@ -4108,14 +4108,15 @@ void MainWindow::timerEvent(QTimerEvent * ev)
             }
             else
             {
-                QString str = oursTotheirs(comparisonArray5[0]);
-                QString str2 = oursTotheirs(comparisonArray5[1]);
+                QString str = QString::fromStdString(to_string(comparisonArray5[0]));
+                QString str2 = QString::fromStdString(to_string(comparisonArray5[1]));
                 checkSwitches(str, str2);
                 cout << tmpstr.toStdString() << " moved to track segment " << oursTotheirs(comparisonArray5[1]).toStdString() << endl;
             }
             comparisonArray5.erase(comparisonArray5.begin());
             qApp->processEvents();
         }
+
 
 
 
