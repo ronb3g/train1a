@@ -14,7 +14,7 @@ return ss.str();
 }
 
 
-int MainWindow::checkPaths(int trainS)
+int MainWindow::checkPaths(int attempt, int islong)
 {
     int f1 = 0;
     int f2 = 0;
@@ -66,23 +66,23 @@ int MainWindow::checkPaths(int trainS)
         //No paths or only one path detected. No comparison needed (However, time still needs to be called.
         if(f1 == 1)
         {
-            Eng1Time();
+            Eng1Time(attempt, islong);
         }
         else if (f2 == 1)
         {
-            Eng2Time();
+            Eng2Time(attempt, islong);
         }
         else if (f3 == 1)
         {
-            Eng3Time();
+            Eng3Time(attempt, islong);
         }
         else if (f4 == 1)
         {
-            Eng4Time();
+            Eng4Time(attempt, islong);
         }
         else if (f5 == 1)
         {
-            Eng5Time();
+            Eng5Time(attempt, islong);
         }
         return -1;
     }
@@ -92,62 +92,62 @@ int MainWindow::checkPaths(int trainS)
         if(f1+f2 == 2)
         {
 
-            Eng1Time();
-            Eng2Time();
+            Eng1Time(attempt, islong);
+            Eng2Time(attempt, islong);
             return (compare2(comparisonArray, comparisonArray2, i1, i2));
         }
         else if (f1+f3 == 2)
         {
-            Eng1Time();
-            Eng3Time();
+            Eng1Time(attempt, islong);
+            Eng3Time(attempt, islong);
             return (compare2(comparisonArray, comparisonArray3, i1, i3));
         }
         else if (f1+f4 == 2)
         {
-            Eng1Time();
-            Eng4Time();
+            Eng1Time(attempt, islong);
+            Eng4Time(attempt, islong);
             return (compare2(comparisonArray,comparisonArray4, i1, i4));
         }
         else if(f1+f5 == 2)
         {
-            Eng1Time();
-            Eng5Time();
+            Eng1Time(attempt, islong);
+            Eng5Time(attempt, islong);
             return (compare2(comparisonArray,comparisonArray5,i1,i5));
         }
         else if(f2+f3 == 2)
         {
-            Eng2Time();
-            Eng3Time();
+            Eng2Time(attempt, islong);
+            Eng3Time(attempt, islong);
             return (compare2(comparisonArray2,comparisonArray3,i2,i3));
         }
         else if(f2+f4 == 2)
         {
-            Eng2Time();
-            Eng4Time();
+            Eng2Time(attempt, islong);
+            Eng4Time(attempt, islong);
             return (compare2(comparisonArray2,comparisonArray4,i2,i4));
         }
         else if(f2+f5 == 2)
         {
-            Eng2Time();
-            Eng5Time();
+            Eng2Time(attempt, islong);
+            Eng5Time(attempt, islong);
             return (compare2(comparisonArray2,comparisonArray5,i2,i5));
         }
         else if(f3+f4 == 2)
         {
-            Eng3Time();
-            Eng4Time();
+            Eng3Time(attempt, islong);
+            Eng4Time(attempt, islong);
             return (compare2(comparisonArray3,comparisonArray4,i3,i4));
         }
         else if(f3+f5 == 2)
         {
-            Eng3Time();
-            Eng5Time();
+            Eng3Time(attempt, islong);
+            Eng5Time(attempt, islong);
             return (compare2(comparisonArray3,comparisonArray5,i3,i5));
         }
         else if(f4+f5 == 2)
         {
-            Eng4Time();
-            Eng5Time();
+            Eng4Time(attempt, islong);
+            Eng5Time(attempt, islong);
             return (compare2(comparisonArray4,comparisonArray5,i4,i5));
         }
     }
@@ -155,72 +155,72 @@ int MainWindow::checkPaths(int trainS)
       {// 3 paths detected. Checking for collisions.
         if(f1+f2+f3 == 3)
         {
-            Eng1Time();
-            Eng2Time();
-            Eng3Time();
+            Eng1Time(attempt, islong);
+            Eng2Time(attempt, islong);
+            Eng3Time(attempt, islong);
             return (compare3(comparisonArray,comparisonArray2,comparisonArray3,i1,i2,i3));
         }
         else if (f1+f2+f4 == 3)
         {
-            Eng1Time();
-            Eng2Time();
-            Eng4Time();
+            Eng1Time(attempt, islong);
+            Eng2Time(attempt, islong);
+            Eng4Time(attempt, islong);
             return (compare3(comparisonArray,comparisonArray2,comparisonArray4,i1,i2,i4));
         }
         else if (f1+f2+f5 == 3)
         {
-            Eng1Time();
-            Eng2Time();
-            Eng5Time();
+            Eng1Time(attempt, islong);
+            Eng2Time(attempt, islong);
+            Eng5Time(attempt, islong);
             return (compare3(comparisonArray,comparisonArray2,comparisonArray5,i1,i2,i5));
         }
         else if(f1+f3+f4 == 3)
         {
-            Eng1Time();
-            Eng3Time();
-            Eng4Time();
+            Eng1Time(attempt, islong);
+            Eng3Time(attempt, islong);
+            Eng4Time(attempt, islong);
             return (compare3(comparisonArray,comparisonArray3,comparisonArray4,i1,i3,i4));
         }
         else if(f1+f3+f5 == 3)
         {
-            Eng1Time();
-            Eng3Time();
-            Eng5Time();
+            Eng1Time(attempt, islong);
+            Eng3Time(attempt, islong);
+            Eng5Time(attempt, islong);
             return (compare3(comparisonArray,comparisonArray3,comparisonArray5,i1,i3,i5));
         }
         else if(f1+f4+f5 == 3)
         {
-            Eng1Time();
-            Eng4Time();
-            Eng5Time();
+            Eng1Time(attempt, islong);
+            Eng4Time(attempt, islong);
+            Eng5Time(attempt, islong);
             return (compare3(comparisonArray,comparisonArray4,comparisonArray5,i1,i4,i5));
         }
         else if(f2+f3+f4 == 3)
         {
-            Eng2Time();
-            Eng3Time();
-            Eng4Time();
+            Eng2Time(attempt, islong);
+            Eng3Time(attempt, islong);
+            Eng4Time(attempt, islong);
             return (compare3(comparisonArray2,comparisonArray3,comparisonArray4,i2,i3,i4));
         }
         else if(f2+f3+f5 == 3)
         {
-            Eng2Time();
-            Eng3Time();
-            Eng5Time();
+            Eng2Time(attempt, islong);
+            Eng3Time(attempt, islong);
+            Eng5Time(attempt, islong);
             return (compare3(comparisonArray2,comparisonArray3,comparisonArray5,i2,i3,i5));
         }
         else if(f2+f4+f5 == 3)
         {
-            Eng2Time();
-            Eng4Time();
-            Eng5Time();
+            Eng2Time(attempt, islong);
+            Eng4Time(attempt, islong);
+            Eng5Time(attempt, islong);
             return (compare3(comparisonArray2,comparisonArray4,comparisonArray5,i2,i4,i5));
         }
         else if(f3+f4+f5 == 3)
         {
-            Eng3Time();
-            Eng4Time();
-            Eng5Time();
+            Eng3Time(attempt, islong);
+            Eng4Time(attempt, islong);
+            Eng5Time(attempt, islong);
             return (compare3(comparisonArray3,comparisonArray4,comparisonArray5,i3,i4,i5));
         }
     }
@@ -228,10 +228,10 @@ int MainWindow::checkPaths(int trainS)
     {//4 paths detected. checking now.
         if (f1+f2+f3+f4 == 4)
         {
-            Eng1Time();
-            Eng2Time();
-            Eng3Time();
-            Eng4Time();
+            Eng1Time(attempt, islong);
+            Eng2Time(attempt, islong);
+            Eng3Time(attempt, islong);
+            Eng4Time(attempt, islong);
             //compare4(comparisonArray,comparisonArray2,comparisonArray3,comparisonArray4,i1,i2,i3,i4);
             int c1 = compare3(comparisonArray, comparisonArray2, comparisonArray3, i1, i2, i3);
             if(c1 != -1)
@@ -252,10 +252,10 @@ int MainWindow::checkPaths(int trainS)
         }
         else if (f2+f3+f4+f5 == 4)
         {
-            Eng5Time();
-            Eng2Time();
-            Eng3Time();
-            Eng4Time();
+            Eng5Time(attempt, islong);
+            Eng2Time(attempt, islong);
+            Eng3Time(attempt, islong);
+            Eng4Time(attempt, islong);
             //compare4(comparisonArray2,comparisonArray3,comparisonArray4,comparisonArray5,i2,i3,i4,i5);
             int c1 = compare3(comparisonArray2, comparisonArray3, comparisonArray4, i2, i3, i4);
             if(c1 != -1)
@@ -274,10 +274,10 @@ int MainWindow::checkPaths(int trainS)
         }
         else if (f3+f4+f5+f1 == 4)
         {
-            Eng1Time();
-            Eng5Time();
-            Eng3Time();
-            Eng4Time();
+            Eng1Time(attempt, islong);
+            Eng5Time(attempt, islong);
+            Eng3Time(attempt, islong);
+            Eng4Time(attempt, islong);
             //compare4(comparisonArray,comparisonArray3,comparisonArray4,comparisonArray5,i1,i3,i4,i5);
             int c1 = compare3(comparisonArray, comparisonArray4, comparisonArray3, i1, i4, i3);
             if(c1 != -1)
@@ -296,10 +296,10 @@ int MainWindow::checkPaths(int trainS)
         }
         else if(f4+f5+f1+f2 == 4)
         {
-            Eng1Time();
-            Eng2Time();
-            Eng5Time();
-            Eng4Time();
+            Eng1Time(attempt, islong);
+            Eng2Time(attempt, islong);
+            Eng5Time(attempt, islong);
+            Eng4Time(attempt, islong);
             //compare4(comparisonArray,comparisonArray2,comparisonArray4,comparisonArray5,i1,i2,i4,i5);
             int c1 = compare3(comparisonArray, comparisonArray2, comparisonArray4, i1, i2, i4);
             if(c1 != -1)
@@ -319,10 +319,10 @@ int MainWindow::checkPaths(int trainS)
         }
         else if (f1+f2+f3+f5 == 4)
         {
-            Eng1Time();
-            Eng2Time();
-            Eng3Time();
-            Eng5Time();
+            Eng1Time(attempt, islong);
+            Eng2Time(attempt, islong);
+            Eng3Time(attempt, islong);
+            Eng5Time(attempt, islong);
             //compare4(comparisonArray,comparisonArray2,comparisonArray3,comparisonArray5,i1,i2,i3,i5);
 
             int c1 = compare3(comparisonArray, comparisonArray2, comparisonArray3, i1, i2, i3);
@@ -346,11 +346,11 @@ int MainWindow::checkPaths(int trainS)
     }
     else if (f1+f2+f3+f4+f5 == 5)
     {
-        Eng1Time();
-        Eng2Time();
-        Eng3Time();
-        Eng4Time();
-        Eng5Time();
+        Eng1Time(attempt, islong);
+        Eng2Time(attempt, islong);
+        Eng3Time(attempt, islong);
+        Eng4Time(attempt, islong);
+        Eng5Time(attempt, islong);
         //compare5();
         int c1 = compare3(comparisonArray, comparisonArray2, comparisonArray3, i1, i2, i3);
         if(c1 != -1)
@@ -587,19 +587,41 @@ int MainWindow::trackLength(int trackNum)
         return 2;
 }
 
-void MainWindow::Eng1Time()
+void MainWindow::Eng1Time( int attempt, int islong)
 {
 
-    comparisonArray.clear();
-    int len = 0; //length * speed of current piece of track
+    if (islong == 0){
+    comparisonArray.clear();}
+
+    float throttle1 =(ui->throttleBox1->currentText().toFloat()/100);
+    float len = 0; //length * speed of current piece of track
+    float overflow = 0;
     int j = 0;
-    for (int i=0; i<E1S; i++)
+    int i = 0;
+    if (attempt == 1 || attempt == 2)
+       { i++;}
+    for (; i<E1S; i++)
     {
-       len = trackLength(Eng1[i]) * Eng1Speed;
-        for(int k=0; k<len; k++)
+        double intPart;
+        len = trackLength(Eng1[i]) * Eng1Speed / throttle1;
+        double fracPart = modf(len, &intPart);
+        overflow = overflow + fracPart;
+        if( overflow >= 1)
         {
-           comparisonArray.push_back(Eng1[i]);
-            j++;
+            overflow = overflow - 1;
+            for(int k=0; k<(intPart + 1); k++)
+            {
+                comparisonArray.push_back(Eng1[i]);
+                j++;
+            }
+        }
+        else
+        {
+            for(int k=0; k<intPart; k++)
+            {
+                comparisonArray.push_back(Eng1[i]);
+                j++;
+            }
         }
     }
 
@@ -670,18 +692,40 @@ void MainWindow::Eng1Time()
 
 }
 
-void MainWindow::Eng2Time()
+void MainWindow::Eng2Time(int attempt, int islong)
 {
+    if (islong == 0){
     comparisonArray2.clear();
-    int len = 0; //length * speed of current piece of track
+    }
+    float throttle2 =(ui->throttleBox2->currentText().toFloat()/100);
+    float len = 0; //length * speed of current piece of track
+    float overflow = 0;
     int j = 0;
-    for (int i=0; i<E2S; i++)
+    int i = 0;
+    if (attempt == 1 || attempt == 2)
+       { i++;}
+    for (; i<E2S; i++)
     {
-        len = trackLength(Eng2[i]) * Eng2Speed;
-        for(int k=0; k<len; k++)
+        double intPart;
+        len = trackLength(Eng2[i]) * Eng2Speed / throttle2;
+        double fracPart = modf(len, &intPart);
+        overflow = overflow + fracPart;
+        if( overflow >= 1)
         {
-            comparisonArray2.push_back(Eng2[i]);
-            j++;
+            overflow = overflow - 1;
+            for(int k=0; k<(intPart + 1); k++)
+            {
+                comparisonArray2.push_back(Eng2[i]);
+                j++;
+            }
+        }
+        else
+        {
+            for(int k=0; k<intPart; k++)
+            {
+                comparisonArray2.push_back(Eng2[i]);
+                j++;
+            }
         }
     }
 
@@ -752,18 +796,40 @@ void MainWindow::Eng2Time()
 
 }
 
-void MainWindow::Eng3Time()
+void MainWindow::Eng3Time(int attempt, int islong)
 {
+    if (islong == 0){
     comparisonArray3.clear();
-    int len = 0; //length * speed of current piece of track
+    }
+    float throttle3 =(ui->throttleBox3->currentText().toFloat()/100);
+    float len = 0; //length * speed of current piece of track
     int j = 0;
-    for (int i=0; i<E3S; i++)
+    float overflow = 0;
+    int i = 0;
+    if (attempt == 1 || attempt == 2)
+       { i++;}
+    for (; i<E3S; i++)
     {
-        len = trackLength(Eng3[i]) * Eng3Speed;
-        for(int k=0; k<len; k++)
+        double intPart;
+        len = trackLength(Eng3[i]) * Eng3Speed / throttle3;
+        double fracPart = modf(len, &intPart);
+        overflow = overflow + fracPart;
+        if( overflow >= 1)
         {
-            comparisonArray3.push_back(Eng3[i]);
-            j++;
+            overflow = overflow - 1;
+            for(int k=0; k<(intPart + 1); k++)
+            {
+                comparisonArray3.push_back(Eng3[i]);
+                j++;
+            }
+        }
+        else
+        {
+            for(int k=0; k<intPart; k++)
+            {
+                comparisonArray3.push_back(Eng3[i]);
+                j++;
+            }
         }
     }
 
@@ -834,18 +900,40 @@ void MainWindow::Eng3Time()
 
 }
 
-void MainWindow::Eng4Time()
+void MainWindow::Eng4Time(int attempt, int islong)
 {
+    if (islong == 0){
     comparisonArray4.clear();
-    int len = 0; //length * speed of current piece of track
+    }
+    float throttle4 =(ui->throttleBox4->currentText().toFloat()/100);
+    float len = 0; //length * speed of current piece of track
     int j = 0;
-    for (int i=0; i<E4S; i++)
+    float overflow = 0;
+    int i = 0;
+    if (attempt == 1 || attempt == 2)
+       { i++;}
+    for (; i<E4S; i++)
     {
-        len = trackLength(Eng4[i]) * Eng4Speed;
-        for(int k=0; k<len; k++)
+        double intPart;
+        len = trackLength(Eng4[i]) * Eng4Speed / throttle4;
+        double fracPart = modf(len, &intPart);
+        overflow = overflow + fracPart;
+        if( overflow >= 1)
         {
-            comparisonArray4.push_back(Eng4[i]);
-            j++;
+            overflow = overflow - 1;
+            for(int k=0; k<(intPart + 1); k++)
+            {
+                comparisonArray4.push_back(Eng4[i]);
+                j++;
+            }
+        }
+        else
+        {
+            for(int k=0; k<intPart; k++)
+            {
+                comparisonArray4.push_back(Eng4[i]);
+                j++;
+            }
         }
     }
 
@@ -916,18 +1004,40 @@ void MainWindow::Eng4Time()
 
 }
 
-void MainWindow::Eng5Time()
+void MainWindow::Eng5Time(int attempt, int islong)
 {
+    if (islong == 0){
     comparisonArray5.clear();
-    int len = 0; //length * speed of current piece of track
+    }
+    float throttle5 =(ui->throttleBox3->currentText().toFloat()/100);
+    float len = 0; //length * speed of current piece of track
+    float overflow = 0;
     int j = 0;
-    for (int i=0; i<E5S; i++)
+    int i = 0;
+    if (attempt == 1 || attempt == 2)
+       { i++;}
+    for (; i<E5S; i++)
     {
-        len = trackLength(Eng5[i]) * Eng5Speed;
-        for(int k=0; k<len; k++)
+        double intPart;
+        len = trackLength(Eng5[i]) * Eng5Speed / throttle5;
+        double fracPart = modf(len, &intPart);
+        overflow = overflow + fracPart;
+        if( overflow >= 1)
         {
-            comparisonArray5.push_back(Eng5[i]);
-            j++;
+            overflow = overflow - 1;
+            for(int k=0; k<(intPart + 1); k++)
+            {
+                comparisonArray5.push_back(Eng5[i]);
+                j++;
+            }
+        }
+        else
+        {
+            for(int k=0; k<intPart; k++)
+            {
+                comparisonArray5.push_back(Eng5[i]);
+                j++;
+            }
         }
     }
     if(Eng5[0] == 53 || Eng5[0] == 54 || Eng5[0] == 55)
