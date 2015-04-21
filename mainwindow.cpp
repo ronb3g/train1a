@@ -704,13 +704,28 @@ void MainWindow::greyOut1()
                 adjacency_list[30].push_back(neighbor(29, 2));
                 adjacency_list[29].push_back(neighbor(30, 2));
 
-                std::vector<weight_t> min_distance;
+ std::vector<weight_t> min_distance;
                         std::vector<vertex_t> previous;
                         DijkstraComputePaths(start, adjacency_list, min_distance, previous);
                         std::cout << "Distance from " << ui->originBox1->currentText().toStdString() << " to " << ui->destBox1->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
                         std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
+
+                        tableOperation(path, 1, 0, 0, 0);
                         std::cout << ui->trainselectBox1->currentText().toStdString() <<" Path : ";
-                        tableOperation(path, 1, 0);
+
+                        cout << oursTotheirs(comparisonArray[0]).toStdString() << " ";
+                        int l = 1;
+                        for (; l<comparisonArray.size(); l++)
+                        {
+                            while (comparisonArray[l] == comparisonArray[l-1] && (l < comparisonArray.size()))
+                            {
+                                l++;
+                            }
+                            if(l < comparisonArray.size())
+                         cout << oursTotheirs(comparisonArray[l]).toStdString() << " ";
+                         }
+                         cout << endl;
+
 
                         //std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
                         std::cout << std::endl;
@@ -899,16 +914,38 @@ void MainWindow::greyOut1()
                 adjacency_list[29].push_back(neighbor(30, 2));
 
                 //calculate and output information
-                        std::vector<weight_t> min_distance;
-                        std::vector<vertex_t> previous;
-                        DijkstraComputePaths(start, adjacency_list, min_distance, previous);
-                        std::cout << "Distance from " << ui->originBox1->currentText().toStdString() << " to " << ui->destBox1->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
-                        std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
-                        std::cout << ui->trainselectBox1->currentText().toStdString() <<" Path : ";
-                        tableOperation(path, 1, 0);
+                                       std::vector<weight_t> min_distance;
+                std::vector<vertex_t> previous;
+                DijkstraComputePaths(start, adjacency_list, min_distance, previous);
+                if (i == 3)
+                std::cout << "Distance from " << ui->originBox1->currentText().toStdString() << " to " << ui->destBox1->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
+                std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
+
+                tableOperation(path, 1, 0, i, 1);
+
+
+                if(i <= 1)
+                std::cout << ui->trainselectBox1->currentText().toStdString() <<" Path : ";
+                if(i <= 1)
+                {
+                    cout << oursTotheirs(comparisonArray[0]).toStdString() << " ";
+                    int l = 1;
+                    for (; l<comparisonArray.size(); l++)
+                    {
+                        while (comparisonArray[l] == comparisonArray[l-1] && (l < comparisonArray.size()))
+                        {
+                            l++;
+                        }
+                         if(l < comparisonArray.size())
+                     cout << oursTotheirs(comparisonArray[l]).toStdString() << " ";
+                     }
+                     cout << endl;
+                }
 
                         //std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
                         std::cout << std::endl;
+
+
 
 
                         if (i==3){start = 1; end = 2;}
@@ -1098,13 +1135,35 @@ void MainWindow::greyOut1()
                         adjacency_list[29].push_back(neighbor(30, 2));
 
                         //calculate and output information
-                                std::vector<weight_t> min_distance;
+ std::vector<weight_t> min_distance;
                                 std::vector<vertex_t> previous;
                                 DijkstraComputePaths(start, adjacency_list, min_distance, previous);
+                                if (i == 3)
                                 std::cout << "Distance from " << ui->originBox1->currentText().toStdString() << " to " << ui->destBox1->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
                                 std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
+
+
+                                tableOperation(path, 1, 0, i, 1);
+
+                                if(i <= 1)
                                 std::cout << ui->trainselectBox1->currentText().toStdString() <<" Path : ";
-                                tableOperation(path, 1, 0);
+
+                                if(i <= 1)
+                                {
+                                    cout << oursTotheirs(comparisonArray[0]).toStdString() << " ";
+                                    int l = 1;
+                                    for (; l<comparisonArray.size(); l++)
+                                    {
+                                        while (comparisonArray[l] == comparisonArray[l-1] && (l < comparisonArray.size()))
+                                        {
+                                            l++;
+                                        }
+                                         if(l < comparisonArray.size())
+                                     cout << oursTotheirs(comparisonArray[l]).toStdString() << " ";
+                                     }
+                                     cout << endl;
+                                }
+
 
                                 //std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
                                 std::cout << std::endl;
@@ -1391,13 +1450,28 @@ void MainWindow::greyOut2()
                 adjacency_list[30].push_back(neighbor(29, 2));
                 adjacency_list[29].push_back(neighbor(30, 2));
 
-                std::vector<weight_t> min_distance;
+                 std::vector<weight_t> min_distance;
                         std::vector<vertex_t> previous;
                         DijkstraComputePaths(start, adjacency_list, min_distance, previous);
                         std::cout << "Distance from " << ui->originBox2->currentText().toStdString() << " to " << ui->destBox2->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
                         std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
+
+                        tableOperation(path, 2, 0, 0, 0);
                         std::cout << ui->trainselectBox2->currentText().toStdString() <<" Path : ";
-                        tableOperation(path, 2, 0);
+
+                        cout << oursTotheirs(comparisonArray2[0]).toStdString() << " ";
+                        int l = 1;
+                        for (; l<comparisonArray2.size(); l++)
+                        {
+                            while (comparisonArray2[l] == comparisonArray2[l-1] && (l < comparisonArray2.size()))
+                            {
+                                l++;
+                            }
+                            if(l < comparisonArray2.size())
+                         cout << oursTotheirs(comparisonArray2[l]).toStdString() << " ";
+                         }
+                         cout << endl;
+
 
                         //std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
                         std::cout << std::endl;
@@ -1586,20 +1660,40 @@ void MainWindow::greyOut2()
                 adjacency_list[29].push_back(neighbor(30, 2));
 
                 //calculate and output information
-                        std::vector<weight_t> min_distance;
-                        std::vector<vertex_t> previous;
-                        DijkstraComputePaths(start, adjacency_list, min_distance, previous);
-                        std::cout << "Distance from " << ui->originBox2->currentText().toStdString() << " to " << ui->destBox2->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
-                        std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
-                        std::cout << ui->trainselectBox2->currentText().toStdString() <<" Path : ";
-                        tableOperation(path, 2, 0);
-
-                        //std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
-                        std::cout << std::endl;
+                                       std::vector<weight_t> min_distance;
+                std::vector<vertex_t> previous;
+                DijkstraComputePaths(start, adjacency_list, min_distance, previous);
+                if (i == 3)
+                std::cout << "Distance from " << ui->originBox2->currentText().toStdString() << " to " << ui->destBox2->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
+                std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
 
 
-                        if (i==3){start = 1; end = 2;}
-                        else if (i==2) {start = 2; end = oldEnd;}
+                tableOperation(path, 2, 0, i, 1);
+
+                if(i <= 1)
+                std::cout << ui->trainselectBox2->currentText().toStdString() <<" Path : ";
+
+                if(i <= 1)
+                {
+                    cout << oursTotheirs(comparisonArray2[0]).toStdString() << " ";
+                    int l = 1;
+                    for (; l<comparisonArray2.size(); l++)
+                    {
+                        while (comparisonArray2[l] == comparisonArray2[l-1] && (l < comparisonArray2.size()))
+                        {
+                            l++;
+                        }
+                         if(l < comparisonArray2.size())
+                     cout << oursTotheirs(comparisonArray2[l]).toStdString() << " ";
+                     }
+                     cout << endl;
+                }
+
+
+                //std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
+                std::cout << std::endl;
+                if (i==3){start = 16; end = 0;}
+                else if (i==2) {start = 0; end = oldEnd;}
             }
         }
                     else if (shortorLong == 2)
@@ -1786,17 +1880,39 @@ void MainWindow::greyOut2()
 
                         //calculate and output information
                                 std::vector<weight_t> min_distance;
-                                std::vector<vertex_t> previous;
-                                DijkstraComputePaths(start, adjacency_list, min_distance, previous);
-                                std::cout << "Distance from " << ui->originBox2->currentText().toStdString() << " to " << ui->destBox2->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
-                                std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
-                                std::cout << ui->trainselectBox2->currentText().toStdString() <<" Path : ";
-                                tableOperation(path, 2, 0);
+                        std::vector<vertex_t> previous;
+                        DijkstraComputePaths(start, adjacency_list, min_distance, previous);
+                        if (i == 3)
+                        std::cout << "Distance from " << ui->originBox2->currentText().toStdString() << " to " << ui->destBox2->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
+                        std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
 
-                                //std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
-                                std::cout << std::endl;
-                                if (i==3){start = 16; end = 0;}
-                                else if (i==2) {start = 0; end = oldEnd;}
+
+                        tableOperation(path, 2, 0, i, 1);
+
+                        if(i <= 1)
+                        std::cout << ui->trainselectBox2->currentText().toStdString() <<" Path : ";
+
+                        if(i <= 1)
+                        {
+                            cout << oursTotheirs(comparisonArray2[0]).toStdString() << " ";
+                            int l = 1;
+                            for (; l<comparisonArray2.size(); l++)
+                            {
+                                while (comparisonArray2[l] == comparisonArray2[l-1] && (l < comparisonArray2.size()))
+                                {
+                                    l++;
+                                }
+                                 if(l < comparisonArray2.size())
+                             cout << oursTotheirs(comparisonArray2[l]).toStdString() << " ";
+                             }
+                             cout << endl;
+                        }
+
+
+                        //std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
+                        std::cout << std::endl;
+                        if (i==3){start = 16; end = 0;}
+                        else if (i==2) {start = 0; end = oldEnd;}
                         }
 
 
