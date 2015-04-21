@@ -76,8 +76,8 @@ MainWindow::MainWindow(QWidget *parent) :
     initializeSwitchtable();
 
     //Start and Start button graphics
-    startIcon = new QIcon("startbutton.png");
-    stopIcon = new QIcon("stop.jpg");
+    startIcon = new QIcon(":/startbutton/startbutton.png");
+    stopIcon = new QIcon(":/startbutton/stop.jpg");
     ui->startButton->setIcon(*startIcon);
     ui->startButton->setIconSize(QSize(65,65));
     ui->stopButton->setIcon(*stopIcon);
@@ -103,11 +103,11 @@ MainWindow::MainWindow(QWidget *parent) :
 
 
     //create train image icons
-    engine1Icon = new QIcon("engine1.jpg");
-    engine2Icon = new QIcon("engine2.jpg");
-    engine3Icon = new QIcon("engine3.jpg");
-    engine4Icon = new QIcon("engine4.jpg");
-    engine5Icon = new QIcon("engine5.jpg");
+    engine1Icon = new QIcon(":/startbutton/engine1.jpg");
+    engine2Icon = new QIcon(":/startbutton/engine2.jpg");
+    engine3Icon = new QIcon(":/startbutton/engine3.jpg");
+    engine4Icon = new QIcon(":/startbutton/engine4.jpg");
+    engine5Icon = new QIcon(":/startbutton/engine5.jpg");
 
     //train image and route info hidden until selected
     ui->trainimageButton1->hide();
