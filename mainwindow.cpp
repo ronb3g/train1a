@@ -521,6 +521,12 @@ void MainWindow::greyOut1()
         ui->setButton1->setDisabled(true);
         ui->trainimageButton1->show();
         ui->routeInfo1->show();
+        
+        if (ui->trainselectBox1->currentIndex() == 0 || ui->originBox1->currentIndex() == 0 || ui->destBox1->currentIndex() == 0 || ui->facingBox1->currentIndex() == 0 || ui->throttleBox1->currentIndex() == 0)
+{
+    cout << "Route info incomplete. Can not compute route with information given. Please fill out all values before attempting to start planning a route." << endl;
+    return;
+    }
 
 
 
@@ -1269,6 +1275,11 @@ void MainWindow::greyOut2()
         ui->trainimageButton2->show();
         ui->routeInfo2->show();
 
+        if (ui->trainselectBox2->currentIndex() == 0 || ui->originBox2->currentIndex() == 0 || ui->destBox2->currentIndex() == 0 || ui->facingBox2->currentIndex() == 0 || ui->throttleBox2->currentIndex() == 0)
+        {
+            cout << "Route info incomplete. Can not compute route with information given. Please fill out all values before attempting to start planning a route." << endl;
+            return;
+            }
 
         int shortorLong =  longPathroute(start, end);
 
@@ -2012,6 +2023,11 @@ void MainWindow::greyOut3()
         ui->setButton3->setDisabled(true);
         ui->trainimageButton3->show();
         ui->routeInfo3->show();
+                if (ui->trainselectBox3->currentIndex() == 0 || ui->originBox3->currentIndex() == 0 || ui->destBox3->currentIndex() == 0 || ui->facingBox3->currentIndex() == 0 || ui->throttleBox3->currentIndex() == 0)
+        {
+            cout << "Route info incomplete. Can not compute route with information given. Please fill out all values before attempting to start planning a route." << endl;
+            return;
+            }
 
 
         int shortorLong =  longPathroute(start, end);
@@ -2699,6 +2715,13 @@ void MainWindow::greyOut4()
         ui->setButton4->setDisabled(true);
         ui->trainimageButton4->show();
         ui->routeInfo4->show();
+                if (ui->trainselectBox4->currentIndex() == 0 || ui->originBox4->currentIndex() == 0 || ui->destBox4->currentIndex() == 0 || ui->facingBox4->currentIndex() == 0 || ui->throttleBox4->currentIndex() == 0)
+        {
+            cout << "Route info incomplete. Can not compute route with information given. Please fill out all values before attempting to start planning a route." << endl;
+            return;
+            }
+
+        
         int shortorLong =  longPathroute(start, end);
 
                 if (shortorLong == 0)
@@ -3384,6 +3407,12 @@ void MainWindow::greyOut5()
         ui->setButton5->setDisabled(true);
         ui->trainimageButton5->show();
         ui->routeInfo5->show();
+        
+                if (ui->trainselectBox5->currentIndex() == 0 || ui->originBox5->currentIndex() == 0 || ui->destBox5->currentIndex() == 0 || ui->facingBox5->currentIndex() == 0 || ui->throttleBox5->currentIndex() == 0)
+        {
+            cout << "Route info incomplete. Can not compute route with information given. Please fill out all values before attempting to start planning a route." << endl;
+            return;
+            }
 
 
         int shortorLong =  longPathroute(start, end);
