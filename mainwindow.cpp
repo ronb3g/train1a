@@ -2200,7 +2200,7 @@ void MainWindow::greyOut3()
                         std::cout << "Distance from " << ui->originBox3->currentText().toStdString() << " to " << ui->destBox3->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
                         std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
                         std::cout << ui->trainselectBox3->currentText().toStdString() <<" Path : ";
-                        tableOperation(path, 3, 0);
+                        tableOperation(path, 3, 0, 0, 0);
 
                         //std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
                         std::cout << std::endl;
@@ -2395,7 +2395,7 @@ void MainWindow::greyOut3()
                         std::cout << "Distance from " << ui->originBox3->currentText().toStdString() << " to " << ui->destBox3->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
                         std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
                         std::cout << ui->trainselectBox3->currentText().toStdString() <<" Path : ";
-                        tableOperation(path, 3, 0);
+                        tableOperation(path, 3, 0, i, 1);
 
                         //std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
                         std::cout << std::endl;
@@ -2594,7 +2594,7 @@ void MainWindow::greyOut3()
                                 std::cout << "Distance from " << ui->originBox3->currentText().toStdString() << " to " << ui->destBox3->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
                                 std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
                                 std::cout << ui->trainselectBox3->currentText().toStdString() <<" Path : ";
-                                tableOperation(path, 3, 0);
+                                tableOperation(path, 3, 0, i, 1);
 
                                 //std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
                                 std::cout << std::endl;
@@ -2885,7 +2885,7 @@ void MainWindow::greyOut4()
                         std::cout << "Distance from " << ui->originBox4->currentText().toStdString() << " to " << ui->destBox4->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
                         std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
                         std::cout << ui->trainselectBox4->currentText().toStdString() <<" Path : ";
-                        tableOperation(path, 1, 0);
+                        tableOperation(path, 4, 0, 0, 0);
 
                         //std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
                         std::cout << std::endl;
@@ -3080,7 +3080,7 @@ void MainWindow::greyOut4()
                         std::cout << "Distance from " << ui->originBox4->currentText().toStdString() << " to " << ui->destBox4->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
                         std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
                         std::cout << ui->trainselectBox4->currentText().toStdString() <<" Path : ";
-                        tableOperation(path, 1, 0);
+                        tableOperation(path, 4, 0, i, 1);
 
                         //std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
                         std::cout << std::endl;
@@ -3279,7 +3279,7 @@ void MainWindow::greyOut4()
                                 std::cout << "Distance from " << ui->originBox4->currentText().toStdString() << " to " << ui->destBox4->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
                                 std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
                                 std::cout << ui->trainselectBox4->currentText().toStdString() <<" Path : ";
-                                tableOperation(path, 1, 0);
+                                tableOperation(path, 4, 0, i, 1);
 
                                 //std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
                                 std::cout << std::endl;
@@ -3572,7 +3572,7 @@ void MainWindow::greyOut5()
                         std::cout << "Distance from " << ui->originBox5->currentText().toStdString() << " to " << ui->destBox5->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
                         std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
                         std::cout << ui->trainselectBox5->currentText().toStdString() <<" Path : ";
-                        tableOperation(path, 1, 0);
+                        tableOperation(path, 5, 0, 0, 0);
 
                         //std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
                         std::cout << std::endl;
@@ -3767,7 +3767,7 @@ void MainWindow::greyOut5()
                         std::cout << "Distance from " << ui->originBox5->currentText().toStdString() << " to " << ui->destBox5->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
                         std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
                         std::cout << ui->trainselectBox5->currentText().toStdString() <<" Path : ";
-                        tableOperation(path, 1, 0);
+                        tableOperation(path, 5, 0, i, 1);
 
                         //std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
                         std::cout << std::endl;
@@ -3966,7 +3966,7 @@ void MainWindow::greyOut5()
                                 std::cout << "Distance from " << ui->originBox5->currentText().toStdString() << " to " << ui->destBox5->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
                                 std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
                                 std::cout << ui->trainselectBox5->currentText().toStdString() <<" Path : ";
-                                tableOperation(path, 1, 0);
+                                tableOperation(path, 5, 0, i, 1);
 
                                 //std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
                                 std::cout << std::endl;
