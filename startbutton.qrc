@@ -7,11 +7,5 @@
         <file>engine3.jpg</file>
         <file>engine4.jpg</file>
         <file>engine5.jpg</file>
-        <file>american_train.wav</file>
-        <file>american_train_whistle_blow.wav</file>
-        <file>amtrak_passenger_train_whistle_blow_exterior_long.wav</file>
-        <file>train-depart-with-whistle-01.wav</file>
-        <file>vintage_steam_train_double_whistle.wav</file>
-        <file>vintage_steam_train_single_whistle.wav</file>
     </qresource>
 </RCC>
