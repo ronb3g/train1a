@@ -10,7 +10,7 @@
 
 
 
-void MainWindow::tableOperation(std::list<vertex_t> path, int trainsel, int testInt, int islong)
+void MainWindow::tableOperation(std::list<vertex_t> path, int trainsel, int testInt, int attempt, int islong)
 {
 testInt++;
     if(testInt >= 4)
