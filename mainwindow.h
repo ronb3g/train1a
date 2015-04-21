@@ -114,7 +114,7 @@ private slots:
     void checkSwitches(QString cN, QString nN);
     void setSwitch(QString sN, QString sM);
     void viewTable();
-    void tableOperation(std::list<vertex_t> path, int trainsel, int testInt);
+    void tableOperation(std::list<vertex_t> path, int trainsel, int testInt, int attempt, int islong);
     void traininfoTable();
     void throttleTable();
     void pathinfoTable();
@@ -131,13 +131,13 @@ private slots:
     void setgreyOut4();
     void setgreyOut5();
     void stop1();
-    int checkPaths(int trainS);
+    int checkPaths(int trainS, int islong);
     int trackLength(int trackNum);
-    void Eng1Time();
-    void Eng2Time();
-    void Eng3Time();
-    void Eng4Time();
-    void Eng5Time();
+    void Eng1Time(int attempt, int islong);
+    void Eng2Time(int attempt, int islong);
+    void Eng3Time(int attempt, int islong);
+    void Eng4Time(int attempt, int islong);
+    void Eng5Time(int attempt, int islong);
     void reroute(int tNum, int tVal);
     int compare2(std::vector<int>  a, std::vector<int>  b, int a1, int b1);
     int compare3(std::vector<int> a, std::vector<int>  b, std::vector<int>  c, int a1, int b1, int c1);
