@@ -15,9 +15,51 @@ void MainWindow::tableOperation(std::list<vertex_t> path, int trainsel, int test
 testInt++;
     if(testInt >= 4)
     {
-        cout<< "rerouting failed 4 times. Aborting." << endl;
-               return;
+        cout<< "rerouting failed 4 times. Delaying route start time." << endl;
+              if(trainsel == 1)
+              {
+                  int begin = comparisonArray[0];
+                  for (int i = 5; i>0; i--)
+                  {
+                      comparisonArray.insert(comparisonArray.begin(), begin);
+                  }
+              }
+              else if (trainsel == 2)
+              {
+                  int begin = comparisonArray2[0];
+                  for (int i = 5; i>0; i--)
+                  {
+                      comparisonArray2.insert(comparisonArray2.begin(), begin);
+                  }
+              }
+              else if (trainsel == 3)
+              {
+                  int begin = comparisonArray3[0];
+                  for (int i = 5; i>0; i--)
+                  {
+                      comparisonArray3.insert(comparisonArray3.begin(), begin);
+                  }
+              }
+              else if (trainsel == 4)
+              {
+                  int begin = comparisonArray4[0];
+                  for (int i = 5; i>0; i--)
+                  {
+                      comparisonArray4.insert(comparisonArray4.begin(), begin);
+                  }
+              }
+              else if (trainsel == 5)
+              {
+                  int begin = comparisonArray5[0];
+                  for (int i = 5; i>0; i--)
+                  {
+                      comparisonArray5.insert(comparisonArray5.begin(), begin);
+                  }
+              }
+
+    return;
     }
+    
 
     int flag = 0;
 
@@ -511,22 +553,68 @@ testInt++;
             }
             }
             //check for possible collisions before writing to table
-           int check = 0;
-           check = checkPaths(trainsel);
+              int check = 0;
+           check = checkPaths(attempt, islong);
 
+           if (attempt <= 1){
            if(check == -1)
                cout << "no issues detected. Finalizing path" << endl;
-           else
+           else if (check != -1 && islong == 0)
               {
 
                reroute(trainsel, check);
                cout << " rerouted!" << endl;
-               tableOperation(backupPath, trainsel, testInt);
+               tableOperation(backupPath, trainsel, testInt, 0, 0);
                return;
 
                //insert code to reroute or slow down train here. I have the rerouting code partially working, but the throttle controls are currently unavailable, so am leaving this blank for now. The rerouting function is currently unconnected.
 
               }
+           else if (check != -1 && islong == 1)
+           {
+               if(trainsel == 1)
+               {
+                   int begin = comparisonArray[0];
+                   for(int i=5; i>0;i--)
+                   {
+                       comparisonArray.insert(comparisonArray.begin(), begin);
+                   }
+
+               }
+               else if (trainsel == 2)
+               {
+                   int begin = comparisonArray2[0];
+                   for(int i=5; i>0;i--)
+                   {
+                       comparisonArray2.insert(comparisonArray2.begin(), begin);
+                   }
+               }
+               else if (trainsel == 3)
+               {
+                   int begin = comparisonArray3[0];
+                   for(int i=5; i>0;i--)
+                   {
+                       comparisonArray3.insert(comparisonArray3.begin(), begin);
+                   }
+               }
+               else if (trainsel == 4)
+               {
+                   int begin = comparisonArray4[0];
+                   for(int i=5; i>0;i--)
+                   {
+                       comparisonArray4.insert(comparisonArray4.begin(), begin);
+                   }
+               }
+               else if (trainsel == 5)
+               {
+                   int begin = comparisonArray5[0];
+                   for(int i=5; i>0;i--)
+                   {
+                       comparisonArray5.insert(comparisonArray5.begin(), begin);
+                   }
+               }
+           }
+           }
 
 
 
