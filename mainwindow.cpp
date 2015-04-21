@@ -28,7 +28,6 @@
 #include <QFileDialog>
 #include <timedelay.h>
 #include <fstream>
-#include <QSound>
 
 
 
@@ -339,7 +338,6 @@ void MainWindow::calculateRoute()
 {
 
     ui->startButton->setDisabled(true); //disabled start button to avoid throwing timer off
-    QSound::play("train-depart-with-whistle-01.wav");
 
     if(ui->setButton1->isChecked() == true)
         greyOut1();
@@ -402,35 +400,30 @@ void MainWindow::setgreyOut1()
 {
     ui->setButton1->click();
     greyOut1();
-    QSound::play("american_train.wav");
 }
 
 void MainWindow::setgreyOut2()
 {
     ui->setButton2->click();
     greyOut2();
-    QSound::play("american_train_whistle_blow.wav");
 }
 
 void MainWindow::setgreyOut3()
 {
     ui->setButton3->click();
     greyOut3();
-    QSound::play("amtrak_passenger_train_whistle_blow_exterior_long.wav");
 }
 
 void MainWindow::setgreyOut4()
 {
     ui->setButton4->click();
     greyOut4();
-    QSound::play("vintage_steam_train_double_whistle.wav");
 }
 
 void MainWindow::setgreyOut5()
 {
     ui->setButton5->click();
     greyOut5();
-    QSound::play("vintage_steam_train_single_whistle.wav");
 }
 //lock in and calculate route for line 1
 void MainWindow::greyOut1()
