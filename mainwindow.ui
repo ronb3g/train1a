@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>952</width>
+    <width>1000</width>
     <height>778</height>
    </rect>
   </property>
@@ -35,22 +35,52 @@ background-color: rgb(211, 209, 209);</string>
           </item>
           <item>
            <property name="text">
-            <string>25%</string>
+            <string>10</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>50%</string>
+            <string>20</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>75%</string>
+            <string>3.0</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>100%</string>
+            <string>40</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>50</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>60</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>70</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>80</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>90</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>100</string>
            </property>
           </item>
          </widget>
@@ -116,26 +146,6 @@ background-color: rgb(211, 209, 209);</string>
           </item>
           <item>
            <property name="text">
-            <string>Engine 1</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Engine 2</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Engine 3</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Engine 4</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
             <string>Engine 5</string>
            </property>
           </item>
@@ -173,27 +183,7 @@ background-color: rgb(211, 209, 209);</string>
           </item>
           <item>
            <property name="text">
-            <string>Engine 1</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
             <string>Engine 2</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Engine 3</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Engine 4</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Engine 5</string>
            </property>
           </item>
          </widget>
@@ -298,27 +288,7 @@ background-color: rgb(211, 209, 209);</string>
           </item>
           <item>
            <property name="text">
-            <string>Engine 1</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Engine 2</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Engine 3</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
             <string>Engine 4</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Engine 5</string>
            </property>
           </item>
          </widget>
@@ -336,27 +306,7 @@ background-color: rgb(211, 209, 209);</string>
           </item>
           <item>
            <property name="text">
-            <string>Engine 1</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Engine 2</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
             <string>Engine 3</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Engine 4</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Engine 5</string>
            </property>
           </item>
          </widget>
@@ -378,26 +328,6 @@ background-color: rgb(211, 209, 209);</string>
           <item>
            <property name="text">
             <string>Engine 1</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Engine 2</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Engine 3</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Engine 4</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>Engine 5</string>
            </property>
           </item>
          </widget>
@@ -497,22 +427,57 @@ background-color: rgb(211, 209, 209);</string>
           </item>
           <item>
            <property name="text">
-            <string>25%</string>
+            <string>10</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>50%</string>
+            <string>20</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>75%</string>
+            <string>30</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>100%</string>
+            <string>40</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>50</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>60</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>60</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>70</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>80</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>90</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>100</string>
            </property>
           </item>
          </widget>
@@ -819,7 +784,7 @@ background-color: rgba(255, 255, 255, 0);
 font: 75 12pt &quot;Jomolhari&quot;;</string>
           </property>
           <property name="text">
-           <string>Create DB</string>
+           <string>Query</string>
           </property>
          </widget>
         </item>
@@ -936,22 +901,52 @@ background-color: rgb(211, 209, 209);</string>
           </item>
           <item>
            <property name="text">
-            <string>25%</string>
+            <string>10</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>50%</string>
+            <string>20</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>75%</string>
+            <string>30</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>100%</string>
+            <string>40</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>50</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>60</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>70</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>80</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>90</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>100</string>
            </property>
           </item>
          </widget>
@@ -988,22 +983,52 @@ background-color: rgb(211, 209, 209);</string>
           </item>
           <item>
            <property name="text">
-            <string>25%</string>
+            <string>10</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>50%</string>
+            <string>20</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>75%</string>
+            <string>30</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>100%</string>
+            <string>40</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>50</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>60</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>70</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>80</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>90</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>100</string>
            </property>
           </item>
          </widget>
@@ -1275,22 +1300,52 @@ background-color: rgb(211, 209, 209);</string>
           </item>
           <item>
            <property name="text">
-            <string>25%</string>
+            <string>10</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>50%</string>
+            <string>20</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>75%</string>
+            <string>30</string>
            </property>
           </item>
           <item>
            <property name="text">
-            <string>100%</string>
+            <string>40</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>50</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>60</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>70</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>80</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>90</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>100</string>
            </property>
           </item>
          </widget>
@@ -1712,7 +1767,7 @@ background-color: rgb(211, 209, 209);</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>952</width>
+     <width>1000</width>
      <height>21</height>
     </rect>
    </property>
