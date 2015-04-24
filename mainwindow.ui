@@ -45,7 +45,7 @@ background-color: rgb(211, 209, 209);</string>
           </item>
           <item>
            <property name="text">
-            <string>3.0</string>
+            <string>30</string>
            </property>
           </item>
           <item>
@@ -129,6 +129,16 @@ background-color: rgb(211, 209, 209);</string>
           <item>
            <property name="text">
             <string>End Siding 7</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Inner East End</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Inner West End</string>
            </property>
           </item>
          </widget>
@@ -258,6 +268,16 @@ background-color: rgb(211, 209, 209);</string>
             <string>End Siding 7</string>
            </property>
           </item>
+          <item>
+           <property name="text">
+            <string>Inner East Start</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Inner West Start</string>
+           </property>
+          </item>
          </widget>
         </item>
         <item row="0" column="2" alignment="Qt::AlignHCenter">
@@ -376,6 +396,16 @@ background-color: rgb(211, 209, 209);</string>
           <item>
            <property name="text">
             <string>End Siding 7</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Inner East End</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Inner West End</string>
            </property>
           </item>
          </widget>
@@ -528,6 +558,16 @@ background-color: rgb(211, 209, 209);</string>
             <string>End Siding 7</string>
            </property>
           </item>
+          <item>
+           <property name="text">
+            <string>Inner East Start</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Inner West Start</string>
+           </property>
+          </item>
          </widget>
         </item>
         <item row="4" column="3">
@@ -576,6 +616,16 @@ background-color: rgb(211, 209, 209);</string>
             <string>End Siding 7</string>
            </property>
           </item>
+          <item>
+           <property name="text">
+            <string>Inner East End</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Inner West End</string>
+           </property>
+          </item>
          </widget>
         </item>
         <item row="4" column="2">
@@ -622,6 +672,16 @@ background-color: rgb(211, 209, 209);</string>
           <item>
            <property name="text">
             <string>End Siding 7</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Inner East Start</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Inner West Start</string>
            </property>
           </item>
          </widget>
@@ -784,7 +844,7 @@ background-color: rgba(255, 255, 255, 0);
 font: 75 12pt &quot;Jomolhari&quot;;</string>
           </property>
           <property name="text">
-           <string>Query</string>
+           <string>Create DB</string>
           </property>
          </widget>
         </item>
@@ -1102,6 +1162,16 @@ background-color: rgb(211, 209, 209);</string>
             <string>End Siding 7</string>
            </property>
           </item>
+          <item>
+           <property name="text">
+            <string>Inner East End</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Inner West End</string>
+           </property>
+          </item>
          </widget>
         </item>
         <item row="1" column="2">
@@ -1206,6 +1276,16 @@ background-color: rgb(211, 209, 209);</string>
           <item>
            <property name="text">
             <string>End Siding 7</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Inner East Start</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Inner West Start</string>
            </property>
           </item>
          </widget>
