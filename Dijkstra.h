@@ -28,8 +28,8 @@ void DijkstraComputePaths(vertex_t source,const adjacency_list_t &adjacency_list
     //int oldererSw, oldestSw, oldSw, lastSw, currentSw = 0;
     //int sw3, sw2, sw1 = -1;
     //long switchNumber = -1;
-    int u1, u2, u3, u4, u5, u6, u7, u8 = -1;
-    int v1, v2, v3, v4, v5, v6, v7, v8 = -1;
+    int u1, u2, u3, u4, u5, u6 = -1;
+    int v1, v2, v3, v4, v5, v6 = -1;
     int U, V;
     int n = adjacency_list.size();
     min_distance.clear();
@@ -64,8 +64,6 @@ void DijkstraComputePaths(vertex_t source,const adjacency_list_t &adjacency_list
                  V = forbiddenTurnV(u ,v);
                  //qDebug() << "generated " << U << V << endl;
                 if (U != -1){
-                     u8 = u7;
-                     u7 = u6;
                      u6 = u5;
                      u5 = u4;
                      u4 = u3;
@@ -74,8 +72,6 @@ void DijkstraComputePaths(vertex_t source,const adjacency_list_t &adjacency_list
                      u1 = U;
                  }
                  if (V != -1){
-                     v8 = v7;
-                     v7 = v6;
                      v6 = v5;
                      v5 = v4;
                      v4 = v3;
@@ -896,12 +892,28 @@ QString MainWindow::oursTotheirs(int number)
             return "U-50";
     if (number == 88)
             return "U-48";
+    if (number == 99)
+            return "99";
+    if (number == 100)
+            return "100";
+    if (number == 101)
+            return "101";
+    if (number == 102)
+            return "102";
     else
         return "-1";
 }
 
 int MainWindow::theirsToours(QString string)
 {
+    if (string == "99")
+            return 99;
+    if (string == "100")
+            return 100;
+    if (string == "101")
+            return 101;
+    if (string == "102")
+            return 102;
     if (string == "U-3")
         return 43;
     if (string == "4-9")
