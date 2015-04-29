@@ -38,6 +38,12 @@ MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+
+    
+    //initialize all variables that will be used here.
+
+    controlBit = 0;
+    ready = 1;
     Eng1 = NULL;
         Eng2 = NULL;
         Eng3 = NULL;
@@ -63,9 +69,12 @@ MainWindow::MainWindow(QWidget *parent) :
        // comparisonArray3 = NULL;
         //comparisonArray4 = NULL;
         //comparisonArray5 = NULL;
-        m_timer.start(250, this);
 
-    ldb = QSqlDatabase::addDatabase("QSQLITE", "ldb");
+        m_timer.start(1000, this);
+        fakeoccupancy = 0;
+        occupyitt = 0;
+
+    ldb = QSqlDatabase::addDatabase("QSQLITE", "ldb"); //local database initialization
     ldb.setDatabaseName( "train.db" );
     if(!ldb.open())
        { qDebug() << ldb.lastError();}
@@ -82,23 +91,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->stopButton->setIcon(*stopIcon);
     ui->stopButton->setIconSize(QSize(35,35));
 
-    /*
-    mapIcon = new QIcon("MasterTracknumbered1.jpg");
-    //ui->graphicsView->setScene(scene);
-    QGraphicsView* w = new QGraphicsView();
-    QGraphicsScene *scn = new QGraphicsScene( w );
-     scn->setSceneRect( w->rect() );
-     w->setScene( scn );
-     w->scale(.1, .1);
-     //w->setAlignment(Qt::AlignCenter);
-     //w->setDragMode(QGraphicsView::ScrollHandDrag);
-     w->viewport();
-     //w->addScrollBarWidget(w, Qt::AlignCenter);
-     //w->setFixedSize( 400, 400 );
-    QPixmap pix( "MasterTracknumbered1.jpg" );
-    scn->addPixmap(pix);
-    w->show();
-*/
 
 
     //create train image icons
@@ -126,16 +118,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(ui->startButton, SIGNAL(clicked()), this, SLOT(calculateRoute()));
     connect(ui->stopButton, SIGNAL(clicked()), this, SLOT(stop1()));
 
-    //connect(ui->delaypushButton, SIGNAL(clicked()), this, SLOT(timeDelay1()));
-    //connect(ui->timeEdit1, SIGNAL(timeChanged(QTime)), this, SLOT(timedDelay()));
-
-    //once schedule created, select radio button to lock it in
-    //connect(ui->setButton1, SIGNAL(clicked(bool)), this, SLOT(greyOut1()));
-    //connect(ui->setButton2, SIGNAL(clicked(bool)), this, SLOT(greyOut2()));
-    //connect(ui->setButton3, SIGNAL(clicked(bool)), this, SLOT(greyOut3()));
-    //connect(ui->setButton4, SIGNAL(clicked(bool)), this, SLOT(greyOut4()));
-    //connect(ui->setButton5, SIGNAL(clicked(bool)), this, SLOT(greyOut5()));
-
+   
     //feature to include randomly selected node to include in origin box to start train from
     //i.e. dynamically added due to node being occuppied when train placed on it
     connect(ui->occButton, SIGNAL(clicked()), this, SLOT(occupiedNode()));
@@ -154,13 +137,17 @@ MainWindow::MainWindow(QWidget *parent) :
     //i.e. if origin Endpoint 1 selected need to block destination box from selecting Endpoint 1
     connect(ui->originBox1, SIGNAL(currentIndexChanged(int)), this, SLOT(blockDest()));
 
-    //feature to save and load configurations
+    //feature to save and load configurations, as well as toggle the control bit
+    toggleControl = new QAction("Toggle Control", this);
     savefile = new QAction("Save config", this);
     loadfile = new QAction("Load config", this);
+    Occtest = new QAction("Occupancy Test", this);
     connect(loadfile, SIGNAL(triggered()), this, SLOT(loadText()));
     ui->menuCPE_453_Team_1A->addAction(loadfile);
     ui->menuCPE_453_Team_1A->addAction(savefile);
+    ui->menuCPE_453_Team_1A->addAction(toggleControl);
     connect(savefile, SIGNAL(triggered()), this, SLOT(saveText()));
+    connect(toggleControl, SIGNAL(triggered()), this, SLOT(toggleBit()));
 
     //SQL Database query drop down menu selection
     traininfo = new QAction("Train Info table", this);
@@ -182,6 +169,15 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(techsupport, SIGNAL(triggered()), this, SLOT(techsupportDoc()));
     menu = menuBar()->addMenu("Help");
     menu->addAction(techsupport);
+    clearAll = new QAction("Clear checkboxes", this);
+    connect(clearAll, SIGNAL(triggered()), this, SLOT(clearChecks()));
+    menu->addAction(clearAll);
+    connect (Occtest, SIGNAL(triggered()), this, SLOT(occupy()));
+            menu->addAction(Occtest);
+
+    ui->ModeEdit->setText("Scheduler Control");
+    ui->stopButton->setDisabled(true);
+
 
 }
 
@@ -235,6 +231,7 @@ void MainWindow::occupiedNode()
     ui->originBox3->addItem(ui->addorlineEdit3->text());
     ui->originBox4->addItem(ui->addorlineEdit3->text());
     ui->originBox5->addItem(ui->addorlineEdit3->text());
+    ui->addorlineEdit3->clear();
 }
 
 //function to add random destination to destination boxes
@@ -245,9 +242,10 @@ void MainWindow::destNode()
     ui->destBox3->addItem((ui->adddestlineEdit4->text()));
     ui->destBox4->addItem((ui->adddestlineEdit4->text()));
     ui->destBox5->addItem((ui->adddestlineEdit4->text()));
+    ui->adddestlineEdit4->clear();
 }
 
-//function to stop route calculations
+//function to route calculations
 void MainWindow::stopTimer()
 {
     //recalculateTimer->stop();
@@ -255,12 +253,44 @@ void MainWindow::stopTimer()
 
 void MainWindow::stop1()
 {
-    ui->startButton->setDisabled(false);
+
+   // m_timer.stop();
+
+    occupyitt = 0;
+    comparisonArray.clear();
+    comparisonArray2.clear();
+    comparisonArray3.clear();
+    comparisonArray4.clear();
+    comparisonArray5.clear();
+    pathcomplete1 = 0;
+    pathcomplete2 = 0;
+    pathcomplete3 = 0;
+    pathcomplete4 = 0;
+    pathcomplete5 = 0;
+//    if (Eng1 != NULL)
+//    delete Eng1;
+//    if (Eng2 != NULL)
+//    delete Eng2;
+//    if (Eng3 != NULL)
+//    delete Eng3;
+//    if (Eng4 != NULL)
+//    delete Eng4;
+//    if (Eng5 != NULL)
+//    delete Eng5;
+    ui->routeInfo1->clear();
+    ui->routeInfo2->clear();
+    ui->routeInfo3->clear();
+    ui->routeInfo4->clear();
+    ui->routeInfo5->clear();
 
     ui->setButton1->setDisabled(false);
-    if (ui->setButton1->isChecked() == true)
+   // if (ui->setButton1->isChecked() == true)
     {
-        ui->setButton1->click();
+//        if (Eng1 != NULL)
+//        {
+//        delete Eng1;
+//        }
+        //ui->setButton1->click();
         ui->trainselectBox1->setDisabled(false);
         ui->originBox1->setDisabled(false);
         ui->destBox1->setDisabled(false);
@@ -273,9 +303,13 @@ void MainWindow::stop1()
     }
 
     ui->setButton2->setDisabled(false);
-    if (ui->setButton2->isChecked() == true)
+    //if (ui->setButton2->isChecked() == true)
     {
-        ui->setButton2->click();
+//        if (Eng2 != NULL)
+//        {
+//        delete Eng2;
+//        }
+       // ui->setButton2->click();
         ui->trainselectBox2->setDisabled(false);
         ui->originBox2->setDisabled(false);
         ui->destBox2->setDisabled(false);
@@ -288,9 +322,13 @@ void MainWindow::stop1()
     }
 
     ui->setButton3->setDisabled(false);
-    if (ui->setButton3->isChecked() == true)
+    //if (ui->setButton3->isChecked() == true)
     {
-        ui->setButton3->click();
+//        if (Eng3 != NULL)
+//        {
+//        delete Eng3;
+//        }
+       // ui->setButton3->click();
         ui->trainselectBox3->setDisabled(false);
         ui->originBox3->setDisabled(false);
         ui->destBox3->setDisabled(false);
@@ -303,9 +341,13 @@ void MainWindow::stop1()
     }
 
     ui->setButton4->setDisabled(false);
-    if (ui->setButton4->isChecked() == true)
+    //if (ui->setButton4->isChecked() == true)
     {
-        ui->setButton4->click();
+//        if (Eng4 != NULL)
+//        {
+//        delete Eng4;
+//        }
+      //  ui->setButton4->click();
         ui->trainselectBox4->setDisabled(false);
         ui->originBox4->setDisabled(false);
         ui->destBox4->setDisabled(false);
@@ -318,9 +360,13 @@ void MainWindow::stop1()
     }
 
     ui->setButton5->setDisabled(false);
-    if (ui->setButton5->isChecked() == true)
+    //if (ui->setButton5->isChecked() == true)
     {
-        ui->setButton5->click();
+//        if (Eng5 != NULL)
+//        {
+//        delete Eng5;
+//        }
+        //ui->setButton5->click();
         ui->trainselectBox5->setDisabled(false);
         ui->originBox5->setDisabled(false);
         ui->destBox5->setDisabled(false);
@@ -331,12 +377,21 @@ void MainWindow::stop1()
         ui->routeInfo5->clear();
         ui->routeInfo5->hide();
     }
+
+    ui->stopButton->setDisabled(true);
+    ui->startButton->setDisabled(false);
 }
 
 //function to start periodic route calculations
 void MainWindow::calculateRoute()
 {
 
+    if (controlBit == 1)
+    {
+        return;
+    }
+
+    ui->stopButton->setDisabled(false);
     ui->startButton->setDisabled(true); //disabled start button to avoid throwing timer off
 
     if(ui->setButton1->isChecked() == true)
@@ -359,6 +414,7 @@ void MainWindow::calculateRoute()
         greyOut5();
     else if(ui->delayButton5->isChecked() == true)
         timeDelay5();
+    //m_timer.start(250, this);
     //connect(recalculateTimer, SIGNAL(timeout()), this, SLOT(greyOut1()));
     //if(ui->setButton2->isChecked() == true)
     //connect(recalculateTimer, SIGNAL(timeout()), this, SLOT(greyOut2()));
@@ -431,6 +487,8 @@ void MainWindow::setgreyOut5()
 void MainWindow::greyOut1()
 {
 
+
+
     new Q_DebugStream(std::cout, ui->routeInfo1); //Redirect Console output to textBrowser1
     Q_DebugStream::registerQDebugMessageHandler(); //Redirect qDebug() output to textBrowser1
 
@@ -485,6 +543,8 @@ void MainWindow::greyOut1()
         start = 95;
     else if (ui->originBox1->currentIndex() == 9)
         start = 94;
+    else
+        start = theirsToours(ui->originBox1->currentText());
     //translate destination box
     if (ui->destBox1->currentIndex() == 1)
         end = 43;
@@ -504,6 +564,8 @@ void MainWindow::greyOut1()
         end = 57;
     else if (ui->destBox1->currentIndex() == 9)
         end = 60;
+    else
+        end = theirsToours(ui->destBox1->currentText());
     //grey out line 1 if radio button selected
     if (ui->setButton1->isChecked()== true)
     {
@@ -516,12 +578,102 @@ void MainWindow::greyOut1()
         ui->setButton1->setDisabled(true);
         ui->trainimageButton1->show();
         ui->routeInfo1->show();
+
+
+
+        if (ui->originBox1->currentIndex() != 0)
+        {
+
+            if ((ui->originBox1->currentIndex() == ui->originBox2->currentIndex()) && (ui->buttonGroup_2->checkedButton() != 0))
+            {
+                cout << "Trains can not begin concurent paths at the same node." << endl;
+                return;
+            }
+            else if ((ui->originBox1->currentIndex() == ui->originBox3->currentIndex()) && (ui->buttonGroup_3->checkedButton() != 0))
+            {
+                cout << "Trains can not begin concurent paths at the same node." << endl;
+                return;
+            }
+            else if ((ui->originBox1->currentIndex() == ui->originBox4->currentIndex()) && (ui->buttonGroup_4->checkedButton() != 0))
+            {
+                cout << "Trains can not begin concurent paths at the same node." << endl;
+                return;
+            }
+            else if ((ui->originBox1->currentIndex() == ui->originBox5->currentIndex()) && (ui->buttonGroup_5->checkedButton() != 0))
+            {
+                cout << "Trains can not begin concurent paths at the same node." << endl;
+                return;
+            }
+        }
+
+        if (ui->destBox1->currentIndex() != 0)
+        {
+
+            if ((ui->destBox1->currentIndex() == ui->destBox2->currentIndex()) && (ui->buttonGroup_2->checkedButton() != 0))
+            {
+                cout << "Trains can not end concurent paths at the same node." << endl;
+                return;
+            }
+            else if ((ui->destBox1->currentIndex() == ui->destBox3->currentIndex()) && (ui->buttonGroup_3->checkedButton() != 0))
+            {
+                cout << "Trains can not end concurent paths at the same node." << endl;
+                return;
+            }
+            else if ((ui->destBox1->currentIndex() == ui->destBox4->currentIndex()) && (ui->buttonGroup_4->checkedButton() != 0))
+            {
+                cout << "Trains can not end concurent paths at the same node." << endl;
+                return;
+            }
+            else if ((ui->destBox1->currentIndex() == ui->destBox5->currentIndex()) && (ui->buttonGroup_5->checkedButton() != 0))
+            {
+                cout << "Trains can not end concurent paths at the same node." << endl;
+                return;
+            }
+        }
         
         if (ui->trainselectBox1->currentIndex() == 0 || ui->originBox1->currentIndex() == 0 || ui->destBox1->currentIndex() == 0 || ui->facingBox1->currentIndex() == 0 || ui->throttleBox1->currentIndex() == 0)
 {
     cout << "Route info incomplete. Can not compute route with information given. Please fill out all values before attempting to start planning a route." << endl;
+    ui->buttonGroup->setExclusive(false);
+    ui->delayButton1->setChecked(false);
+    ui->setButton1->setChecked(false);
+    ui->buttonGroup->setExclusive(true);
     return;
     }
+
+        if (start == 95 || start == 59 || start == 61 || start == 93 || start == 62 || start == 99 || start == 100 || start == 60 || start == 94 || start == 58 || start == 56 || start == 96 || start == 65 || start == 101 || start == 102 || start == 57)
+        {
+            pathcomplete1 = 1;
+        }
+
+        if((!(start == 95 || start == 59 || start == 61 || start == 93 || start == 62 || start == 99 || start == 100 || start == 60 || start == 94 || start == 58 || start == 56 || start == 96 || start == 65 || start == 101 || start == 102 || start == 57)) != (!(end== 95 || end == 59 || end == 61 || end == 93 || end == 62 || end == 99 || end == 100 || end == 60 || end == 94 || end == 58 || end == 56 || end == 96 || end == 65 || end == 101 || end == 102 || end == 57)))
+        {
+            cout << "Invalid path. Attempting to move between two non-connected tracks. " << endl;
+            ui->buttonGroup->setExclusive(false);
+            ui->delayButton1->setChecked(false);
+            ui->setButton1->setChecked(false);
+            ui->buttonGroup->setExclusive(true);
+            return;
+        }
+        if(start == -1)
+        {
+            cout << "Start node is invalid." << endl;
+            ui->buttonGroup->setExclusive(false);
+            ui->delayButton1->setChecked(false);
+            ui->setButton1->setChecked(false);
+            ui->buttonGroup->setExclusive(true);
+                    return;
+        }
+        if (end == -1)
+        {
+            cout << "Destination node is invalid" << endl;
+            ui->buttonGroup->setExclusive(false);
+            ui->delayButton1->setChecked(false);
+            ui->setButton1->setChecked(false);
+            ui->buttonGroup->setExclusive(true);
+            return;
+        }
+
 
 
 
@@ -713,17 +865,22 @@ void MainWindow::greyOut1()
                         std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
 
                         tableOperation(path, 1, 0, 0, 0);
+                        cout << "Estimated time: " << to_string(comparisonArray.size()) << "seconds." << endl;
                         std::cout << ui->trainselectBox1->currentText().toStdString() <<" Path : ";
 
                         cout << oursTotheirs(comparisonArray[0]).toStdString() << " ";
                         int l = 1;
+                        
+                        //This bit of code checks steps through the vector, finding where the train changes segments, then outputs these segments.
                         for (; l<comparisonArray.size(); l++)
                         {
                             while (comparisonArray[l] == comparisonArray[l-1] && (l < comparisonArray.size()))
                             {
                                 l++;
                             }
-                            if(l < comparisonArray.size())
+
+
+                                if(l < comparisonArray.size())
                          cout << oursTotheirs(comparisonArray[l]).toStdString() << " ";
                          }
                          cout << endl;
@@ -926,10 +1083,14 @@ void MainWindow::greyOut1()
                 tableOperation(path, 1, 0, i, 1);
 
 
-                if(i <= 1)
-                std::cout << ui->trainselectBox1->currentText().toStdString() <<" Path : ";
+
+
                 if(i <= 1)
                 {
+                    cout << "Estimated time: " << to_string(comparisonArray.size()) << "seconds." << endl;
+                    std::cout << ui->trainselectBox1->currentText().toStdString() <<" Path : ";
+
+
                     cout << oursTotheirs(comparisonArray[0]).toStdString() << " ";
                     int l = 1;
                     for (; l<comparisonArray.size(); l++)
@@ -1010,6 +1171,7 @@ void MainWindow::greyOut1()
                         std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
 
                         tableOperation(path, 1, 0, 0, 0);
+                        cout << "Estimated time: " << to_string(comparisonArray.size()) << "seconds." << endl;
                         std::cout << ui->trainselectBox1->currentText().toStdString() <<" Path : ";
 
                         cout << oursTotheirs(comparisonArray[0]).toStdString() << " ";
@@ -1222,11 +1384,13 @@ void MainWindow::greyOut1()
 
                                 tableOperation(path, 1, 0, i, 1);
 
-                                if(i <= 1)
-                                std::cout << ui->trainselectBox1->currentText().toStdString() <<" Path : ";
+
 
                                 if(i <= 1)
                                 {
+
+                                    cout << "Estimated time: " << to_string(comparisonArray.size()) << "seconds." << endl;
+                                    std::cout << ui->trainselectBox1->currentText().toStdString() <<" Path : ";
                                     cout << oursTotheirs(comparisonArray[0]).toStdString() << " ";
                                     int l = 1;
                                     for (; l<comparisonArray.size(); l++)
@@ -1322,6 +1486,8 @@ void MainWindow::greyOut2()
         start = 95;
     else if (ui->originBox2->currentIndex() == 9)
         start = 94;
+    else
+        start = theirsToours(ui->originBox2->currentText());
     //translate destination box
     if (ui->destBox2->currentIndex() == 1)
         end = 43;
@@ -1341,6 +1507,8 @@ void MainWindow::greyOut2()
         end = 57;
     else if (ui->destBox2->currentIndex() == 9)
         end = 60;
+    else
+        end = theirsToours(ui->destBox2->currentText());
     //grey out line 2 if radio button selected
     if (ui->setButton2->isChecked()== true)
     {
@@ -1354,11 +1522,98 @@ void MainWindow::greyOut2()
         ui->trainimageButton2->show();
         ui->routeInfo2->show();
 
+
+        if (ui->originBox2->currentIndex() != 0)
+        {
+
+            if ((ui->originBox2->currentIndex() == ui->originBox1->currentIndex()) && (ui->buttonGroup->checkedButton() != 0))
+            {
+                cout << "Trains can not begin concurent paths at the same node." << endl;
+                return;
+            }
+            else if ((ui->originBox2->currentIndex() == ui->originBox3->currentIndex()) && (ui->buttonGroup_3->checkedButton() != 0))
+            {
+                cout << "Trains can not begin concurent paths at the same node." << endl;
+                return;
+            }
+            else if ((ui->originBox2->currentIndex() == ui->originBox4->currentIndex()) && (ui->buttonGroup_4->checkedButton() != 0))
+            {
+                cout << "Trains can not begin concurent paths at the same node." << endl;
+                return;
+            }
+            else if ((ui->originBox2->currentIndex() == ui->originBox5->currentIndex()) && (ui->buttonGroup_5->checkedButton() != 0))
+            {
+                cout << "Trains can not begin concurent paths at the same node." << endl;
+                return;
+            }
+        }
+
+        if (ui->destBox2->currentIndex() != 0)
+        {
+
+            if ((ui->destBox2->currentIndex() == ui->destBox1->currentIndex()) && (ui->buttonGroup->checkedButton() != 0))
+            {
+                cout << "Trains can not end concurent paths at the same node." << endl;
+                return;
+            }
+            else if ((ui->destBox2->currentIndex() == ui->destBox3->currentIndex()) && (ui->buttonGroup_3->checkedButton() != 0))
+            {
+                cout << "Trains can not end concurent paths at the same node." << endl;
+                return;
+            }
+            else if ((ui->destBox2->currentIndex() == ui->destBox4->currentIndex()) && (ui->buttonGroup_4->checkedButton() != 0))
+            {
+                cout << "Trains can not end concurent paths at the same node." << endl;
+                return;
+            }
+            else if ((ui->destBox2->currentIndex() == ui->destBox5->currentIndex()) && (ui->buttonGroup_5->checkedButton() != 0))
+            {
+                cout << "Trains can not end concurent paths at the same node." << endl;
+                return;
+            }
+        }
+
         if (ui->trainselectBox2->currentIndex() == 0 || ui->originBox2->currentIndex() == 0 || ui->destBox2->currentIndex() == 0 || ui->facingBox2->currentIndex() == 0 || ui->throttleBox2->currentIndex() == 0)
         {
             cout << "Route info incomplete. Can not compute route with information given. Please fill out all values before attempting to start planning a route." << endl;
+            ui->buttonGroup_2->setExclusive(false);
+            ui->delayButton2->setChecked(false);
+            ui->setButton2->setChecked(false);
+            ui->buttonGroup_2->setExclusive(true);
             return;
             }
+        if((!(start == 95 || start == 59 || start == 61 || start == 93 || start == 62 || start == 99 || start == 100 || start == 60 || start == 94 || start == 58 || start == 56 || start == 96 || start == 65 || start == 101 || start == 102 || start == 57)) != (!(end== 95 || end == 59 || end == 61 || end == 93 || end == 62 || end == 99 || end == 100 || end == 60 || end == 94 || end == 58 || end == 56 || end == 96 || end == 65 || end == 101 || end == 102 || end == 57)))
+        {
+            cout << "Invalid path. Attempting to move between two non-connected tracks. " << endl;
+            ui->buttonGroup_2->setExclusive(false);
+            ui->delayButton2->setChecked(false);
+            ui->setButton2->setChecked(false);
+            ui->buttonGroup_2->setExclusive(true);
+            return;
+        }
+
+        if (start == 95 || start == 59 || start == 61 || start == 93 || start == 62 || start == 99 || start == 100 || start == 60 || start == 94 || start == 58 || start == 56 || start == 96 || start == 65 || start == 101 || start == 102 || start == 57)
+        {
+            pathcomplete2 = 1;
+        }
+        if(start == -1)
+        {
+            cout << "Start node is invalid." << endl;
+            ui->buttonGroup_2->setExclusive(false);
+            ui->delayButton2->setChecked(false);
+            ui->setButton2->setChecked(false);
+            ui->buttonGroup_2->setExclusive(true);
+                    return;
+        }
+        if (end == -1)
+        {
+            cout << "Destination node is invalid" << endl;
+            ui->buttonGroup_2->setExclusive(false);
+            ui->delayButton2->setChecked(false);
+            ui->setButton2->setChecked(false);
+            ui->buttonGroup_2->setExclusive(true);
+            return;
+        }
 
         int shortorLong =  longPathroute(start, end);
 
@@ -1547,6 +1802,7 @@ void MainWindow::greyOut2()
                         std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
 
                         tableOperation(path, 2, 0, 0, 0);
+                        cout << "Estimated time: " << to_string(comparisonArray2.size()) << "seconds." << endl;
                         std::cout << ui->trainselectBox2->currentText().toStdString() <<" Path : ";
 
                         cout << oursTotheirs(comparisonArray2[0]).toStdString() << " ";
@@ -1622,6 +1878,7 @@ void MainWindow::greyOut2()
                         std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
 
                         tableOperation(path, 2, 0, 0, 0);
+                        cout << "Estimated time: " << to_string(comparisonArray2.size()) << "seconds." << endl;
                         std::cout << ui->trainselectBox2->currentText().toStdString() <<" Path : ";
 
                         cout << oursTotheirs(comparisonArray2[0]).toStdString() << " ";
@@ -1835,11 +2092,12 @@ void MainWindow::greyOut2()
 
                 tableOperation(path, 2, 0, i, 1);
 
-                if(i <= 1)
-                std::cout << ui->trainselectBox2->currentText().toStdString() <<" Path : ";
+
 
                 if(i <= 1)
                 {
+                    cout << "Estimated time: " << to_string(comparisonArray2.size()) << "seconds." << endl;
+                    std::cout << ui->trainselectBox2->currentText().toStdString() <<" Path : ";
                     cout << oursTotheirs(comparisonArray2[0]).toStdString() << " ";
                     int l = 1;
                     for (; l<comparisonArray2.size(); l++)
@@ -2054,11 +2312,13 @@ void MainWindow::greyOut2()
 
                         tableOperation(path, 2, 0, i, 1);
 
-                        if(i <= 1)
-                        std::cout << ui->trainselectBox2->currentText().toStdString() <<" Path : ";
+
 
                         if(i <= 1)
                         {
+
+                            cout << "Estimated time: " << to_string(comparisonArray2.size()) << "seconds." << endl;
+                            std::cout << ui->trainselectBox2->currentText().toStdString() <<" Path : ";
                             cout << oursTotheirs(comparisonArray2[0]).toStdString() << " ";
                             int l = 1;
                             for (; l<comparisonArray2.size(); l++)
@@ -2154,6 +2414,8 @@ void MainWindow::greyOut3()
         start = 95;
     else if (ui->originBox3->currentIndex() == 9)
         start = 94;
+    else
+        start = theirsToours(ui->originBox3->currentText());
     //translate destination box
     if (ui->destBox3->currentIndex() == 1)
         end = 43;
@@ -2173,6 +2435,8 @@ void MainWindow::greyOut3()
         end = 57;
     else if (ui->destBox3->currentIndex() == 9)
         end = 60;
+    else
+        end = theirsToours(ui->destBox3->currentText());
     //grey out line 3 if radio button selected
     if (ui->setButton3->isChecked()== true)
     {
@@ -2185,11 +2449,99 @@ void MainWindow::greyOut3()
         ui->setButton3->setDisabled(true);
         ui->trainimageButton3->show();
         ui->routeInfo3->show();
+
+
+        if (ui->originBox3->currentIndex() != 0)
+           {
+
+               if ((ui->originBox3->currentIndex() == ui->originBox1->currentIndex()) && (ui->buttonGroup->checkedButton() != 0))
+               {
+                   cout << "Trains can not begin concurent paths at the same node." << endl;
+                   return;
+               }
+               else if ((ui->originBox3->currentIndex() == ui->originBox2->currentIndex()) && (ui->buttonGroup_2->checkedButton() != 0))
+               {
+                   cout << "Trains can not begin concurent paths at the same node." << endl;
+                   return;
+               }
+               else if ((ui->originBox3->currentIndex() == ui->originBox4->currentIndex()) && (ui->buttonGroup_4->checkedButton() != 0))
+               {
+                   cout << "Trains can not begin concurent paths at the same node." << endl;
+                   return;
+               }
+               else if ((ui->originBox3->currentIndex() == ui->originBox5->currentIndex()) && (ui->buttonGroup_5->checkedButton() != 0))
+               {
+                   cout << "Trains can not begin concurent paths at the same node." << endl;
+                   return;
+               }
+           }
+
+           if (ui->destBox3->currentIndex() != 0)
+           {
+
+               if ((ui->destBox3->currentIndex() == ui->destBox1->currentIndex()) && (ui->buttonGroup->checkedButton() != 0))
+               {
+                   cout << "Trains can not end concurent paths at the same node." << endl;
+                   return;
+               }
+               else if ((ui->destBox3->currentIndex() == ui->destBox2->currentIndex()) && (ui->buttonGroup_2->checkedButton() != 0))
+               {
+                   cout << "Trains can not end concurent paths at the same node." << endl;
+                   return;
+               }
+               else if ((ui->destBox3->currentIndex() == ui->destBox4->currentIndex()) && (ui->buttonGroup_4->checkedButton() != 0))
+               {
+                   cout << "Trains can not end concurent paths at the same node." << endl;
+                   return;
+               }
+               else if ((ui->destBox3->currentIndex() == ui->destBox5->currentIndex()) && (ui->buttonGroup_5->checkedButton() != 0))
+               {
+                   cout << "Trains can not end concurent paths at the same node." << endl;
+                   return;
+               }
+           }
+
                 if (ui->trainselectBox3->currentIndex() == 0 || ui->originBox3->currentIndex() == 0 || ui->destBox3->currentIndex() == 0 || ui->facingBox3->currentIndex() == 0 || ui->throttleBox3->currentIndex() == 0)
         {
             cout << "Route info incomplete. Can not compute route with information given. Please fill out all values before attempting to start planning a route." << endl;
+            ui->buttonGroup_3->setExclusive(false);
+            ui->delayButton3->setChecked(false);
+            ui->setButton3->setChecked(false);
+            ui->buttonGroup_3->setExclusive(true);
             return;
             }
+                if((!(start == 95 || start == 59 || start == 61 || start == 93 || start == 62 || start == 99 || start == 100 || start == 60 || start == 94 || start == 58 || start == 56 || start == 96 || start == 65 || start == 101 || start == 102 || start == 57)) != (!(end== 95 || end == 59 || end == 61 || end == 93 || end == 62 || end == 99 || end == 100 || end == 60 || end == 94 || end == 58 || end == 56 || end == 96 || end == 65 || end == 101 || end == 102 || end == 57)))
+                {
+                    cout << "Invalid path. Attempting to move between two non-connected tracks. " << endl;
+                    ui->buttonGroup_3->setExclusive(false);
+                    ui->delayButton3->setChecked(false);
+                    ui->setButton3->setChecked(false);
+                    ui->buttonGroup_3->setExclusive(true);
+                    return;
+                }
+
+                if (start == 95 || start == 59 || start == 61 || start == 93 || start == 62 || start == 99 || start == 100 || start == 60 || start == 94 || start == 58 || start == 56 || start == 96 || start == 65 || start == 101 || start == 102 || start == 57)
+                {
+                    pathcomplete3 = 1;
+                }
+                if(start == -1)
+                {
+                    cout << "Start node is invalid." << endl;\
+                    ui->buttonGroup_3->setExclusive(false);
+                    ui->delayButton3->setChecked(false);
+                    ui->setButton3->setChecked(false);
+                    ui->buttonGroup_3->setExclusive(true);
+                            return;
+                }
+                if (end == -1)
+                {
+                    cout << "Destination node is invalid" << endl;
+                    ui->buttonGroup_3->setExclusive(false);
+                    ui->delayButton3->setChecked(false);
+                    ui->setButton3->setChecked(false);
+                    ui->buttonGroup_3->setExclusive(true);
+                    return;
+                }
 
 
         int shortorLong =  longPathroute(start, end);
@@ -2377,8 +2729,26 @@ void MainWindow::greyOut3()
                         DijkstraComputePaths(start, adjacency_list, min_distance, previous);
                         std::cout << "Distance from " << ui->originBox3->currentText().toStdString() << " to " << ui->destBox3->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
                         std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
-                        std::cout << ui->trainselectBox3->currentText().toStdString() <<" Path : ";
+
                         tableOperation(path, 3, 0, 0, 0);
+
+
+
+                            cout << "Estimated time: " << to_string(comparisonArray3.size()) << "seconds." << endl;
+                            std::cout << ui->trainselectBox3->currentText().toStdString() <<" Path : ";
+                            cout << oursTotheirs(comparisonArray3[0]).toStdString() << " ";
+                            int l = 1;
+                            for (; l<comparisonArray3.size(); l++)
+                            {
+                                while (comparisonArray3[l] == comparisonArray3[l-1] && (l < comparisonArray3.size()))
+                                {
+                                    l++;
+                                }
+                                 if(l < comparisonArray3.size())
+                             cout << oursTotheirs(comparisonArray3[l]).toStdString() << " ";
+                             }
+                             cout << endl;
+
 
                         //std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
                         std::cout << std::endl;
@@ -2437,8 +2807,26 @@ void MainWindow::greyOut3()
                         DijkstraComputePaths(start, adjacency_list, min_distance, previous);
                         std::cout << "Distance from " << ui->originBox3->currentText().toStdString() << " to " << ui->destBox3->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
                         std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
-                        std::cout << ui->trainselectBox3->currentText().toStdString() <<" Path : ";
+                        //std::cout << ui->trainselectBox3->currentText().toStdString() <<" Path : ";
                         tableOperation(path, 3, 0, 0, 0);
+
+
+
+                            cout << "Estimated time: " << to_string(comparisonArray3.size()) << "seconds." << endl;
+                            std::cout << ui->trainselectBox3->currentText().toStdString() <<" Path : ";
+                            cout << oursTotheirs(comparisonArray3[0]).toStdString() << " ";
+                            int l = 1;
+                            for (; l<comparisonArray3.size(); l++)
+                            {
+                                while (comparisonArray3[l] == comparisonArray3[l-1] && (l < comparisonArray3.size()))
+                                {
+                                    l++;
+                                }
+                                 if(l < comparisonArray3.size())
+                             cout << oursTotheirs(comparisonArray3[l]).toStdString() << " ";
+                             }
+                             cout << endl;
+
 
                         //std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
                         std::cout << std::endl;
@@ -2634,6 +3022,25 @@ void MainWindow::greyOut3()
                         std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
                         std::cout << ui->trainselectBox3->currentText().toStdString() <<" Path : ";
                         tableOperation(path, 3, 0, i, 1);
+
+                        if(i <= 1)
+                        {
+
+                            cout << "Estimated time: " << to_string(comparisonArray3.size()) << "seconds." << endl;
+                            std::cout << ui->trainselectBox3->currentText().toStdString() <<" Path : ";
+                            cout << oursTotheirs(comparisonArray3[0]).toStdString() << " ";
+                            int l = 1;
+                            for (; l<comparisonArray3.size(); l++)
+                            {
+                                while (comparisonArray3[l] == comparisonArray3[l-1] && (l < comparisonArray3.size()))
+                                {
+                                    l++;
+                                }
+                                 if(l < comparisonArray3.size())
+                             cout << oursTotheirs(comparisonArray3[l]).toStdString() << " ";
+                             }
+                             cout << endl;
+                        }
 
                         //std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
                         std::cout << std::endl;
@@ -2834,6 +3241,25 @@ void MainWindow::greyOut3()
                                 std::cout << ui->trainselectBox3->currentText().toStdString() <<" Path : ";
                                 tableOperation(path, 3, 0, i, 1);
 
+                                if(i <= 1)
+                                {
+
+                                    cout << "Estimated time: " << to_string(comparisonArray3.size()) << "seconds." << endl;
+                                    std::cout << ui->trainselectBox3->currentText().toStdString() <<" Path : ";
+                                    cout << oursTotheirs(comparisonArray3[0]).toStdString() << " ";
+                                    int l = 1;
+                                    for (; l<comparisonArray3.size(); l++)
+                                    {
+                                        while (comparisonArray3[l] == comparisonArray3[l-1] && (l < comparisonArray3.size()))
+                                        {
+                                            l++;
+                                        }
+                                         if(l < comparisonArray3.size())
+                                     cout << oursTotheirs(comparisonArray3[l]).toStdString() << " ";
+                                     }
+                                     cout << endl;
+                                }
+
                                 //std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
                                 std::cout << std::endl;
                                 if (i==3){start = 16; end = 0;}
@@ -2914,6 +3340,8 @@ void MainWindow::greyOut4()
         start = 95;
     else if (ui->originBox4->currentIndex() == 9)
         start = 94;
+    else
+        start = theirsToours(ui->originBox4->currentText());
     //translate destination box
     if (ui->destBox4->currentIndex() == 1)
         end = 43;
@@ -2933,6 +3361,8 @@ void MainWindow::greyOut4()
         end = 57;
     else if (ui->destBox4->currentIndex() == 9)
         end = 60;
+    else
+        end = theirsToours(ui->destBox4->currentText());
     //grey out line 4 if radio button selected
     if (ui->setButton4->isChecked()== true)
     {
@@ -2945,12 +3375,99 @@ void MainWindow::greyOut4()
         ui->setButton4->setDisabled(true);
         ui->trainimageButton4->show();
         ui->routeInfo4->show();
+
+        if (ui->originBox4->currentIndex() != 0)
+         {
+
+             if ((ui->originBox4->currentIndex() == ui->originBox1->currentIndex()) && (ui->buttonGroup->checkedButton() != 0))
+             {
+                 cout << "Trains can not begin concurent paths at the same node." << endl;
+                 return;
+             }
+             else if ((ui->originBox4->currentIndex() == ui->originBox2->currentIndex()) && (ui->buttonGroup_2->checkedButton() != 0))
+             {
+                 cout << "Trains can not begin concurent paths at the same node." << endl;
+                 return;
+             }
+             else if ((ui->originBox4->currentIndex() == ui->originBox3->currentIndex()) && (ui->buttonGroup_3->checkedButton() != 0))
+             {
+                 cout << "Trains can not begin concurent paths at the same node." << endl;
+                 return;
+             }
+             else if ((ui->originBox4->currentIndex() == ui->originBox5->currentIndex()) && (ui->buttonGroup_5->checkedButton() != 0))
+             {
+                 cout << "Trains can not begin concurent paths at the same node." << endl;
+                 return;
+             }
+         }
+
+         if (ui->destBox4->currentIndex() != 0)
+         {
+
+             if ((ui->destBox4->currentIndex() == ui->destBox1->currentIndex()) && (ui->buttonGroup->checkedButton() != 0))
+             {
+                 cout << "Trains can not end concurent paths at the same node." << endl;
+                 return;
+             }
+             else if ((ui->destBox4->currentIndex() == ui->destBox2->currentIndex()) && (ui->buttonGroup_2->checkedButton() != 0))
+             {
+                 cout << "Trains can not end concurent paths at the same node." << endl;
+                 return;
+             }
+             else if ((ui->destBox4->currentIndex() == ui->destBox3->currentIndex()) && (ui->buttonGroup_3->checkedButton() != 0))
+             {
+                 cout << "Trains can not end concurent paths at the same node." << endl;
+                 return;
+             }
+             else if ((ui->destBox4->currentIndex() == ui->destBox5->currentIndex()) && (ui->buttonGroup_5->checkedButton() != 0))
+             {
+                 cout << "Trains can not end concurent paths at the same node." << endl;
+                 return;
+             }
+         }
+
                 if (ui->trainselectBox4->currentIndex() == 0 || ui->originBox4->currentIndex() == 0 || ui->destBox4->currentIndex() == 0 || ui->facingBox4->currentIndex() == 0 || ui->throttleBox4->currentIndex() == 0)
         {
             cout << "Route info incomplete. Can not compute route with information given. Please fill out all values before attempting to start planning a route." << endl;
+            ui->buttonGroup_4->setExclusive(false);
+            ui->delayButton4->setChecked(false);
+            ui->setButton4->setChecked(false);
+            ui->buttonGroup_4->setExclusive(true);
             return;
             }
 
+                if((!(start == 95 || start == 59 || start == 61 || start == 93 || start == 62 || start == 99 || start == 100 || start == 60 || start == 94 || start == 58 || start == 56 || start == 96 || start == 65 || start == 101 || start == 102 || start == 57)) != (!(end== 95 || end == 59 || end == 61 || end == 93 || end == 62 || end == 99 || end == 100 || end == 60 || end == 94 || end == 58 || end == 56 || end == 96 || end == 65 || end == 101 || end == 102 || end == 57)))
+                {
+                    cout << "Invalid path. Attempting to move between two non-connected tracks. " << endl;
+                    ui->buttonGroup_4->setExclusive(false);
+                    ui->delayButton4->setChecked(false);
+                    ui->setButton4->setChecked(false);
+                    ui->buttonGroup_4->setExclusive(true);
+                    return;
+                }
+
+                if (start == 95 || start == 59 || start == 61 || start == 93 || start == 62 || start == 99 || start == 100 || start == 60 || start == 94 || start == 58 || start == 56 || start == 96 || start == 65 || start == 101 || start == 102 || start == 57)
+                {
+                    pathcomplete4 = 1;
+                }
+                if(start == -1)
+                {
+                    cout << "Start node is invalid." << endl;
+                    ui->buttonGroup_4->setExclusive(false);
+                    ui->delayButton4->setChecked(false);
+                    ui->setButton4->setChecked(false);
+                    ui->buttonGroup_4->setExclusive(true);
+                            return;
+                }
+                if (end == -1)
+                {
+                    cout << "Destination node is invalid" << endl;
+                    ui->buttonGroup_4->setExclusive(false);
+                    ui->delayButton4->setChecked(false);
+                    ui->setButton4->setChecked(false);
+                    ui->buttonGroup_4->setExclusive(true);
+                    return;
+                }
         
         int shortorLong =  longPathroute(start, end);
 
@@ -3140,6 +3657,24 @@ void MainWindow::greyOut4()
                         std::cout << ui->trainselectBox4->currentText().toStdString() <<" Path : ";
                         tableOperation(path, 4, 0, 0, 0);
 
+
+
+                            cout << "Estimated time: " << to_string(comparisonArray4.size()) << "seconds." << endl;
+                            std::cout << ui->trainselectBox4->currentText().toStdString() <<" Path : ";
+                            cout << oursTotheirs(comparisonArray4[0]).toStdString() << " ";
+                            int l = 1;
+                            for (; l<comparisonArray4.size(); l++)
+                            {
+                                while (comparisonArray4[l] == comparisonArray4[l-1] && (l < comparisonArray4.size()))
+                                {
+                                    l++;
+                                }
+                                 if(l < comparisonArray4.size())
+                             cout << oursTotheirs(comparisonArray4[l]).toStdString() << " ";
+                             }
+                             cout << endl;
+
+
                         //std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
                         std::cout << std::endl;
             }
@@ -3197,8 +3732,26 @@ void MainWindow::greyOut4()
                         DijkstraComputePaths(start, adjacency_list, min_distance, previous);
                         std::cout << "Distance from " << ui->originBox4->currentText().toStdString() << " to " << ui->destBox4->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
                         std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
-                        std::cout << ui->trainselectBox4->currentText().toStdString() <<" Path : ";
+                        //std::cout << ui->trainselectBox4->currentText().toStdString() <<" Path : ";
                         tableOperation(path, 4, 0, 0, 0);
+
+
+
+                            cout << "Estimated time: " << to_string(comparisonArray4.size()) << "seconds." << endl;
+                            std::cout << ui->trainselectBox4->currentText().toStdString() <<" Path : ";
+                            cout << oursTotheirs(comparisonArray4[0]).toStdString() << " ";
+                            int l = 1;
+                            for (; l<comparisonArray4.size(); l++)
+                            {
+                                while (comparisonArray4[l] == comparisonArray4[l-1] && (l < comparisonArray4.size()))
+                                {
+                                    l++;
+                                }
+                                 if(l < comparisonArray4.size())
+                             cout << oursTotheirs(comparisonArray4[l]).toStdString() << " ";
+                             }
+                             cout << endl;
+
 
                         //std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
                         std::cout << std::endl;
@@ -3392,8 +3945,28 @@ void MainWindow::greyOut4()
                         DijkstraComputePaths(start, adjacency_list, min_distance, previous);
                         std::cout << "Distance from " << ui->originBox4->currentText().toStdString() << " to " << ui->destBox4->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
                         std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
-                        std::cout << ui->trainselectBox4->currentText().toStdString() <<" Path : ";
+                        //std::cout << ui->trainselectBox4->currentText().toStdString() <<" Path : ";
                         tableOperation(path, 4, 0, i, 1);
+
+
+                        if(i <= 1)
+                        {
+
+                            cout << "Estimated time: " << to_string(comparisonArray4.size()) << "seconds." << endl;
+                            std::cout << ui->trainselectBox4->currentText().toStdString() <<" Path : ";
+                            cout << oursTotheirs(comparisonArray4[0]).toStdString() << " ";
+                            int l = 1;
+                            for (; l<comparisonArray4.size(); l++)
+                            {
+                                while (comparisonArray4[l] == comparisonArray4[l-1] && (l < comparisonArray4.size()))
+                                {
+                                    l++;
+                                }
+                                 if(l < comparisonArray4.size())
+                             cout << oursTotheirs(comparisonArray4[l]).toStdString() << " ";
+                             }
+                             cout << endl;
+                        }
 
                         //std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
                         std::cout << std::endl;
@@ -3591,8 +4164,27 @@ void MainWindow::greyOut4()
                                 DijkstraComputePaths(start, adjacency_list, min_distance, previous);
                                 std::cout << "Distance from " << ui->originBox4->currentText().toStdString() << " to " << ui->destBox4->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
                                 std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
-                                std::cout << ui->trainselectBox4->currentText().toStdString() <<" Path : ";
+                                //std::cout << ui->trainselectBox4->currentText().toStdString() <<" Path : ";
                                 tableOperation(path, 4, 0, i, 1);
+
+                                if(i <= 1)
+                                {
+
+                                    cout << "Estimated time: " << to_string(comparisonArray4.size()) << "seconds." << endl;
+                                    std::cout << ui->trainselectBox4->currentText().toStdString() <<" Path : ";
+                                    cout << oursTotheirs(comparisonArray4[0]).toStdString() << " ";
+                                    int l = 1;
+                                    for (; l<comparisonArray4.size(); l++)
+                                    {
+                                        while (comparisonArray4[l] == comparisonArray4[l-1] && (l < comparisonArray4.size()))
+                                        {
+                                            l++;
+                                        }
+                                         if(l < comparisonArray4.size())
+                                     cout << oursTotheirs(comparisonArray4[l]).toStdString() << " ";
+                                     }
+                                     cout << endl;
+                                }
 
                                 //std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
                                 std::cout << std::endl;
@@ -3674,6 +4266,8 @@ void MainWindow::greyOut5()
         start = 95;
     else if (ui->originBox5->currentIndex() == 9)
         start = 94;
+    else
+        start = theirsToours(ui->originBox5->currentText());
     //translate destination box
     if (ui->destBox5->currentIndex() == 1)
         end = 43;
@@ -3693,6 +4287,8 @@ void MainWindow::greyOut5()
         end = 57;
     else if (ui->destBox5->currentIndex() == 9)
         end = 60;
+    else
+        end = theirsToours(ui->destBox5->currentText());
     //grey out line 5 if radio button selected
     if (ui->setButton5->isChecked()== true)
     {
@@ -3705,12 +4301,99 @@ void MainWindow::greyOut5()
         ui->setButton5->setDisabled(true);
         ui->trainimageButton5->show();
         ui->routeInfo5->show();
+
+        if (ui->originBox5->currentIndex() != 0)
+        {
+
+            if ((ui->originBox5->currentIndex() == ui->originBox1->currentIndex()) && (ui->buttonGroup->checkedButton() != 0))
+            {
+                cout << "Trains can not begin concurent paths at the same node." << endl;
+                return;
+            }
+            else if ((ui->originBox5->currentIndex() == ui->originBox2->currentIndex()) && (ui->buttonGroup_2->checkedButton() != 0))
+            {
+                cout << "Trains can not begin concurent paths at the same node." << endl;
+                return;
+            }
+            else if ((ui->originBox5->currentIndex() == ui->originBox3->currentIndex()) && (ui->buttonGroup_3->checkedButton() != 0))
+            {
+                cout << "Trains can not begin concurent paths at the same node." << endl;
+                return;
+            }
+            else if ((ui->originBox5->currentIndex() == ui->originBox4->currentIndex()) && (ui->buttonGroup_4->checkedButton() != 0))
+            {
+                cout << "Trains can not begin concurent paths at the same node." << endl;
+                return;
+            }
+        }
+
+        if (ui->destBox5->currentIndex() != 0)
+        {
+
+            if ((ui->destBox5->currentIndex() == ui->destBox1->currentIndex()) && (ui->buttonGroup->checkedButton() != 0))
+            {
+                cout << "Trains can not end concurent paths at the same node." << endl;
+                return;
+            }
+            else if ((ui->destBox5->currentIndex() == ui->destBox2->currentIndex()) && (ui->buttonGroup_2->checkedButton() != 0))
+            {
+                cout << "Trains can not end concurent paths at the same node." << endl;
+                return;
+            }
+            else if ((ui->destBox5->currentIndex() == ui->destBox3->currentIndex()) && (ui->buttonGroup_3->checkedButton() != 0))
+            {
+                cout << "Trains can not end concurent paths at the same node." << endl;
+                return;
+            }
+            else if ((ui->destBox5->currentIndex() == ui->destBox4->currentIndex()) && (ui->buttonGroup_4->checkedButton() != 0))
+            {
+                cout << "Trains can not end concurent paths at the same node." << endl;
+                return;
+            }
+        }
         
                 if (ui->trainselectBox5->currentIndex() == 0 || ui->originBox5->currentIndex() == 0 || ui->destBox5->currentIndex() == 0 || ui->facingBox5->currentIndex() == 0 || ui->throttleBox5->currentIndex() == 0)
         {
-            cout << "Route info incomplete. Can not compute route with information given. Please fill out all values before attempting to start planning a route." << endl;
+            cout << "Route info incomplete. Cannot compute route with information given. Please fill out all values before attempting to start planning a route." << endl;
+            ui->buttonGroup_5->setExclusive(false);
+            ui->delayButton5->setChecked(false);
+            ui->setButton5->setChecked(false);
+            ui->buttonGroup_5->setExclusive(true);
             return;
             }
+
+                if((!(start == 95 || start == 59 || start == 61 || start == 93 || start == 62 || start == 99 || start == 100 || start == 60 || start == 94 || start == 58 || start == 56 || start == 96 || start == 65 || start == 101 || start == 102 || start == 57)) != (!(end== 95 || end == 59 || end == 61 || end == 93 || end == 62 || end == 99 || end == 100 || end == 60 || end == 94 || end == 58 || end == 56 || end == 96 || end == 65 || end == 101 || end == 102 || end == 57)))
+                {
+                    cout << "Invalid path. Attempting to move between two non-connected tracks. " << endl;
+                    ui->buttonGroup_5->setExclusive(false);
+                    ui->delayButton5->setChecked(false);
+                    ui->setButton5->setChecked(false);
+                    ui->buttonGroup_5->setExclusive(true);
+                    return;
+                }
+
+                if (start == 95 || start == 59 || start == 61 || start == 93 || start == 62 || start == 99 || start == 100 || start == 60 || start == 94 || start == 58 || start == 56 || start == 96 || start == 65 || start == 101 || start == 102 || start == 57)
+                {
+                    pathcomplete5 = 1;
+                }
+                if(start == -1)
+                {
+                    cout << "Start node is invalid." << endl;
+                    ui->buttonGroup_5->setExclusive(false);
+                    ui->delayButton5->setChecked(false);
+                    ui->setButton5->setChecked(false);
+                    ui->buttonGroup_5->setExclusive(true);
+                            return;
+                }
+                if (end == -1)
+                {
+                    cout << "Destination node is invalid" << endl;
+                    ui->buttonGroup_5->setExclusive(false);
+                    ui->delayButton5->setChecked(false);
+                    ui->setButton5->setChecked(false);
+                    ui->buttonGroup_5->setExclusive(true);
+                    return;
+                }
 
 
         int shortorLong =  longPathroute(start, end);
@@ -3898,8 +4581,27 @@ void MainWindow::greyOut5()
                         DijkstraComputePaths(start, adjacency_list, min_distance, previous);
                         std::cout << "Distance from " << ui->originBox5->currentText().toStdString() << " to " << ui->destBox5->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
                         std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
-                        std::cout << ui->trainselectBox5->currentText().toStdString() <<" Path : ";
+                       // std::cout << ui->trainselectBox5->currentText().toStdString() <<" Path : ";
                         tableOperation(path, 5, 0, 0, 0);
+
+
+
+
+                            cout << "Estimated time: " << to_string(comparisonArray5.size()) << "seconds." << endl;
+                            std::cout << ui->trainselectBox5->currentText().toStdString() <<" Path : ";
+                            cout << oursTotheirs(comparisonArray5[0]).toStdString() << " ";
+                            int l = 1;
+                            for (; l<comparisonArray5.size(); l++)
+                            {
+                                while (comparisonArray5[l] == comparisonArray5[l-1] && (l < comparisonArray5.size()))
+                                {
+                                    l++;
+                                }
+                                 if(l < comparisonArray5.size())
+                             cout << oursTotheirs(comparisonArray5[l]).toStdString() << " ";
+                             }
+                             cout << endl;
+
 
                         //std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
                         std::cout << std::endl;
@@ -3958,8 +4660,26 @@ void MainWindow::greyOut5()
                         DijkstraComputePaths(start, adjacency_list, min_distance, previous);
                         std::cout << "Distance from " << ui->originBox5->currentText().toStdString() << " to " << ui->destBox5->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
                         std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
-                        std::cout << ui->trainselectBox5->currentText().toStdString() <<" Path : ";
+                       // std::cout << ui->trainselectBox5->currentText().toStdString() <<" Path : ";
                         tableOperation(path, 5, 0, 0, 0);
+
+
+
+                            cout << "Estimated time: " << to_string(comparisonArray5.size()) << "seconds." << endl;
+                            std::cout << ui->trainselectBox5->currentText().toStdString() <<" Path : ";
+                            cout << oursTotheirs(comparisonArray5[0]).toStdString() << " ";
+                            int l = 1;
+                            for (; l<comparisonArray5.size(); l++)
+                            {
+                                while (comparisonArray5[l] == comparisonArray5[l-1] && (l < comparisonArray5.size()))
+                                {
+                                    l++;
+                                }
+                                 if(l < comparisonArray5.size())
+                             cout << oursTotheirs(comparisonArray5[l]).toStdString() << " ";
+                             }
+                             cout << endl;
+
 
                         //std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
                         std::cout << std::endl;
@@ -4153,8 +4873,28 @@ void MainWindow::greyOut5()
                         DijkstraComputePaths(start, adjacency_list, min_distance, previous);
                         std::cout << "Distance from " << ui->originBox5->currentText().toStdString() << " to " << ui->destBox5->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
                         std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
-                        std::cout << ui->trainselectBox5->currentText().toStdString() <<" Path : ";
+                        //std::cout << ui->trainselectBox5->currentText().toStdString() <<" Path : ";
                         tableOperation(path, 5, 0, i, 1);
+
+
+                        if(i <= 1)
+                        {
+
+                            cout << "Estimated time: " << to_string(comparisonArray5.size()) << "seconds." << endl;
+                            std::cout << ui->trainselectBox5->currentText().toStdString() <<" Path : ";
+                            cout << oursTotheirs(comparisonArray5[0]).toStdString() << " ";
+                            int l = 1;
+                            for (; l<comparisonArray5.size(); l++)
+                            {
+                                while (comparisonArray5[l] == comparisonArray5[l-1] && (l < comparisonArray5.size()))
+                                {
+                                    l++;
+                                }
+                                 if(l < comparisonArray5.size())
+                             cout << oursTotheirs(comparisonArray5[l]).toStdString() << " ";
+                             }
+                             cout << endl;
+                        }
 
                         //std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
                         std::cout << std::endl;
@@ -4352,8 +5092,28 @@ void MainWindow::greyOut5()
                                 DijkstraComputePaths(start, adjacency_list, min_distance, previous);
                                 std::cout << "Distance from " << ui->originBox5->currentText().toStdString() << " to " << ui->destBox5->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
                                 std::list<vertex_t> path = DijkstraGetShortestPathTo(end, previous);
-                                std::cout << ui->trainselectBox5->currentText().toStdString() <<" Path : ";
+                               // std::cout << ui->trainselectBox5->currentText().toStdString() <<" Path : ";
                                 tableOperation(path, 5, 0, i, 1);
+
+
+                                if(i <= 1)
+                                {
+
+                                    cout << "Estimated time: " << to_string(comparisonArray5.size()) << "seconds." << endl;
+                                    std::cout << ui->trainselectBox5->currentText().toStdString() <<" Path : ";
+                                    cout << oursTotheirs(comparisonArray5[0]).toStdString() << " ";
+                                    int l = 1;
+                                    for (; l<comparisonArray5.size(); l++)
+                                    {
+                                        while (comparisonArray5[l] == comparisonArray5[l-1] && (l < comparisonArray5.size()))
+                                        {
+                                            l++;
+                                        }
+                                         if(l < comparisonArray5.size())
+                                     cout << oursTotheirs(comparisonArray5[l]).toStdString() << " ";
+                                     }
+                                     cout << endl;
+                                }
 
                                 //std::copy(path.begin(), path.end(), std::ostream_iterator<vertex_t>(std::cout, " "));
                                 std::cout << std::endl;
@@ -4381,6 +5141,7 @@ void MainWindow::greyOut5()
 void MainWindow::timerEvent(QTimerEvent * ev)
 {
 
+    if (controlBit == 0) //If we are in control of the train.
     {
         if(ev->timerId() != m_timer.timerId())
         {
@@ -4390,90 +5151,147 @@ void MainWindow::timerEvent(QTimerEvent * ev)
 
         if(comparisonArray.size() != 0)
         {
+           // pathcomplete1 = 1;
+              int pause1 = 0;
+
             new Q_DebugStream(std::cout, ui->routeInfo1); //Redirect Console output to textBrowser2
-            if(comparisonArray[0] == comparisonArray[1])
+            if(fakeoccupancy == 1) //this is where the occupancy data check code is in the final version. Currently simulated by a global variable. This call would be asking "Is the appropriate segment occupied?"
             {
-                cout << tmpstr.toStdString()<< " still at track segment " << oursTotheirs(comparisonArray[0]).toStdString() << endl;
+                if (occupyitt < 3)
+                {
+                    cout << "Engine 1 one track segment behind. Pausing route until it catches up." << endl;
+                occupyitt++;
+                pause1 = 1;
+                }
+                else if (occupyitt >= 3 && ready != 0)
+                {
+                    cout << "Engine 1 stalled for over 3 seconds. Temporarily stopping all other active trains until issue is resolved." << endl;
+                    pause1 = 1;
+                    ready = 0;
+                    occupyitt++;
+
+                }
+                else
+                    pause1 = 1;
+
+
+
+
+            }
+            if(fakeoccupancy == 0 && ready == 0)
+            {
+                cout << "Engine 1 caught up. Resuming all routes." << endl;
+                ready = 1;
+            }
+
+            if(pause1 != 1)
+           {
+                if(comparisonArray[0] == comparisonArray[1]) //if the train has moved, but is still at the same segment
+            {
+                cout << "Engine 1 still at track segment " << oursTotheirs(comparisonArray[0]).toStdString() << endl;
             }
             else
             {
                 QString str = QString::fromStdString(to_string(comparisonArray[0]));
                 QString str2 = QString::fromStdString(to_string(comparisonArray[1]));
                 checkSwitches(str, str2);
-                cout << tmpstr.toStdString() << " moved to track segment " << oursTotheirs(comparisonArray[1]).toStdString() << endl;
+                cout << "Engine 1 moved to track segment " << oursTotheirs(comparisonArray[1]).toStdString() << endl;
             }
-            comparisonArray.erase(comparisonArray.begin());
+            comparisonArray.erase(comparisonArray.begin()); }
             qApp->processEvents();
 
         }
         if(comparisonArray2.size() != 0)
         {
+
+
+
+            //pathcomplete2 = 1;
             new Q_DebugStream(std::cout, ui->routeInfo2);
+            if (ready == 0)
+                cout << "All engines stopped to avoid collisions" << endl;
+            else
+            {
             if(comparisonArray2[0] == comparisonArray2[1])
             {
-                cout << tmpstr.toStdString()<< " still at track segment " << oursTotheirs(comparisonArray2[0]).toStdString() << endl;
+                cout << "Engine 2 still at track segment " << oursTotheirs(comparisonArray2[0]).toStdString() << endl;
             }
             else
             {
                 QString str = QString::fromStdString(to_string(comparisonArray2[0]));
                 QString str2 = QString::fromStdString(to_string(comparisonArray2[1]));
                 checkSwitches(str, str2);
-                cout << tmpstr.toStdString() << " moved to track segment " << oursTotheirs(comparisonArray2[1]).toStdString() << endl;
+                cout << "Engine 2 moved to track segment " << oursTotheirs(comparisonArray2[1]).toStdString() << endl;
             }
             comparisonArray2.erase(comparisonArray2.begin());
             qApp->processEvents();
-        }
+        }}
         if(comparisonArray3.size() != 0)
         {
+            //pathcomplete3 = 1;
             new Q_DebugStream(std::cout, ui->routeInfo3);
+            if (ready == 0)
+                cout << "All engines stopped to avoid collisions" << endl;
+            else
+            {
             if(comparisonArray3[0] == comparisonArray3[1])
             {
-                cout << tmpstr.toStdString()<< " still at track segment " << oursTotheirs(comparisonArray3[0]).toStdString() << endl;
+                cout << "Engine 3 still at track segment " << oursTotheirs(comparisonArray3[0]).toStdString() << endl;
             }
             else
             {
                 QString str = QString::fromStdString(to_string(comparisonArray3[0]));
                 QString str2 = QString::fromStdString(to_string(comparisonArray3[1]));
                 checkSwitches(str, str2);
-                cout << tmpstr.toStdString() << " moved to track segment " << oursTotheirs(comparisonArray3[1]).toStdString() << endl;
+                cout << "Engine 3 moved to track segment " << oursTotheirs(comparisonArray3[1]).toStdString() << endl;
             }
             comparisonArray3.erase(comparisonArray3.begin());
             qApp->processEvents();
-        }
+        }}
         if(comparisonArray4.size() != 0)
         {
+           // pathcomplete4 = 1;
             new Q_DebugStream(std::cout, ui->routeInfo4);
+            if (ready == 0)
+                cout << "All engines stopped to avoid collisions" << endl;
+            else
+            {
             if(comparisonArray4[0] == comparisonArray4[1])
             {
-                cout << tmpstr.toStdString()<< " still at track segment " << oursTotheirs(comparisonArray4[0]).toStdString() << endl;
+                cout << "Engine 4 still at track segment " << oursTotheirs(comparisonArray4[0]).toStdString() << endl;
             }
             else
             {
                 QString str = QString::fromStdString(to_string(comparisonArray4[0]));
                 QString str2 = QString::fromStdString(to_string(comparisonArray4[1]));
                 checkSwitches(str, str2);
-                cout << tmpstr.toStdString() << " moved to track segment " << oursTotheirs(comparisonArray4[1]).toStdString() << endl;
+                cout << " Engine 4 moved to track segment " << oursTotheirs(comparisonArray4[1]).toStdString() << endl;
             }
             comparisonArray4.erase(comparisonArray4.begin());
             qApp->processEvents();
-        }
+        }}
         if(comparisonArray5.size() != 0)
         {
+            //pathcomplete5 = 1;
             new Q_DebugStream(std::cout, ui->routeInfo5);
+            if (ready == 0)
+                cout << "All engines stopped to avoid collisions" << endl;
+            else
+            {
             if(comparisonArray5[0] == comparisonArray5[1])
             {
-                cout << tmpstr.toStdString()<< " still at track segment " << oursTotheirs(comparisonArray5[0]).toStdString() << endl;
+                cout << "Engine 5 still at track segment " << oursTotheirs(comparisonArray5[0]).toStdString() << endl;
             }
             else
             {
                 QString str = QString::fromStdString(to_string(comparisonArray5[0]));
                 QString str2 = QString::fromStdString(to_string(comparisonArray5[1]));
                 checkSwitches(str, str2);
-                cout << tmpstr.toStdString() << " moved to track segment " << oursTotheirs(comparisonArray5[1]).toStdString() << endl;
+                cout << "Engine 5 moved to track segment " << oursTotheirs(comparisonArray5[1]).toStdString() << endl;
             }
             comparisonArray5.erase(comparisonArray5.begin());
             qApp->processEvents();
-        }
+        }}
 
 
 
@@ -4481,6 +5299,62 @@ void MainWindow::timerEvent(QTimerEvent * ev)
 
 
     }
+    else
+    {
+    //cout << "Tablet controls enabled. Scheduler disabled " << controlBit << endl;
+    ui->stopButton->click();
+    }
 
+
+}
+
+void MainWindow::toggleBit() //If tablet control is enabled, take control. If scheduler is active, give control to tablet.
+{
+    if (controlBit == 0)
+    {
+        //cout << "Tablet controls enabled" << endl;
+        controlBit = 1;
+        ui->ModeEdit->setText("Tablet Control");
+        ui->startButton->setDisabled(true);
+    }
+    else
+    {
+        controlBit = 0;
+        ui->ModeEdit->setText("Scheduler Control");
+        ui->startButton->setEnabled(true);
+        //cout << "automatic controls enabled" << endl;
+    }
+}
+
+
+
+void MainWindow::clearChecks()
+{
+    //This function clears all the radio buttons.
+    
+
+ui->buttonGroup->setExclusive(false);
+ui->buttonGroup_2->setExclusive(false);
+ui->buttonGroup_3->setExclusive(false);
+ui->buttonGroup_4->setExclusive(false);
+ui->buttonGroup_5->setExclusive(false);
+
+ui->delayButton1->setChecked(false);
+ui->delayButton2->setChecked(false);
+ui->delayButton3->setChecked(false);
+ui->delayButton4->setChecked(false);
+ui->delayButton5->setChecked(false);
+
+ui->setButton1->setChecked(false);
+ui->setButton2->setChecked(false);
+ui->setButton3->setChecked(false);
+ui->setButton4->setChecked(false);
+ui->setButton5->setChecked(false);
+
+ui->buttonGroup->setExclusive(true);
+ui->buttonGroup_2->setExclusive(true);
+ui->buttonGroup_3->setExclusive(true);
+ui->buttonGroup_4->setExclusive(true);
+ui->buttonGroup_5->setExclusive(true);
 
 }
