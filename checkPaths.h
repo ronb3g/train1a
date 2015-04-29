@@ -5,7 +5,7 @@
 
 
 
-template <class T>
+template <class T> //Simple int-to-string convertor.
 inline std::string to_string (const T& t)
 {
 std::stringstream ss;
@@ -14,8 +14,10 @@ return ss.str();
 }
 
 
-int MainWindow::checkPaths(int attempt, int islong)
+int MainWindow::checkPaths(int attempt, int islong) //Checks the paths for collisions.
 {
+    
+    //these variables indicate which engines are active.
     int f1 = 0;
     int f2 = 0;
     int f3 = 0;
@@ -25,45 +27,60 @@ int MainWindow::checkPaths(int attempt, int islong)
 
 
     //Check to see which paths have been planned so far
-    if ( Eng1 != NULL)
+    if ( Eng1 != NULL && (ui->setButton1->isChecked())&& pathcomplete1 != 1) //If pathcomplete = 1, that means the route has already started and should not be started over. This mainly comes up with the delay function.
     {
+
         f1 = 1;
-        //comparisonArray = new int[i1];
+        //comparisonArray = new int[comparisonArray.size()];
     }
-    if ( Eng2 != NULL)
+    if ( Eng2 != NULL && (ui->setButton2->isChecked()) && pathcomplete2 != 1)
     {
         f2 = 1;
-        //comparisonArray2 = new int[i2];
+        //comparisonArray2 = new int[comparisonArray2.size()];
     }
-    if ( Eng3 != NULL)
+    if ( Eng3 != NULL && (ui->setButton3->isChecked())&& pathcomplete3 != 1)
     {
         f3 = 1;
-       //comparisonArray3 = new int[i3];
+       //comparisonArray3 = new int[comparisonArray3.size()];
     }
-    if ( Eng4 != NULL)
+    if ( Eng4 != NULL && (ui->setButton4->isChecked()) && pathcomplete4 != 1)
     {
         f4 = 1;
-        //comparisonArray4 = new int[i4];
+        //comparisonArray4 = new int[comparisonArray4.size()];
     }
-    if ( Eng5 != NULL)
+    if ( Eng5 != NULL && (ui->setButton5->isChecked())&& pathcomplete5 != 1)
     {
         f5 = 1;
-       // comparisonArray5 = new int[i5];
+       // comparisonArray5 = new int[comparisonArray5.size()];
    }
 
 
-// delete comparisonArray;
- //delete comparisonArray2;
- //delete comparisonArray3;
- //delete comparisonArray4;
-// delete comparisonArray5;
- //return -1;
 
 
+//if(pathcomplete1 == 1)
+//{
+//    Eng1Time(attempt, islong);
+//}
+//if(pathcomplete2 == 1)
+//{
+//    Eng2Time(attempt, islong);
+//}
+//if(pathcomplete3 == 1)
+//{
+//    Eng3Time(attempt, islong);
+//}
+//if(pathcomplete4 == 1)
+//{
+//    Eng4Time(attempt, islong);
+//}
+//if(pathcomplete5 == 1)
+//{
+//    Eng5Time(attempt, islong);
+//}
 
     if ( (f1+f2+f3+f4+f5 == 1) || (f1+f2+f3+f4+f5 == 0))
     {
-        //No paths or only one path detected. No comparison needed (However, time still needs to be called.
+        //No paths or only one path detected. No comparison needed (However, time still needs to be called.)
         if(f1 == 1)
         {
             Eng1Time(attempt, islong);
@@ -88,162 +105,168 @@ int MainWindow::checkPaths(int attempt, int islong)
     }
     else if (f1+f2+f3+f4+f5 == 2)
     { //2 paths detected. Determining possible collisions
+        
+        //First, we determine which two trains are active. Then, we determine if they will collide.
 
         if(f1+f2 == 2)
         {
 
             Eng1Time(attempt, islong);
             Eng2Time(attempt, islong);
-            return (compare2(comparisonArray, comparisonArray2, i1, i2));
+            return (compare2(comparisonArray, comparisonArray2, comparisonArray.size(), comparisonArray2.size()));
         }
         else if (f1+f3 == 2)
         {
             Eng1Time(attempt, islong);
             Eng3Time(attempt, islong);
-            return (compare2(comparisonArray, comparisonArray3, i1, i3));
+            return (compare2(comparisonArray, comparisonArray3, comparisonArray.size(), comparisonArray3.size()));
         }
         else if (f1+f4 == 2)
         {
             Eng1Time(attempt, islong);
             Eng4Time(attempt, islong);
-            return (compare2(comparisonArray,comparisonArray4, i1, i4));
+            return (compare2(comparisonArray,comparisonArray4, comparisonArray.size(), comparisonArray4.size()));
         }
         else if(f1+f5 == 2)
         {
             Eng1Time(attempt, islong);
             Eng5Time(attempt, islong);
-            return (compare2(comparisonArray,comparisonArray5,i1,i5));
+            return (compare2(comparisonArray,comparisonArray5,comparisonArray.size(),comparisonArray5.size()));
         }
         else if(f2+f3 == 2)
         {
             Eng2Time(attempt, islong);
             Eng3Time(attempt, islong);
-            return (compare2(comparisonArray2,comparisonArray3,i2,i3));
+            return (compare2(comparisonArray2,comparisonArray3,comparisonArray2.size(),comparisonArray3.size()));
         }
         else if(f2+f4 == 2)
         {
             Eng2Time(attempt, islong);
             Eng4Time(attempt, islong);
-            return (compare2(comparisonArray2,comparisonArray4,i2,i4));
+            return (compare2(comparisonArray2,comparisonArray4,comparisonArray2.size(),comparisonArray4.size()));
         }
         else if(f2+f5 == 2)
         {
             Eng2Time(attempt, islong);
             Eng5Time(attempt, islong);
-            return (compare2(comparisonArray2,comparisonArray5,i2,i5));
+            return (compare2(comparisonArray2,comparisonArray5,comparisonArray2.size(),comparisonArray5.size()));
         }
         else if(f3+f4 == 2)
         {
             Eng3Time(attempt, islong);
             Eng4Time(attempt, islong);
-            return (compare2(comparisonArray3,comparisonArray4,i3,i4));
+            return (compare2(comparisonArray3,comparisonArray4,comparisonArray3.size(),comparisonArray4.size()));
         }
         else if(f3+f5 == 2)
         {
             Eng3Time(attempt, islong);
             Eng5Time(attempt, islong);
-            return (compare2(comparisonArray3,comparisonArray5,i3,i5));
+            return (compare2(comparisonArray3,comparisonArray5,comparisonArray3.size(),comparisonArray5.size()));
         }
         else if(f4+f5 == 2)
         {
             Eng4Time(attempt, islong);
             Eng5Time(attempt, islong);
-            return (compare2(comparisonArray4,comparisonArray5,i4,i5));
+            return (compare2(comparisonArray4,comparisonArray5,comparisonArray4.size(),comparisonArray5.size()));
         }
     }
     else if (f1+f2+f3+f4+f5 == 3)
       {// 3 paths detected. Checking for collisions.
+        
+        //Same thing here. If there are 3 paths, we find out which 3, then compare their routes.
         if(f1+f2+f3 == 3)
         {
             Eng1Time(attempt, islong);
             Eng2Time(attempt, islong);
             Eng3Time(attempt, islong);
-            return (compare3(comparisonArray,comparisonArray2,comparisonArray3,i1,i2,i3));
+            return (compare3(comparisonArray,comparisonArray2,comparisonArray3,comparisonArray.size(),comparisonArray2.size(),comparisonArray3.size()));
         }
         else if (f1+f2+f4 == 3)
         {
             Eng1Time(attempt, islong);
             Eng2Time(attempt, islong);
             Eng4Time(attempt, islong);
-            return (compare3(comparisonArray,comparisonArray2,comparisonArray4,i1,i2,i4));
+            return (compare3(comparisonArray,comparisonArray2,comparisonArray4,comparisonArray.size(),comparisonArray2.size(),comparisonArray4.size()));
         }
         else if (f1+f2+f5 == 3)
         {
             Eng1Time(attempt, islong);
             Eng2Time(attempt, islong);
             Eng5Time(attempt, islong);
-            return (compare3(comparisonArray,comparisonArray2,comparisonArray5,i1,i2,i5));
+            return (compare3(comparisonArray,comparisonArray2,comparisonArray5,comparisonArray.size(),comparisonArray2.size(),comparisonArray5.size()));
         }
         else if(f1+f3+f4 == 3)
         {
             Eng1Time(attempt, islong);
             Eng3Time(attempt, islong);
             Eng4Time(attempt, islong);
-            return (compare3(comparisonArray,comparisonArray3,comparisonArray4,i1,i3,i4));
+            return (compare3(comparisonArray,comparisonArray3,comparisonArray4,comparisonArray.size(),comparisonArray3.size(),comparisonArray4.size()));
         }
         else if(f1+f3+f5 == 3)
         {
             Eng1Time(attempt, islong);
             Eng3Time(attempt, islong);
             Eng5Time(attempt, islong);
-            return (compare3(comparisonArray,comparisonArray3,comparisonArray5,i1,i3,i5));
+            return (compare3(comparisonArray,comparisonArray3,comparisonArray5,comparisonArray.size(),comparisonArray3.size(),comparisonArray5.size()));
         }
         else if(f1+f4+f5 == 3)
         {
             Eng1Time(attempt, islong);
             Eng4Time(attempt, islong);
             Eng5Time(attempt, islong);
-            return (compare3(comparisonArray,comparisonArray4,comparisonArray5,i1,i4,i5));
+            return (compare3(comparisonArray,comparisonArray4,comparisonArray5,comparisonArray.size(),comparisonArray4.size(),comparisonArray5.size()));
         }
         else if(f2+f3+f4 == 3)
         {
             Eng2Time(attempt, islong);
             Eng3Time(attempt, islong);
             Eng4Time(attempt, islong);
-            return (compare3(comparisonArray2,comparisonArray3,comparisonArray4,i2,i3,i4));
+            return (compare3(comparisonArray2,comparisonArray3,comparisonArray4,comparisonArray2.size(),comparisonArray3.size(),comparisonArray4.size()));
         }
         else if(f2+f3+f5 == 3)
         {
             Eng2Time(attempt, islong);
             Eng3Time(attempt, islong);
             Eng5Time(attempt, islong);
-            return (compare3(comparisonArray2,comparisonArray3,comparisonArray5,i2,i3,i5));
+            return (compare3(comparisonArray2,comparisonArray3,comparisonArray5,comparisonArray2.size(),comparisonArray3.size(),comparisonArray5.size()));
         }
         else if(f2+f4+f5 == 3)
         {
             Eng2Time(attempt, islong);
             Eng4Time(attempt, islong);
             Eng5Time(attempt, islong);
-            return (compare3(comparisonArray2,comparisonArray4,comparisonArray5,i2,i4,i5));
+            return (compare3(comparisonArray2,comparisonArray4,comparisonArray5,comparisonArray2.size(),comparisonArray4.size(),comparisonArray5.size()));
         }
         else if(f3+f4+f5 == 3)
         {
             Eng3Time(attempt, islong);
             Eng4Time(attempt, islong);
             Eng5Time(attempt, islong);
-            return (compare3(comparisonArray3,comparisonArray4,comparisonArray5,i3,i4,i5));
+            return (compare3(comparisonArray3,comparisonArray4,comparisonArray5,comparisonArray3.size(),comparisonArray4.size(),comparisonArray5.size()));
         }
     }
     else if(f1+f2+f3+f4+f5 == 4)
     {//4 paths detected. checking now.
+        
+        //The following code detects which 4 paths are active (if there are exactly 4 paths active), and then compares their routes.
         if (f1+f2+f3+f4 == 4)
         {
             Eng1Time(attempt, islong);
             Eng2Time(attempt, islong);
             Eng3Time(attempt, islong);
             Eng4Time(attempt, islong);
-            //compare4(comparisonArray,comparisonArray2,comparisonArray3,comparisonArray4,i1,i2,i3,i4);
-            int c1 = compare3(comparisonArray, comparisonArray2, comparisonArray3, i1, i2, i3);
+            //compare4(comparisonArray,comparisonArray2,comparisonArray3,comparisonArray4,comparisonArray.size(),comparisonArray2.size(),comparisonArray3.size(),comparisonArray4.size());
+            int c1 = compare3(comparisonArray, comparisonArray2, comparisonArray3, comparisonArray.size(), comparisonArray2.size(), comparisonArray3.size());
             if(c1 != -1)
             {return c1;}
             else
             {
-                c1 = compare3(comparisonArray2, comparisonArray3, comparisonArray4, i2, i3, i4);
+                c1 = compare3(comparisonArray2, comparisonArray3, comparisonArray4, comparisonArray2.size(), comparisonArray3.size(), comparisonArray4.size());
                 if(c1 != -1)
                 {return c1;}
                 else
                 {
-                   return (compare2(comparisonArray, comparisonArray4, i1, i4));
+                   return (compare2(comparisonArray, comparisonArray4, comparisonArray.size(), comparisonArray4.size()));
 
                 }
             }
@@ -256,18 +279,18 @@ int MainWindow::checkPaths(int attempt, int islong)
             Eng2Time(attempt, islong);
             Eng3Time(attempt, islong);
             Eng4Time(attempt, islong);
-            //compare4(comparisonArray2,comparisonArray3,comparisonArray4,comparisonArray5,i2,i3,i4,i5);
-            int c1 = compare3(comparisonArray2, comparisonArray3, comparisonArray4, i2, i3, i4);
+            //compare4(comparisonArray2,comparisonArray3,comparisonArray4,comparisonArray5,comparisonArray2.size(),comparisonArray3.size(),comparisonArray4.size(),comparisonArray5.size());
+            int c1 = compare3(comparisonArray2, comparisonArray3, comparisonArray4, comparisonArray2.size(), comparisonArray3.size(), comparisonArray4.size());
             if(c1 != -1)
             {return c1;}
             else
             {
-                c1 = compare3(comparisonArray3, comparisonArray4, comparisonArray5, i3, i4, i5);
+                c1 = compare3(comparisonArray3, comparisonArray4, comparisonArray5, comparisonArray3.size(), comparisonArray4.size(), comparisonArray5.size());
                 if(c1 != -1)
                 {return c1;}
                 else
                 {
-                   return (compare2(comparisonArray2, comparisonArray5, i2, i5));
+                   return (compare2(comparisonArray2, comparisonArray5, comparisonArray2.size(), comparisonArray5.size()));
 
                 }
             }
@@ -278,18 +301,18 @@ int MainWindow::checkPaths(int attempt, int islong)
             Eng5Time(attempt, islong);
             Eng3Time(attempt, islong);
             Eng4Time(attempt, islong);
-            //compare4(comparisonArray,comparisonArray3,comparisonArray4,comparisonArray5,i1,i3,i4,i5);
-            int c1 = compare3(comparisonArray, comparisonArray4, comparisonArray3, i1, i4, i3);
+            //compare4(comparisonArray,comparisonArray3,comparisonArray4,comparisonArray5,comparisonArray.size(),comparisonArray3.size(),comparisonArray4.size(),comparisonArray5.size());
+            int c1 = compare3(comparisonArray, comparisonArray4, comparisonArray3, comparisonArray.size(), comparisonArray4.size(), comparisonArray3.size());
             if(c1 != -1)
             {return c1;}
             else
             {
-                c1 = compare3(comparisonArray3, comparisonArray4, comparisonArray5, i3, i4, i5);
+                c1 = compare3(comparisonArray3, comparisonArray4, comparisonArray5, comparisonArray3.size(), comparisonArray4.size(), comparisonArray5.size());
                 if(c1 != -1)
                 {return c1;}
                 else
                 {
-                   return (compare2(comparisonArray, comparisonArray5, i1, i5));
+                   return (compare2(comparisonArray, comparisonArray5, comparisonArray.size(), comparisonArray5.size()));
 
                 }
             }
@@ -300,18 +323,18 @@ int MainWindow::checkPaths(int attempt, int islong)
             Eng2Time(attempt, islong);
             Eng5Time(attempt, islong);
             Eng4Time(attempt, islong);
-            //compare4(comparisonArray,comparisonArray2,comparisonArray4,comparisonArray5,i1,i2,i4,i5);
-            int c1 = compare3(comparisonArray, comparisonArray2, comparisonArray4, i1, i2, i4);
+            //compare4(comparisonArray,comparisonArray2,comparisonArray4,comparisonArray5,comparisonArray.size(),comparisonArray2.size(),comparisonArray4.size(),comparisonArray5.size());
+            int c1 = compare3(comparisonArray, comparisonArray2, comparisonArray4, comparisonArray.size(), comparisonArray2.size(), comparisonArray4.size());
             if(c1 != -1)
             {return c1;}
             else
             {
-                c1 = compare3(comparisonArray2, comparisonArray4, comparisonArray5, i2, i4, i5);
+                c1 = compare3(comparisonArray2, comparisonArray4, comparisonArray5, comparisonArray2.size(), comparisonArray4.size(), comparisonArray5.size());
                 if(c1 != -1)
                 {return c1;}
                 else
                 {
-                   return (compare2(comparisonArray, comparisonArray5, i1, i5));
+                   return (compare2(comparisonArray, comparisonArray5, comparisonArray.size(), comparisonArray5.size()));
 
                 }
             }
@@ -323,19 +346,19 @@ int MainWindow::checkPaths(int attempt, int islong)
             Eng2Time(attempt, islong);
             Eng3Time(attempt, islong);
             Eng5Time(attempt, islong);
-            //compare4(comparisonArray,comparisonArray2,comparisonArray3,comparisonArray5,i1,i2,i3,i5);
+            //compare4(comparisonArray,comparisonArray2,comparisonArray3,comparisonArray5,comparisonArray.size(),comparisonArray2.size(),comparisonArray3.size(),comparisonArray5.size());
 
-            int c1 = compare3(comparisonArray, comparisonArray2, comparisonArray3, i1, i2, i3);
+            int c1 = compare3(comparisonArray, comparisonArray2, comparisonArray3, comparisonArray.size(), comparisonArray2.size(), comparisonArray3.size());
             if(c1 != -1)
             {return c1;}
             else
             {
-                c1 = compare3(comparisonArray2, comparisonArray3, comparisonArray5, i2, i3, i5);
+                c1 = compare3(comparisonArray2, comparisonArray3, comparisonArray5, comparisonArray2.size(), comparisonArray3.size(), comparisonArray5.size());
                 if(c1 != -1)
                 {return c1;}
                 else
                 {
-                   return (compare2(comparisonArray, comparisonArray5, i1, i5));
+                   return (compare2(comparisonArray, comparisonArray5, comparisonArray.size(), comparisonArray5.size()));
 
                 }
             }
@@ -352,22 +375,22 @@ int MainWindow::checkPaths(int attempt, int islong)
         Eng4Time(attempt, islong);
         Eng5Time(attempt, islong);
         //compare5();
-        int c1 = compare3(comparisonArray, comparisonArray2, comparisonArray3, i1, i2, i3);
+        int c1 = compare3(comparisonArray, comparisonArray2, comparisonArray3, comparisonArray.size(), comparisonArray2.size(), comparisonArray3.size());
         if(c1 != -1)
         {return c1;}
         else
         {
-            c1 = compare3(comparisonArray, comparisonArray4, comparisonArray5, i1, i4, i5);
+            c1 = compare3(comparisonArray, comparisonArray4, comparisonArray5, comparisonArray.size(), comparisonArray4.size(), comparisonArray5.size());
             if(c1 != -1)
             {return c1;}
             else
             {
-                c1 = compare3(comparisonArray2, comparisonArray4, comparisonArray5, i2, i4, i5);
+                c1 = compare3(comparisonArray2, comparisonArray4, comparisonArray5, comparisonArray2.size(), comparisonArray4.size(), comparisonArray5.size());
                 if(c1 != -1)
                 {return c1;}
                 else
                 {
-                    return (compare3(comparisonArray3, comparisonArray4, comparisonArray5, i3, i4, i5));
+                    return (compare3(comparisonArray3, comparisonArray4, comparisonArray5, comparisonArray3.size(), comparisonArray4.size(), comparisonArray5.size()));
 
 
                 }
@@ -382,7 +405,7 @@ int MainWindow::checkPaths(int attempt, int islong)
 int MainWindow::trackLength(int trackNum)
 {
 
-    //function that returns length of a certain track piece. Current lengths are dummy lengths.
+    //function that returns length of a certain track piece. Current lengths are dummy lengths. This is a lookup table.
     if (trackNum == 0)
         return 2;
     if (trackNum == 1)
@@ -590,8 +613,11 @@ int MainWindow::trackLength(int trackNum)
 void MainWindow::Eng1Time( int attempt, int islong)
 {
 
+    //This function takes the route given by Dijkstras algorithm, and calculates how long it will take to cross each individial piece of track. It uses throttle, train speed, and track length.
+    
     if (islong == 0){
-    comparisonArray.clear();}
+
+    comparisonArray.clear();} //If this isn't a continuation path.
 
     float throttle1 =(ui->throttleBox1->currentText().toFloat()/100);
     float len = 0; //length * speed of current piece of track
@@ -602,10 +628,15 @@ void MainWindow::Eng1Time( int attempt, int islong)
        { i++;}
     for (; i<E1S; i++)
     {
+        
+        //This block of code handles float to int conversion. For example, if it takes slightly more than a second to cross a track piece, then rounding down will eventually get you off course.
+        //This function calculates the extra bits and saves them, so that when the fractions of a second add up to a whole second, the output accounts for this.
         double intPart;
         len = trackLength(Eng1[i]) * Eng1Speed / throttle1;
         double fracPart = modf(len, &intPart);
         overflow = overflow + fracPart;
+        
+        
         if( overflow >= 1)
         {
             overflow = overflow - 1;
@@ -625,33 +656,35 @@ void MainWindow::Eng1Time( int attempt, int islong)
         }
     }
 
+    //The following code is the delay code. If two trains are leaving the same end siding area, then you account for the delay.
+    
     if(Eng1[0] == 53 || Eng1[0] == 54 || Eng1[0] == 55)
     {
 
     if(comparisonArray5.size() !=0 && ( comparisonArray5[0] == 53 || comparisonArray5[0] == 54 || comparisonArray5[0] == 55) )
     {
-        for (int k=0; k<5; k++)
+        for (int k=0; k<10; k++)
         {
             comparisonArray.insert(comparisonArray.begin(), Eng1[0]);
         }
     }
     else if(comparisonArray2.size() !=0 && ( comparisonArray2[0] == 53 || comparisonArray2[0] == 54 || comparisonArray2[0] == 55) )
     {
-        for (int k=0; k<5; k++)
+        for (int k=0; k<10; k++)
         {
             comparisonArray.insert(comparisonArray.begin(), Eng1[0]);
         }
     }
     else if(comparisonArray3.size() !=0 && ( comparisonArray3[0] == 53 || comparisonArray3[0] == 54 || comparisonArray3[0] == 55) )
     {
-        for (int k=0; k<5; k++)
+        for (int k=0; k<10; k++)
         {
             comparisonArray.insert(comparisonArray.begin(), Eng1[0]);
         }
     }
     else if(comparisonArray4.size() !=0 && ( comparisonArray4[0] == 53 || comparisonArray4[0] == 54 || comparisonArray4[0] == 55) )
     {
-        for (int k=0; k<5; k++)
+        for (int k=0; k<10; k++)
         {
             comparisonArray.insert(comparisonArray.begin(), Eng1[0]);
         }
@@ -662,28 +695,28 @@ void MainWindow::Eng1Time( int attempt, int islong)
 
     if(comparisonArray5.size() !=0 && ( comparisonArray5[0] == 43 || comparisonArray5[0] == 44 ))
     {
-        for (int k=0; k<5; k++)
+        for (int k=0; k<10; k++)
         {
             comparisonArray.insert(comparisonArray.begin(), Eng1[0]);
         }
     }
     else if(comparisonArray2.size() !=0 && ( comparisonArray2[0] == 43 || comparisonArray2[0] == 44) )
     {
-        for (int k=0; k<5; k++)
+        for (int k=0; k<10; k++)
         {
             comparisonArray.insert(comparisonArray.begin(), Eng1[0]);
         }
     }
     else if(comparisonArray3.size() !=0 && ( comparisonArray3[0] == 43 || comparisonArray3[0] == 44) )
     {
-        for (int k=0; k<5; k++)
+        for (int k=0; k<10; k++)
         {
             comparisonArray.insert(comparisonArray.begin(), Eng1[0]);
         }
     }
     else if(comparisonArray4.size() !=0 && ( comparisonArray4[0] == 43 || comparisonArray4[0] == 44) )
     {
-        for (int k=0; k<5; k++)
+        for (int k=0; k<10; k++)
         {
             comparisonArray.insert(comparisonArray.begin(), Eng1[0]);
         }
@@ -694,7 +727,11 @@ void MainWindow::Eng1Time( int attempt, int islong)
 
 void MainWindow::Eng2Time(int attempt, int islong)
 {
+//This is the same function as Eng1Time, only changed for Eng2's variables.
+
     if (islong == 0){
+
+
     comparisonArray2.clear();
     }
     float throttle2 =(ui->throttleBox2->currentText().toFloat()/100);
@@ -734,28 +771,28 @@ void MainWindow::Eng2Time(int attempt, int islong)
 
     if(comparisonArray.size() !=0 && ( comparisonArray[0] == 53 || comparisonArray[0] == 54 || comparisonArray[0] == 55) )
     {
-        for (int k=0; k<5; k++)
+        for (int k=0; k<10; k++)
         {
             comparisonArray2.insert(comparisonArray2.begin(), Eng2[0]);
         }
     }
     else if(comparisonArray5.size() !=0 && ( comparisonArray5[0] == 53 || comparisonArray5[0] == 54 || comparisonArray5[0] == 55) )
     {
-        for (int k=0; k<5; k++)
+        for (int k=0; k<10; k++)
         {
             comparisonArray2.insert(comparisonArray2.begin(), Eng2[0]);
         }
     }
     else if(comparisonArray3.size() !=0 && ( comparisonArray3[0] == 53 || comparisonArray3[0] == 54 || comparisonArray3[0] == 55) )
     {
-        for (int k=0; k<5; k++)
+        for (int k=0; k<10; k++)
         {
             comparisonArray2.insert(comparisonArray2.begin(), Eng2[0]);
         }
     }
     else if(comparisonArray4.size() !=0 && ( comparisonArray4[0] == 53 || comparisonArray4[0] == 54 || comparisonArray4[0] == 55) )
     {
-        for (int k=0; k<5; k++)
+        for (int k=0; k<10; k++)
         {
             comparisonArray2.insert(comparisonArray2.begin(), Eng2[0]);
         }
@@ -766,39 +803,45 @@ void MainWindow::Eng2Time(int attempt, int islong)
 
     if(comparisonArray.size() !=0 && ( comparisonArray[0] == 43 || comparisonArray[0] == 44 ))
     {
-        for (int k=0; k<5; k++)
+        for (int k=0; k<10; k++)
         {
             comparisonArray2.insert(comparisonArray2.begin(), Eng2[0]);
         }
     }
     else if(comparisonArray5.size() !=0 && ( comparisonArray5[0] == 43 || comparisonArray5[0] == 44) )
     {
-        for (int k=0; k<5; k++)
+        for (int k=0; k<10; k++)
         {
             comparisonArray2.insert(comparisonArray2.begin(), Eng2[0]);
         }
     }
     else if(comparisonArray3.size() !=0 && ( comparisonArray3[0] == 43 || comparisonArray3[0] == 44) )
     {
-        for (int k=0; k<5; k++)
+        for (int k=0; k<10; k++)
         {
             comparisonArray2.insert(comparisonArray2.begin(), Eng2[0]);
         }
     }
     else if(comparisonArray4.size() !=0 && ( comparisonArray4[0] == 43 || comparisonArray4[0] == 44) )
     {
-        for (int k=0; k<5; k++)
+        for (int k=0; k<10; k++)
         {
             comparisonArray2.insert(comparisonArray2.begin(), Eng2[0]);
         }
     }
     }
 
+
 }
 
 void MainWindow::Eng3Time(int attempt, int islong)
 {
     if (islong == 0){
+
+//        if (pathcomplete3 == 1)
+//        {
+//            return; //path is already being output. Do not recalculate
+//        }
     comparisonArray3.clear();
     }
     float throttle3 =(ui->throttleBox3->currentText().toFloat()/100);
@@ -838,28 +881,28 @@ void MainWindow::Eng3Time(int attempt, int islong)
 
     if(comparisonArray.size() !=0 && ( comparisonArray[0] == 53 || comparisonArray[0] == 54 || comparisonArray[0] == 55) )
     {
-        for (int k=0; k<5; k++)
+        for (int k=0; k<10; k++)
         {
             comparisonArray3.insert(comparisonArray3.begin(), Eng3[0]);
         }
     }
     else if(comparisonArray2.size() !=0 && ( comparisonArray2[0] == 53 || comparisonArray2[0] == 54 || comparisonArray2[0] == 55) )
     {
-        for (int k=0; k<5; k++)
+        for (int k=0; k<10; k++)
         {
             comparisonArray3.insert(comparisonArray3.begin(), Eng3[0]);
         }
     }
     else if(comparisonArray5.size() !=0 && ( comparisonArray5[0] == 53 || comparisonArray5[0] == 54 || comparisonArray5[0] == 55) )
     {
-        for (int k=0; k<5; k++)
+        for (int k=0; k<10; k++)
         {
             comparisonArray3.insert(comparisonArray3.begin(), Eng3[0]);
         }
     }
     else if(comparisonArray4.size() !=0 && ( comparisonArray4[0] == 53 || comparisonArray4[0] == 54 || comparisonArray4[0] == 55) )
     {
-        for (int k=0; k<5; k++)
+        for (int k=0; k<10; k++)
         {
             comparisonArray3.insert(comparisonArray3.begin(), Eng3[0]);
         }
@@ -870,28 +913,28 @@ void MainWindow::Eng3Time(int attempt, int islong)
 
     if(comparisonArray.size() !=0 && ( comparisonArray[0] == 43 || comparisonArray[0] == 44 ))
     {
-        for (int k=0; k<5; k++)
+        for (int k=0; k<10; k++)
         {
             comparisonArray3.insert(comparisonArray3.begin(), Eng3[0]);
         }
     }
     else if(comparisonArray2.size() !=0 && ( comparisonArray2[0] == 43 || comparisonArray2[0] == 44) )
     {
-        for (int k=0; k<5; k++)
+        for (int k=0; k<10; k++)
         {
             comparisonArray3.insert(comparisonArray3.begin(), Eng3[0]);
         }
     }
     else if(comparisonArray5.size() !=0 && ( comparisonArray5[0] == 43 || comparisonArray5[0] == 44) )
     {
-        for (int k=0; k<5; k++)
+        for (int k=0; k<10; k++)
         {
             comparisonArray3.insert(comparisonArray3.begin(), Eng3[0]);
         }
     }
     else if(comparisonArray4.size() !=0 && ( comparisonArray4[0] == 43 || comparisonArray4[0] == 44) )
     {
-        for (int k=0; k<5; k++)
+        for (int k=0; k<10; k++)
         {
             comparisonArray3.insert(comparisonArray3.begin(), Eng3[0]);
         }
@@ -903,6 +946,11 @@ void MainWindow::Eng3Time(int attempt, int islong)
 void MainWindow::Eng4Time(int attempt, int islong)
 {
     if (islong == 0){
+
+//        if (pathcomplete4 == 1)
+//        {
+//            return; //path is already being output. Do not recalculate
+//        }
     comparisonArray4.clear();
     }
     float throttle4 =(ui->throttleBox4->currentText().toFloat()/100);
@@ -942,28 +990,28 @@ void MainWindow::Eng4Time(int attempt, int islong)
 
     if(comparisonArray.size() !=0 && ( comparisonArray[0] == 53 || comparisonArray[0] == 54 || comparisonArray[0] == 55) )
     {
-        for (int k=0; k<5; k++)
+        for (int k=0; k<10; k++)
         {
             comparisonArray4.insert(comparisonArray4.begin(), Eng4[0]);
         }
     }
     else if(comparisonArray2.size() !=0 && ( comparisonArray2[0] == 53 || comparisonArray2[0] == 54 || comparisonArray2[0] == 55) )
     {
-        for (int k=0; k<5; k++)
+        for (int k=0; k<10; k++)
         {
             comparisonArray4.insert(comparisonArray4.begin(), Eng4[0]);
         }
     }
     else if(comparisonArray3.size() !=0 && ( comparisonArray3[0] == 53 || comparisonArray3[0] == 54 || comparisonArray3[0] == 55) )
     {
-        for (int k=0; k<5; k++)
+        for (int k=0; k<10; k++)
         {
             comparisonArray4.insert(comparisonArray4.begin(), Eng4[0]);
         }
     }
     else if(comparisonArray5.size() !=0 && ( comparisonArray5[0] == 53 || comparisonArray5[0] == 54 || comparisonArray5[0] == 55) )
     {
-        for (int k=0; k<5; k++)
+        for (int k=0; k<10; k++)
         {
             comparisonArray4.insert(comparisonArray4.begin(), Eng4[0]);
         }
@@ -974,28 +1022,28 @@ void MainWindow::Eng4Time(int attempt, int islong)
 
     if(comparisonArray.size() !=0 && ( comparisonArray[0] == 43 || comparisonArray[0] == 44 ))
     {
-        for (int k=0; k<5; k++)
+        for (int k=0; k<10; k++)
         {
             comparisonArray4.insert(comparisonArray4.begin(), Eng4[0]);
         }
     }
     else if(comparisonArray2.size() !=0 && ( comparisonArray2[0] == 43 || comparisonArray2[0] == 44) )
     {
-        for (int k=0; k<5; k++)
+        for (int k=0; k<10; k++)
         {
             comparisonArray4.insert(comparisonArray4.begin(), Eng4[0]);
         }
     }
     else if(comparisonArray3.size() !=0 && ( comparisonArray3[0] == 43 || comparisonArray3[0] == 44) )
     {
-        for (int k=0; k<5; k++)
+        for (int k=0; k<10; k++)
         {
             comparisonArray4.insert(comparisonArray4.begin(), Eng4[0]);
         }
     }
     else if(comparisonArray5.size() !=0 && ( comparisonArray5[0] == 43 || comparisonArray5[0] == 44) )
     {
-        for (int k=0; k<5; k++)
+        for (int k=0; k<10; k++)
         {
             comparisonArray4.insert(comparisonArray4.begin(), Eng4[0]);
         }
@@ -1007,9 +1055,14 @@ void MainWindow::Eng4Time(int attempt, int islong)
 void MainWindow::Eng5Time(int attempt, int islong)
 {
     if (islong == 0){
+
+//        if (pathcomplete5 == 1)
+//        {
+//            return; //path is already being output. Do not recalculate
+//        }
     comparisonArray5.clear();
     }
-    float throttle5 =(ui->throttleBox3->currentText().toFloat()/100);
+    float throttle5 =(ui->throttleBox5->currentText().toFloat()/100);
     float len = 0; //length * speed of current piece of track
     float overflow = 0;
     int j = 0;
@@ -1045,28 +1098,28 @@ void MainWindow::Eng5Time(int attempt, int islong)
 
     if(comparisonArray.size() !=0 && ( comparisonArray[0] == 53 || comparisonArray[0] == 54 || comparisonArray[0] == 55) )
     {
-        for (int k=0; k<5; k++)
+        for (int k=0; k<10; k++)
         {
             comparisonArray5.insert(comparisonArray5.begin(), Eng5[0]);
         }
     }
     else if(comparisonArray2.size() !=0 && ( comparisonArray2[0] == 53 || comparisonArray2[0] == 54 || comparisonArray2[0] == 55) )
     {
-        for (int k=0; k<5; k++)
+        for (int k=0; k<10; k++)
         {
             comparisonArray5.insert(comparisonArray5.begin(), Eng5[0]);
         }
     }
     else if(comparisonArray3.size() !=0 && ( comparisonArray3[0] == 53 || comparisonArray3[0] == 54 || comparisonArray3[0] == 55) )
     {
-        for (int k=0; k<5; k++)
+        for (int k=0; k<10; k++)
         {
             comparisonArray5.insert(comparisonArray5.begin(), Eng5[0]);
         }
     }
     else if(comparisonArray4.size() !=0 && ( comparisonArray4[0] == 53 || comparisonArray4[0] == 54 || comparisonArray4[0] == 55) )
     {
-        for (int k=0; k<5; k++)
+        for (int k=0; k<10; k++)
         {
             comparisonArray5.insert(comparisonArray5.begin(), Eng5[0]);
         }
@@ -1077,28 +1130,28 @@ void MainWindow::Eng5Time(int attempt, int islong)
 
     if(comparisonArray.size() !=0 && ( comparisonArray[0] == 43 || comparisonArray[0] == 44 ))
     {
-        for (int k=0; k<5; k++)
+        for (int k=0; k<10; k++)
         {
             comparisonArray5.insert(comparisonArray5.begin(), Eng5[0]);
         }
     }
     else if(comparisonArray2.size() !=0 && ( comparisonArray2[0] == 43 || comparisonArray2[0] == 44) )
     {
-        for (int k=0; k<5; k++)
+        for (int k=0; k<10; k++)
         {
             comparisonArray5.insert(comparisonArray5.begin(), Eng5[0]);
         }
     }
     else if(comparisonArray3.size() !=0 && ( comparisonArray3[0] == 43 || comparisonArray3[0] == 44) )
     {
-        for (int k=0; k<5; k++)
+        for (int k=0; k<10; k++)
         {
             comparisonArray5.insert(comparisonArray5.begin(), Eng5[0]);
         }
     }
     else if(comparisonArray4.size() !=0 && ( comparisonArray4[0] == 43 || comparisonArray4[0] == 44) )
     {
-        for (int k=0; k<5; k++)
+        for (int k=0; k<10; k++)
         {
             comparisonArray5.insert(comparisonArray5.begin(), Eng5[0]);
         }
@@ -1109,15 +1162,17 @@ void MainWindow::Eng5Time(int attempt, int islong)
 int MainWindow::compare2(std::vector<int>  a, std::vector<int>  b, int c, int d)
 {
 
+    //This function detects collisions. It compares the arrays it is passed, and if there is a collision, it returns the segment of the collision.
+    
 
-    if (c >= d )
+    if (c >= d ) //Determine which array is shorter, and compare that many values. Once a train is stopped on an end siding, we don't care about it any more.
     {
 
       for(int i=0; i<d; i++)
       {
           if (a[i] == b[i])
           {
-              cout << "Collision detected at track segment " << to_string(a[i]) << endl;
+              cout << "Collision detected at track segment " << oursTotheirs(a[i]).toStdString() << endl;
               return a[i];
           }
 
@@ -1129,7 +1184,7 @@ int MainWindow::compare2(std::vector<int>  a, std::vector<int>  b, int c, int d)
         {
             if(a[i] == b[i])
             {
-                cout << "Collision detected at track segment " << to_string(a[i]) << endl;
+                cout << "Collision detected at track segment " << oursTotheirs(a[i]).toStdString() << endl;
                 return a[i];
             }
         }
@@ -1141,21 +1196,22 @@ int MainWindow::compare2(std::vector<int>  a, std::vector<int>  b, int c, int d)
 
 int MainWindow::compare3(std::vector<int>  a, std::vector<int>  b, std::vector<int>  c, int a1, int b1, int c1)
 {
+    //This function does the same thing compare2 does, only with 3 values. 
 int i = 0;
     if(a1 >= b1 && b1 >= c1)
     {
         for (; i<c1;i++)
         {
-         if(a[i] == b[i] || a[i]==c[i] || b[i]==c[i])
+         if(a[i] == b[i] || a[i]==c[i] || b[i]==c[i]) //Determine which array is shorter, and compare that many values. Once a train is stopped on an end siding, we don't care about it any more.
          {
 
-                     if(a[i] == b[i] || a[i] == c[i])
+                     if(a[i] == b[i] || a[i] == c[i]) //If trains intersect.
                      {
-                         cout << "Paths intersect at track section " << oursTotheirs(a[i]).toStdString() << "Returning" << endl;
+                         cout << "Paths intersect at track section " << oursTotheirs(a[i]).toStdString()  << endl;
                              return a[i];
                      }
                      else{
-                      cout << "Paths intersect at track section " << oursTotheirs(a[i]).toStdString() << "Returning" << endl;
+                      cout << "Paths intersect at track section " << oursTotheirs(a[i]).toStdString()  << endl;
                             return b[i];
                      }
          }
@@ -1164,7 +1220,7 @@ int i = 0;
         {
             if(a[i]==b[i])
             {
-                cout << "Paths intersect at track section " << oursTotheirs(a[i]).toStdString() << "Returning" << endl;
+                cout << "Paths intersect at track section " << oursTotheirs(a[i]).toStdString()  << endl;
                 return a[i];
             }
         }
@@ -1179,11 +1235,11 @@ int i = 0;
          {
 
                      if(a[i] == b[i] || a[i] == c[i]){
-                            cout << "Paths intersect at track section " << oursTotheirs(a[i]).toStdString() << "Returning" << endl;
+                            cout << "Paths intersect at track section " << oursTotheirs(a[i]).toStdString()  << endl;
                          return a[i];
                      }
                      else{
-                         cout << "Paths intersect at track section " << oursTotheirs(a[i]).toStdString() << "Returning" << endl;
+                         cout << "Paths intersect at track section " << oursTotheirs(a[i]).toStdString()  << endl;
                             return b[i];}
          }
         }
@@ -1191,7 +1247,7 @@ int i = 0;
         {
             if(a[i]==c[i])
             {
-                cout << "Paths intersect at track section " << oursTotheirs(a[i]).toStdString() << "Returning" << endl;
+                cout << "Paths intersect at track section " << oursTotheirs(a[i]).toStdString()  << endl;
                 return a[i];
             }
         }
@@ -1208,12 +1264,12 @@ int i = 0;
 
                      if(a[i] == b[i] || a[i] == c[i]){
 
-                     cout << "Paths intersect at track section " << oursTotheirs(a[i]).toStdString() << "Returning" << endl;
+                     cout << "Paths intersect at track section " << oursTotheirs(a[i]).toStdString()  << endl;
                      return a[i];
                      }
                      else{
 
-                     cout << "Paths intersect at track section " << oursTotheirs(b[i]).toStdString() << "Returning" << endl;
+                     cout << "Paths intersect at track section " << oursTotheirs(b[i]).toStdString()  << endl;
                      return b[i];}
          }
         }
@@ -1221,7 +1277,7 @@ int i = 0;
         {
             if(a[i]==b[i])
             {
-                cout << "Paths intersect at track section " << oursTotheirs(a[i]).toStdString() << "Returning" << endl;
+                cout << "Paths intersect at track section " << oursTotheirs(a[i]).toStdString()  << endl;
                 return a[i];
             }
         }
@@ -1237,12 +1293,12 @@ int i = 0;
 
                      if(a[i] == b[i] || a[i] == c[i])
                              {
-                         cout << "Paths intersect at track section " << oursTotheirs(a[i]).toStdString() << "Returning" << endl;
+                         cout << "Paths intersect at track section " << oursTotheirs(a[i]).toStdString()  << endl;
                          return a[i];
                      }
                      else{
                             return b[i];
-                     cout << "Paths intersect at track section " << oursTotheirs(b[i]).toStdString() << "Returning" << endl;
+                     cout << "Paths intersect at track section " << oursTotheirs(b[i]).toStdString()  << endl;
                      }
          }
         }
@@ -1250,7 +1306,7 @@ int i = 0;
         {
             if(c[i]==b[i])
             {
-                cout << "Paths intersect at track section " << oursTotheirs(a[i]).toStdString() << "Returning" << endl;
+                cout << "Paths intersect at track section " << oursTotheirs(a[i]).toStdString()  << endl;
                 return a[i];
             }
         }
@@ -1266,12 +1322,12 @@ int i = 0;
 
                      if(a[i] == b[i] || a[i] == c[i])
                      {
-                         cout << "Paths intersect at track section " << oursTotheirs(a[i]).toStdString() << "Returning" << endl;
+                         cout << "Paths intersect at track section " << oursTotheirs(a[i]).toStdString()  << endl;
                          return a[i];
                      }
                      else
                      {
-                         cout << "Paths intersect at track section " << oursTotheirs(b[i]).toStdString() << "Returning" << endl;
+                         cout << "Paths intersect at track section " << oursTotheirs(b[i]).toStdString()  << endl;
                             return b[i];
          }
          }
@@ -1280,7 +1336,7 @@ int i = 0;
         {
             if(a[i]==c[i])
             {
-                cout << "Paths intersect at track section " << oursTotheirs(a[i]).toStdString() << "Returning" << endl;
+                cout << "Paths intersect at track section " << oursTotheirs(a[i]).toStdString()  << endl;
                 return a[i];
             }
         }
@@ -1297,12 +1353,12 @@ int i = 0;
 
                      if(a[i] == b[i] || a[i] == c[i])
                      {
-                         cout << "Paths intersect at track section " << oursTotheirs(a[i]).toStdString() << "Returning" << endl;
+                         cout << "Paths intersect at track section " << oursTotheirs(a[i]).toStdString()  << endl;
                              return a[i];
                      }
                       else
                      {
-                         cout << "Paths intersect at track section " << oursTotheirs(b[i]).toStdString() << "Returning" << endl;
+                         cout << "Paths intersect at track section " << oursTotheirs(b[i]).toStdString()  << endl;
                             return b[i];
          }
          }
@@ -1311,7 +1367,7 @@ int i = 0;
         {
             if(a[i]==b[i])
             {
-                cout << "Paths intersect at track section " << oursTotheirs(a[i]).toStdString() << "Returning" << endl;
+                cout << "Paths intersect at track section " << oursTotheirs(a[i]).toStdString()  << endl;
                 return a[i];
             }
         }
@@ -1323,6 +1379,8 @@ int i = 0;
 void MainWindow::reroute(int trainSel, int tVal)
 {
 
+    //The reroute code goes in and remakes the adjacency list, leaving out the segment that resulted in a crash. The train is then rerouted through a different node, if possible.
+    
     adjacency_list_t adjacency_list(100);
 
     if(tVal != 0)
@@ -1744,7 +1802,7 @@ void MainWindow::reroute(int trainSel, int tVal)
 
     int start;
     int end;
-if(trainSel == 1)
+if(trainSel == 1) //if train1 is the active train
 {
     //translate origin box
     if (ui->originBox1->currentIndex() == 1)
@@ -1777,7 +1835,7 @@ if(trainSel == 1)
     else if (ui->destBox1->currentIndex() == 7)
         end = 69;
 }
-else if(trainSel == 2)
+else if(trainSel == 2) //if train 2 is the active train
 {
     //translate origin box
     if (ui->originBox2->currentIndex() == 1)
@@ -1911,6 +1969,8 @@ if(trainSel == 5)
 }
 
 
+//The following code basically reruns the code from the greyout functions in order to get a working path.
+
     std::vector<weight_t> min_distance;
     std::vector<vertex_t> previous;
     DijkstraComputePaths(start, adjacency_list, min_distance, previous);
@@ -1919,76 +1979,37 @@ if(trainSel == 5)
     {
     std::cout << "Rerouted Distance from " << ui->originBox1->currentText().toStdString() << " to " << ui->destBox1->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
     backupPath = DijkstraGetShortestPathTo(end, previous);
-    std::cout << ui->trainselectBox1->currentText().toStdString() <<" Path : ";
+    //std::cout << ui->trainselectBox1->currentText().toStdString() <<" Path : ";
     }
     else if (trainSel == 2)
     {
     std::cout << "Rerouted Distance from " << ui->originBox2->currentText().toStdString() << " to " << ui->destBox2->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
     backupPath = DijkstraGetShortestPathTo(end, previous);
-    std::cout << ui->trainselectBox2->currentText().toStdString() <<" Path : ";
+    //std::cout << ui->trainselectBox2->currentText().toStdString() <<" Path : ";
     }
     else if (trainSel == 3)
     {
     std::cout << "Rerouted Distance from " << ui->originBox3->currentText().toStdString() << " to " << ui->destBox3->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
     backupPath = DijkstraGetShortestPathTo(end, previous);
-    std::cout << ui->trainselectBox3->currentText().toStdString() <<" Path : ";
+    //std::cout << ui->trainselectBox3->currentText().toStdString() <<" Path : ";
     }
     else if (trainSel == 4)
     {
         std::cout << "Rerouted Distance from " << ui->originBox4->currentText().toStdString() << " to " << ui->destBox4->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
         backupPath = DijkstraGetShortestPathTo(end, previous);
-        std::cout << ui->trainselectBox4->currentText().toStdString() <<" Path : ";
+       // std::cout << ui->trainselectBox4->currentText().toStdString() <<" Path : ";
     }
     else if (trainSel == 5)
     {
     std::cout << "Rerouted Distance from " << ui->originBox5->currentText().toStdString() << " to " << ui->destBox5->currentText().toStdString() <<  ": " << to_string(min_distance[end]) << std::endl;
     backupPath = DijkstraGetShortestPathTo(end, previous);
-    std::cout << ui->trainselectBox5->currentText().toStdString() <<" Path : ";
+    //std::cout << ui->trainselectBox5->currentText().toStdString() <<" Path : ";
     }
 
 
 }
 
 
-//int MainWindow::compare4(int a[], int b[], int c[], int d[], int a1, int b1, int c1, int d1)
-//{
-//    int i = 0;
-//        if(a1 >= b1 && b1 >= c1 && c1 >= d1)
-//        {
-//            for (; i<d1;i++)
-//            {
-//             if(a[i] == b[i] || a[i]==c[i] || b[i]==c[i] || a[i]==d[i] || b[i]==d[i] || c[i] == d[i] )
-//             {
-//                 cout << "Paths intersect. Returning";
-//                         if(a[i] == b[i] || a[i] == c[i] || a[i] == d[i])
-//                                 return a[i];
-//                         else if (b[i] == c[i] || b[i] == d[i])
-//                                return b[i];
-//                         else
-//                             return c[i];
-//             }
-//            }
-//            for (; i<c1;i++)
-//            {
-//             if(a[i] == b[i] || a[i]==c[i] || b[i]==c[i])
-//             {
-//                 cout << "Paths intersect. Returning";
-//                         if(a[i] == b[i] || a[i] == c[i])
-//                                 return a[i];
-//                         else
-//                                return b[i];
-//             }
-//            }
-//            for(;i<b1;i++)
-//            {
-//                if(a[i]==b[i])
-//                {
-//                    cout << "paths intersect. Returning";
-//                    return a[i];
-//                }
-//            }
-//        }
-//    return -1;
-//}
+
 
 #endif // CHECKPATHS_H
