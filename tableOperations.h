@@ -13,13 +13,13 @@
 void MainWindow::tableOperation(std::list<vertex_t> path, int trainsel, int testInt, int attempt, int islong)
 {
 testInt++;
-    if(testInt >= 4)
+    if(testInt >= 4) //if route planning fails, delay the route by 10 seconds and attempt to reroute.
     {
         cout<< "rerouting failed 4 times. Delaying route start time." << endl;
               if(trainsel == 1)
               {
                   int begin = comparisonArray[0];
-                  for (int i = 5; i>0; i--)
+                  for (int i = 10; i>0; i--)
                   {
                       comparisonArray.insert(comparisonArray.begin(), begin);
                   }
@@ -27,7 +27,7 @@ testInt++;
               else if (trainsel == 2)
               {
                   int begin = comparisonArray2[0];
-                  for (int i = 5; i>0; i--)
+                  for (int i = 10; i>0; i--)
                   {
                       comparisonArray2.insert(comparisonArray2.begin(), begin);
                   }
@@ -35,7 +35,7 @@ testInt++;
               else if (trainsel == 3)
               {
                   int begin = comparisonArray3[0];
-                  for (int i = 5; i>0; i--)
+                  for (int i = 10; i>0; i--)
                   {
                       comparisonArray3.insert(comparisonArray3.begin(), begin);
                   }
@@ -43,7 +43,7 @@ testInt++;
               else if (trainsel == 4)
               {
                   int begin = comparisonArray4[0];
-                  for (int i = 5; i>0; i--)
+                  for (int i = 10; i>0; i--)
                   {
                       comparisonArray4.insert(comparisonArray4.begin(), begin);
                   }
@@ -51,7 +51,7 @@ testInt++;
               else if (trainsel == 5)
               {
                   int begin = comparisonArray5[0];
-                  for (int i = 5; i>0; i--)
+                  for (int i = 10; i>0; i--)
                   {
                       comparisonArray5.insert(comparisonArray5.begin(), begin);
                   }
@@ -68,7 +68,7 @@ testInt++;
             int numOfRows = pathSize/10; //number of rows on the path table needed
             if (pathSize%10 !=0)
                 numOfRows++;
-            cout << "The total number of hops is " << to_string(pathSize) << endl;
+            //cout << "The total number of hops is " << to_string(pathSize) << endl;
             //convert the list to an array
             int *copyarray = new int[pathSize];
             for (int i=0; i<pathSize; i++)
@@ -76,133 +76,37 @@ testInt++;
                 copyarray[i] = path.front();
                 path.pop_front();
             }
-            for (int i=0; i<pathSize; i++)
-            {
-                cout << oursTotheirs(copyarray[i]).toStdString() << " ";
-            }
-            cout << endl;
 
 
-            //write the array to a global array for comparison later
-            //
-            //
-            int ArSz = 0;
+            int ArSz = 0; //holds size of the array for comparison later.
 
-            if(trainsel == 1)
+            if(trainsel == 1) //if train 1 is selected.
             {
             if(ui->trainselectBox1->currentText() == "Engine 1")
             {
              flag = 1;
-             Eng1 = new int[pathSize];
+             Eng1 = new int[pathSize]; //initialize the internal array
              E1S = pathSize;
 
+             //Determine how long each track segment is, and add this time to the array.
              for(int i=0; i<pathSize; i++)
              {
                  ArSz = ArSz + trackLength(copyarray[i]);
              }
 
-             i1 = ArSz * Eng1Speed;
+             i1 = ArSz * Eng1Speed; //implement the engine's speed.
              for(int i=0; i<pathSize; i++)
              {
                  Eng1[i] = copyarray[i];
              }
              Eng1Start = Eng1[0];
-            }
-            else if(ui->trainselectBox1->currentText() == "Engine 2")
-            {
-                flag = 2;
-                Eng2 = new int[pathSize];
-                E2S = pathSize;
-
-                for(int i=0; i<pathSize; i++)
-                {
-                    ArSz = ArSz + trackLength(copyarray[i]);
-                }
-
-                i2 = ArSz * Eng2Speed;
-                for(int i=0; i<pathSize; i++)
-                {
-                    Eng2[i] = copyarray[i];
-                }
-                Eng2Start = Eng2[0];
-            }
-            else if(ui->trainselectBox1->currentText() == "Engine 3")
-            {
-                flag = 3;
-                Eng3 = new int[pathSize];
-                E3S = pathSize;
-
-                for(int i=0; i<pathSize; i++)
-                {
-                    ArSz = ArSz + trackLength(copyarray[i]);
-                }
-
-                i3 = ArSz * Eng3Speed;
-                for(int i=0; i<pathSize; i++)
-                {
-                    Eng3[i] = copyarray[i];
-                }
-                Eng3Start = Eng3[0];
-            }
-            else if(ui->trainselectBox1->currentText() == "Engine 4")
-            {
-                flag = 4;
-                Eng4 = new int[pathSize];
-                E4S = pathSize;
-
-                for(int i=0; i<pathSize; i++)
-                {
-                    ArSz = ArSz + trackLength(copyarray[i]);
-                }
-
-                i4 = ArSz * Eng4Speed;
-                for(int i=0; i<pathSize; i++)
-                {
-                    Eng4[i] = copyarray[i];
-                }
-                Eng4Start = Eng4[0];
-            }
-            else if(ui->trainselectBox1->currentText() == "Engine 5")
-            {
-                flag = 5;
-                Eng5 = new int[pathSize];
-                E5S = pathSize;
-
-                for(int i=0; i<pathSize; i++)
-                {
-                    ArSz = ArSz + trackLength(copyarray[i]);
-                }
-
-                i5 = ArSz * Eng5Speed;
-                for(int i=0; i<pathSize; i++)
-                {
-                    Eng5[i] = copyarray[i];
-                }
-                Eng5Start = Eng5[0];
             }
             }
 
             else if(trainsel == 2)
             {
-            if(ui->trainselectBox2->currentText() == "Engine 1")
-            {
-                flag = 1;
-             Eng1 = new int[pathSize];
-             E1S = pathSize;
 
-             for(int i=0; i<pathSize; i++)
-             {
-                 ArSz = ArSz + trackLength(copyarray[i]);
-             }
-
-             i1 = ArSz * Eng1Speed;
-             for(int i=0; i<pathSize; i++)
-             {
-                 Eng1[i] = copyarray[i];
-             }
-             Eng1Start = Eng1[0];
-            }
-            else if(ui->trainselectBox2->currentText() == "Engine 2")
+            if(ui->trainselectBox2->currentText() == "Engine 2")
             {
                 flag = 2;
                 Eng2 = new int[pathSize];
@@ -218,101 +122,13 @@ testInt++;
                     Eng2[i] = copyarray[i];
                 }
                 Eng2Start = Eng2[0];
-            }
-            else if(ui->trainselectBox2->currentText() == "Engine 3")
-            {
-                flag = 3;
-                Eng3 = new int[pathSize];
-                E3S = pathSize;
-
-                for(int i=0; i<pathSize; i++)
-                {
-                    ArSz = ArSz + trackLength(copyarray[i]);
-                }
-
-                i3 = ArSz * Eng3Speed;
-                for(int i=0; i<pathSize; i++)
-                {
-                    Eng3[i] = copyarray[i];
-                }
-                Eng3Start = Eng3[0];
-            }
-            else if(ui->trainselectBox2->currentText() == "Engine 4")
-            {
-                flag = 4;
-                Eng4 = new int[pathSize];
-                E4S = pathSize;
-
-                for(int i=0; i<pathSize; i++)
-                {
-                    ArSz = ArSz + trackLength(copyarray[i]);
-                }
-
-                i4 = ArSz * Eng4Speed;
-                for(int i=0; i<pathSize; i++)
-                {
-                    Eng4[i] = copyarray[i];
-                }
-                Eng4Start = Eng4[0];
-            }
-            else if(ui->trainselectBox2->currentText() == "Engine 5")
-            {
-                flag = 5;
-                Eng5 = new int[pathSize];
-                E5S = pathSize;
-
-                for(int i=0; i<pathSize; i++)
-                {
-                    ArSz = ArSz + trackLength(copyarray[i]);
-                }
-
-                i5 = ArSz * Eng5Speed;
-                for(int i=0; i<pathSize; i++)
-                {
-                    Eng5[i] = copyarray[i];
-                }
-                Eng5Start = Eng5[0];
-            }
+           }
+          
             }
             else if(trainsel == 3)
             {
-            if(ui->trainselectBox3->currentText() == "Engine 1")
-            {
-                flag = 1;
-             Eng1 = new int[pathSize];
-             E1S = pathSize;
-
-             for(int i=0; i<pathSize; i++)
-             {
-                 ArSz = ArSz + trackLength(copyarray[i]);
-             }
-
-             i1 = ArSz * Eng1Speed;
-             for(int i=0; i<pathSize; i++)
-             {
-                 Eng1[i] = copyarray[i];
-             }
-             Eng1Start = Eng1[0];
-            }
-            else if(ui->trainselectBox3->currentText() == "Engine 2")
-            {
-                flag = 2;
-                Eng2 = new int[pathSize];
-                E2S = pathSize;
-
-                for(int i=0; i<pathSize; i++)
-                {
-                    ArSz = ArSz + trackLength(copyarray[i]);
-                }
-
-                i2 = ArSz * Eng2Speed;
-                for(int i=0; i<pathSize; i++)
-                {
-                    Eng2[i] = copyarray[i];
-                }
-                Eng2Start = Eng2[0];
-            }
-            else if(ui->trainselectBox3->currentText() == "Engine 3")
+            
+            if(ui->trainselectBox3->currentText() == "Engine 3")
             {
                 flag = 3;
                 Eng3 = new int[pathSize];
@@ -329,101 +145,12 @@ testInt++;
                     Eng3[i] = copyarray[i];
                 }
                 Eng3Start = Eng3[0];
-            }
-            else if(ui->trainselectBox3->currentText() == "Engine 4")
-            {
-                flag = 4;
-                Eng4 = new int[pathSize];
-                E4S = pathSize;
-
-                for(int i=0; i<pathSize; i++)
-                {
-                    ArSz = ArSz + trackLength(copyarray[i]);
-                }
-
-                i4 = ArSz * Eng4Speed;
-                for(int i=0; i<pathSize; i++)
-                {
-                    Eng4[i] = copyarray[i];
-                }
-                Eng4Start = Eng4[0];
-            }
-            else if(ui->trainselectBox3->currentText() == "Engine 5")
-            {
-                flag = 5;
-                Eng5 = new int[pathSize];
-                E5S = pathSize;
-
-                for(int i=0; i<pathSize; i++)
-                {
-                    ArSz = ArSz + trackLength(copyarray[i]);
-                }
-
-                i5 = ArSz * Eng5Speed;
-                for(int i=0; i<pathSize; i++)
-                {
-                    Eng5[i] = copyarray[i];
-                }
-                Eng5Start = Eng5[0];
             }
             }
             else if(trainsel == 4)
             {
-            if(ui->trainselectBox4->currentText() == "Engine 1")
-            {
-                flag = 1;
-             Eng1 = new int[pathSize];
-             E1S = pathSize;
-
-             for(int i=0; i<pathSize; i++)
-             {
-                 ArSz = ArSz + trackLength(copyarray[i]);
-             }
-
-             i1 = ArSz * Eng1Speed;
-             for(int i=0; i<pathSize; i++)
-             {
-                 Eng1[i] = copyarray[i];
-             }
-             Eng1Start = Eng1[0];
-            }
-            else if(ui->trainselectBox4->currentText() == "Engine 2")
-            {
-                flag = 2;
-                Eng2 = new int[pathSize];
-                E2S = pathSize;
-
-                for(int i=0; i<pathSize; i++)
-                {
-                    ArSz = ArSz + trackLength(copyarray[i]);
-                }
-
-                i2 = ArSz * Eng2Speed;
-                for(int i=0; i<pathSize; i++)
-                {
-                    Eng2[i] = copyarray[i];
-                }
-                Eng2Start = Eng2[0];
-            }
-            else if(ui->trainselectBox4->currentText() == "Engine 3")
-            {
-                flag = 3;
-                Eng3 = new int[pathSize];
-                E3S = pathSize;
-
-                for(int i=0; i<pathSize; i++)
-                {
-                    ArSz = ArSz + trackLength(copyarray[i]);
-                }
-
-                i3 = ArSz * Eng3Speed;
-                for(int i=0; i<pathSize; i++)
-                {
-                    Eng3[i] = copyarray[i];
-                }
-                Eng3Start = Eng3[0];
-            }
-            else if(ui->trainselectBox4->currentText() == "Engine 4")
+            
+            if(ui->trainselectBox4->currentText() == "Engine 4")
             {
                 flag = 4;
                 Eng4 = new int[pathSize];
@@ -440,100 +167,12 @@ testInt++;
                     Eng4[i] = copyarray[i];
                 }
                 Eng4Start = Eng4[0];
-            }
-            else if(ui->trainselectBox4->currentText() == "Engine 5")
-            {
-                flag = 5;
-                Eng5 = new int[pathSize];
-                E5S = pathSize;
-
-                for(int i=0; i<pathSize; i++)
-                {
-                    ArSz = ArSz + trackLength(copyarray[i]);
-                }
-
-                i5 = ArSz * Eng5Speed;
-                for(int i=0; i<pathSize; i++)
-                {
-                    Eng5[i] = copyarray[i];
-                }
-                Eng5Start = Eng5[0];
             }
             }
             else if(trainsel == 5)
             {
-            if(ui->trainselectBox5->currentText() == "Engine 1")
-            { flag = 1;
-             Eng1 = new int[pathSize];
-             E1S = pathSize;
-
-             for(int i=0; i<pathSize; i++)
-             {
-                 ArSz = ArSz + trackLength(copyarray[i]);
-             }
-
-             i1 = ArSz * Eng1Speed;
-             for(int i=0; i<pathSize; i++)
-             {
-                 Eng1[i] = copyarray[i];
-             }
-             Eng1Start = Eng1[0];
-            }
-            else if(ui->trainselectBox5->currentText() == "Engine 2")
-            {
-                flag = 2;
-                Eng2 = new int[pathSize];
-                E2S = pathSize;
-
-                for(int i=0; i<pathSize; i++)
-                {
-                    ArSz = ArSz + trackLength(copyarray[i]);
-                }
-
-                i2 = ArSz * Eng2Speed;
-                for(int i=0; i<pathSize; i++)
-                {
-                    Eng2[i] = copyarray[i];
-                }
-                Eng2Start = Eng2[0];
-            }
-            else if(ui->trainselectBox5->currentText() == "Engine 3")
-            {
-                flag = 3;
-                Eng3 = new int[pathSize];
-                E3S = pathSize;
-
-                for(int i=0; i<pathSize; i++)
-                {
-                    ArSz = ArSz + trackLength(copyarray[i]);
-                }
-
-                i3 = ArSz * Eng3Speed;
-                for(int i=0; i<pathSize; i++)
-                {
-                    Eng3[i] = copyarray[i];
-                }
-                Eng3Start = Eng3[0];
-            }
-            else if(ui->trainselectBox5->currentText() == "Engine 4")
-            {
-                flag = 4;
-                Eng4 = new int[pathSize];
-                E4S = pathSize;
-
-                for(int i=0; i<pathSize; i++)
-                {
-                    ArSz = ArSz + trackLength(copyarray[i]);
-                }
-
-                i4 = ArSz * Eng4Speed;
-                for(int i=0; i<pathSize; i++)
-                {
-                    Eng4[i] = copyarray[i];
-                }
-                Eng4Start = Eng4[0];
-            }
-            else if(ui->trainselectBox5->currentText() == "Engine 5")
+            
+            if(ui->trainselectBox5->currentText() == "Engine 5")
             {
                 flag = 5;
                 Eng5 = new int[pathSize];
@@ -556,21 +195,22 @@ testInt++;
               int check = 0;
            check = checkPaths(attempt, islong);
 
-           if (attempt <= 1){
+           if (attempt <= 1) // Only do this on the final itteration of running Dijkstra's
+           {
            if(check == -1)
                cout << "no issues detected. Finalizing path" << endl;
-           else if (check != -1 && islong == 0)
+           else if (check != -1 && islong == 0) //if the route is a short route, then we attempt to reroute without a delay.
               {
 
                reroute(trainsel, check);
-               cout << " rerouted!" << endl;
+               //cout << " rerouted!" << endl;
                tableOperation(backupPath, trainsel, testInt, 0, 0);
                return;
 
                //insert code to reroute or slow down train here. I have the rerouting code partially working, but the throttle controls are currently unavailable, so am leaving this blank for now. The rerouting function is currently unconnected.
 
               }
-           else if (check != -1 && islong == 1)
+           else if (check != -1 && islong == 1) //Upon the failure of a long route, delay and try again
            {
                if(trainsel == 1)
                {
@@ -809,128 +449,46 @@ testInt++;
 
     int itt2 = 0;
 
-    //Demo output code: Disable the section below to use.
+    //The primary output has moved to the timer function. This merely outputs the start location of the active engine.
     if(flag == 1)
     {
-        //ui->routeInfo1->show();
+
         cout << tmpstr.toStdString() << " starting at location " << oursTotheirs(comparisonArray[0]).toStdString() << endl;
-//        //usleep(50000);
-//        for(;comparisonArray.size() > 0;comparisonArray.erase(comparisonArray.begin()))
-//        {
-//            if(comparisonArray[0] == comparisonArray[1])
-//            {
-//                cout << tmpstr.toStdString()<< " still at track segment " << oursTotheirs(comparisonArray[0]).toStdString() << endl;
-//            }
-//            else
-//            {
-//                QString str = oursTotheirs(comparisonArray[0]);
-//                QString str2 = oursTotheirs(comparisonArray[1]);
-//                checkSwitches(str, str2);
-//                cout << tmpstr.toStdString() << " moved to track segment " << oursTotheirs(comparisonArray[1]).toStdString() << endl;
-//            }
-//            qApp->processEvents();
-//            //usleep(50000);
-//        }
 
 
     }
     else if (flag == 2)
     {
 
-        //ui->routeInfo2->show();
+       
         cout << tmpstr.toStdString()<< " starting at location " << oursTotheirs(comparisonArray2[0]).toStdString() << endl;
-//        usleep(50000);
-//        for(;comparisonArray2.size() > 0;comparisonArray2.erase(comparisonArray2.begin()))
-//        {
-//            if(comparisonArray2[0] == comparisonArray2[1])
-//            {
-//                cout << tmpstr.toStdString()<< " still at track segment " << oursTotheirs(comparisonArray2[0]).toStdString() << endl;
-//            }
-//            else
-//            {
-//                QString str = oursTotheirs(comparisonArray2[0]);
-//                QString str2 = oursTotheirs(comparisonArray2[1]);
-//                checkSwitches(str, str2);
-//                cout << tmpstr.toStdString()<< " moved to track segment " << oursTotheirs(comparisonArray2[1]).toStdString() << endl;
-//            }
-//            qApp->processEvents();
-//            usleep(50000);
-//        }
+
 
     }
     else if (flag == 3)
     {
 
-       // ui->routeInfo3->show();
+     
         cout << tmpstr.toStdString()<< " starting at location " << oursTotheirs(comparisonArray3[0]).toStdString() << endl;
-//        usleep(50000);
-//        for(;comparisonArray3.size() > 0;comparisonArray3.erase(comparisonArray3.begin()))
-//        {
-//            if(comparisonArray3[0] == comparisonArray3[1])
-//            {
-//                cout << tmpstr.toStdString()<< " still at track segment " << oursTotheirs(comparisonArray3[0]).toStdString() << endl;
-//            }
-//            else
-//            {
-//                QString str = oursTotheirs(comparisonArray3[0]);
-//                QString str2 = oursTotheirs(comparisonArray3[1]);
-//                checkSwitches(str, str2);
-//                cout << tmpstr.toStdString()<< " moved to track segment " << oursTotheirs(comparisonArray3[1]).toStdString() << endl;
-//            }
-//            qApp->processEvents();
-//            usleep(50000);
-       // }
 
     }
     else if (flag == 4)
     {
 
-        //ui->routeInfo4->show();
+        
         cout << tmpstr.toStdString()<< " starting at location " << oursTotheirs(comparisonArray4[0]).toStdString() << endl;
-//        usleep(50000);
-//        for(;comparisonArray4.size() > 0;comparisonArray4.erase(comparisonArray4.begin()))
-//        {
-//            if(comparisonArray4[0] == comparisonArray4[1])
-//            {
-//                cout << tmpstr.toStdString()<< " still at track segment " << oursTotheirs(comparisonArray4[0]).toStdString() << endl;
-//            }
-//            else
-//            {
-//                QString str = oursTotheirs(comparisonArray4[0]);
-//                QString str2 = oursTotheirs(comparisonArray4[1]);
-//                checkSwitches(str, str2);
-//                cout << tmpstr.toStdString()<< " moved to track segment " << oursTotheirs(comparisonArray4[1]).toStdString() << endl;
-//            }
-//            qApp->processEvents();
-//            usleep(50000);
-       // }
+
 
     }
     else if (flag == 5)
     {
 
-        //ui->routeInfo5->show();
+  
         cout << tmpstr.toStdString()<< " starting at location " << oursTotheirs(comparisonArray5[0]).toStdString() << endl;
-//        usleep(50000);
-//        for(;comparisonArray5.size() > 0;comparisonArray5.erase(comparisonArray5.begin()))
-//        {
-//            if(comparisonArray5[0] == comparisonArray5[1])
-//            {
-//                cout << tmpstr.toStdString()<< " still at track segment " << oursTotheirs(comparisonArray5[0]).toStdString() << endl;
-//            }
-//            else
-//            {
-//                QString str = oursTotheirs(comparisonArray5[0]);
-//                QString str2 = oursTotheirs(comparisonArray5[1]);
-//                checkSwitches(str, str2);
-//                cout << tmpstr.toStdString()<< " moved to track segment " << oursTotheirs(comparisonArray5[1]).toStdString() << endl;
-//            }
-//            qApp->processEvents();
-//            usleep(50000);
+
         }
 
-    //}
-
+    
 
 
 
@@ -1045,7 +603,7 @@ testInt++;
 
           //int nextTab2 = nextTab;
 
-          while(q.next())
+          while(q.next()) //continue reading from SQL table.
           {
               currenttab = q.value(0).toInt();
               nextTab = q.value(1).toInt();
