@@ -6,6 +6,8 @@
 //Function to check and toggle switches as needed
 void MainWindow::checkSwitches(QString cN, QString nN)
 {
+    
+    //This function is a lookup table function. You pass in two nodes. If there is a switch between those nodes, a switch gets set. Otherwise, everything continues on.
     if (cN == "36")
     {
         if(nN == "35")
@@ -405,7 +407,7 @@ void MainWindow::checkSwitches(QString cN, QString nN)
     return;
 }
 
-void MainWindow::setSwitch(QString sN, QString sM)
+void MainWindow::setSwitch(QString sN, QString sM) //This code sets the switch.
 {
     QSqlQuery q(ldb);
     q.prepare("UPDATE switches SET position=? WHERE switchID=?");
