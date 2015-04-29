@@ -43,6 +43,9 @@ public:
     QMenu* menu;
     QAction* savefile;
     QAction* loadfile;
+    QAction* toggleControl;
+    QAction* Occtest; //occupancy test
+    QAction* clearAll;
     QAction* traininfo;
     QAction* throttle;
     QAction* pathinfo;
@@ -62,16 +65,24 @@ public:
 private:
     Ui::MainWindow *ui;
     QSqlDatabase ldb;
-    int* Eng1;
+    int* Eng1; //these 5 values deal with route planning
     int* Eng2;
     int* Eng3;
     int* Eng4;
     int* Eng5;
     int E1S;
-    int E2S;
+    int E2S; //these five values list the size of Eng1-Eng5
     int E3S;
     int E4S;
     int E5S;
+    int occupyitt; //Itterator to check occupancy wait time
+    int fakeoccupancy;
+    int pathcomplete1;
+    int pathcomplete2;
+    int pathcomplete3;
+    int pathcomplete4;
+    int pathcomplete5;
+    int ready;
     int Eng1Start;
     int Eng2Start;
     int Eng3Start;
@@ -94,6 +105,7 @@ private:
     std::vector<int> comparisonArray5;
     std::list<vertex_t> backupPath;
     QString tmpstr;
+    int controlBit;
 
 private slots:
 
@@ -107,6 +119,9 @@ private slots:
     void occupiedNode();
     void destNode();
     void saveText();
+    void toggleBit();
+    void occupy();
+    void clearChecks();
     void loadText();
     void stopTimer();
     void blockDest();
