@@ -120,7 +120,7 @@ private slots:
     void destNode();
     void saveText();
     void toggleBit();
-    void occupy();
+   // void occupy();
     void clearChecks();
     void loadText();
     void stopTimer();
