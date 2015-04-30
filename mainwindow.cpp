@@ -141,7 +141,7 @@ MainWindow::MainWindow(QWidget *parent) :
     toggleControl = new QAction("Toggle Control", this);
     savefile = new QAction("Save config", this);
     loadfile = new QAction("Load config", this);
-    Occtest = new QAction("Occupancy Test", this);
+   // Occtest = new QAction("Occupancy Test", this);
     connect(loadfile, SIGNAL(triggered()), this, SLOT(loadText()));
     ui->menuCPE_453_Team_1A->addAction(loadfile);
     ui->menuCPE_453_Team_1A->addAction(savefile);
@@ -172,8 +172,8 @@ MainWindow::MainWindow(QWidget *parent) :
     clearAll = new QAction("Clear checkboxes", this);
     connect(clearAll, SIGNAL(triggered()), this, SLOT(clearChecks()));
     menu->addAction(clearAll);
-    connect (Occtest, SIGNAL(triggered()), this, SLOT(occupy()));
-            menu->addAction(Occtest);
+    //connect (Occtest, SIGNAL(triggered()), this, SLOT(occupy()));
+            //menu->addAction(Occtest);
 
     ui->ModeEdit->setText("Scheduler Control");
     ui->stopButton->setDisabled(true);
