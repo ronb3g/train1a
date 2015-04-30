@@ -74,8 +74,17 @@ MainWindow::MainWindow(QWidget *parent) :
         fakeoccupancy = 0;
         occupyitt = 0;
 
+    //*****local database*****//
     ldb = QSqlDatabase::addDatabase("QSQLITE", "ldb"); //local database initialization
     ldb.setDatabaseName( "train.db" );
+    //*****pavelow database*****//
+    //ldb = QSqlDatabase::addDatabase("QMYSQL", "ldb");
+    //ldb.setHostName( "pavelow.eng.uah.edu" );
+    //ldb.setPort( 33150 );
+    //ldb.setDatabaseName( "train" );
+    //ldb.setUserName("root");
+    //ldb.setPassword("oaldehay");
+    
     if(!ldb.open())
        { qDebug() << ldb.lastError();}
 
