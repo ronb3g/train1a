@@ -20,6 +20,141 @@
    <layout class="QGridLayout" name="gridLayout_3">
     <item row="0" column="0">
      <layout class="QGridLayout" name="gridLayout_2">
+      <item row="0" column="1">
+       <widget class="QPushButton" name="startButton">
+        <property name="styleSheet">
+         <string notr="true">background-color: rgba(255, 255, 255, 0);</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QPushButton" name="stopButton">
+        <property name="styleSheet">
+         <string notr="true">background-color: rgba(255, 255, 255, 0);</string>
+        </property>
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <spacer name="verticalSpacer_3">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item row="1" column="0">
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_7">
+          <item>
+           <widget class="QPushButton" name="trainimageButton1">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QTextBrowser" name="routeInfo1">
+            <property name="styleSheet">
+             <string notr="true">border-color: rgb(255, 255, 255);
+background-color: rgb(211, 209, 209);</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_6">
+          <item>
+           <widget class="QPushButton" name="trainimageButton2">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QTextBrowser" name="routeInfo2">
+            <property name="styleSheet">
+             <string notr="true">border-color: rgb(255, 255, 255);
+background-color: rgb(211, 209, 209);</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_5">
+          <item>
+           <widget class="QPushButton" name="trainimageButton3">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QTextBrowser" name="routeInfo3">
+            <property name="styleSheet">
+             <string notr="true">border-color: rgb(255, 255, 255);
+background-color: rgb(211, 209, 209);</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <widget class="QPushButton" name="trainimageButton4">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QTextBrowser" name="routeInfo4">
+            <property name="styleSheet">
+             <string notr="true">border-color: rgb(255, 255, 255);
+background-color: rgb(211, 209, 209);</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <item>
+           <widget class="QPushButton" name="trainimageButton5">
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QTextBrowser" name="routeInfo5">
+            <property name="autoFillBackground">
+             <bool>false</bool>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">border-color: rgb(255, 255, 255);
+background-color: rgb(211, 209, 209);</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
       <item row="0" column="0">
        <layout class="QGridLayout" name="gridLayout">
         <item row="3" column="4">
@@ -178,6 +313,9 @@ background-color: rgb(211, 209, 209);</string>
           <property name="autoExclusive">
            <bool>false</bool>
           </property>
+          <attribute name="buttonGroup">
+           <string notr="true">buttonGroup_5</string>
+          </attribute>
          </widget>
         </item>
         <item row="2" column="0">
@@ -442,6 +580,9 @@ font: 75 12pt &quot;Jomolhari&quot;;</string>
           <property name="autoExclusive">
            <bool>false</bool>
           </property>
+          <attribute name="buttonGroup">
+           <string notr="true">buttonGroup_3</string>
+          </attribute>
          </widget>
         </item>
         <item row="2" column="4">
@@ -834,6 +975,9 @@ background-color: rgb(211, 209, 209);</string>
           <property name="autoExclusive">
            <bool>false</bool>
           </property>
+          <attribute name="buttonGroup">
+           <string notr="true">buttonGroup_4</string>
+          </attribute>
          </widget>
         </item>
         <item row="5" column="9">
@@ -946,6 +1090,9 @@ background-color: rgb(255, 255, 255);</string>
           <property name="autoExclusive">
            <bool>false</bool>
           </property>
+          <attribute name="buttonGroup">
+           <string notr="true">buttonGroup</string>
+          </attribute>
          </widget>
         </item>
         <item row="1" column="4">
@@ -1028,6 +1175,9 @@ background-color: rgb(211, 209, 209);</string>
           <property name="autoExclusive">
            <bool>false</bool>
           </property>
+          <attribute name="buttonGroup">
+           <string notr="true">buttonGroup</string>
+          </attribute>
          </widget>
         </item>
         <item row="5" column="4">
@@ -1307,6 +1457,9 @@ background-color: rgb(211, 209, 209);</string>
           <property name="autoExclusive">
            <bool>false</bool>
           </property>
+          <attribute name="buttonGroup">
+           <string notr="true">buttonGroup_2</string>
+          </attribute>
          </widget>
         </item>
         <item row="1" column="3">
@@ -1601,6 +1754,9 @@ background-color: rgb(255, 255, 255);</string>
           <property name="autoExclusive">
            <bool>false</bool>
           </property>
+          <attribute name="buttonGroup">
+           <string notr="true">buttonGroup_2</string>
+          </attribute>
          </widget>
         </item>
         <item row="4" column="6" alignment="Qt::AlignHCenter">
@@ -1614,6 +1770,9 @@ background-color: rgb(255, 255, 255);</string>
           <property name="autoExclusive">
            <bool>false</bool>
           </property>
+          <attribute name="buttonGroup">
+           <string notr="true">buttonGroup_4</string>
+          </attribute>
          </widget>
         </item>
         <item row="5" column="6" alignment="Qt::AlignHCenter">
@@ -1627,6 +1786,9 @@ background-color: rgb(255, 255, 255);</string>
           <property name="autoExclusive">
            <bool>false</bool>
           </property>
+          <attribute name="buttonGroup">
+           <string notr="true">buttonGroup_5</string>
+          </attribute>
          </widget>
         </item>
         <item row="3" column="6" alignment="Qt::AlignHCenter">
@@ -1640,6 +1802,9 @@ background-color: rgb(255, 255, 255);</string>
           <property name="autoExclusive">
            <bool>false</bool>
           </property>
+          <attribute name="buttonGroup">
+           <string notr="true">buttonGroup_3</string>
+          </attribute>
          </widget>
         </item>
         <item row="0" column="5">
@@ -1701,140 +1866,19 @@ font: 75 12pt &quot;Jomolhari&quot;;</string>
           </property>
          </widget>
         </item>
-       </layout>
-      </item>
-      <item row="0" column="1">
-       <widget class="QPushButton" name="startButton">
-        <property name="styleSheet">
-         <string notr="true">background-color: rgba(255, 255, 255, 0);</string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="1">
-       <widget class="QPushButton" name="stopButton">
-        <property name="styleSheet">
-         <string notr="true">background-color: rgba(255, 255, 255, 0);</string>
-        </property>
-        <property name="text">
-         <string/>
-        </property>
-       </widget>
-      </item>
-      <item row="2" column="0">
-       <spacer name="verticalSpacer_3">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>20</width>
-          <height>40</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item row="1" column="0">
-       <layout class="QVBoxLayout" name="verticalLayout_2">
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_7">
-          <item>
-           <widget class="QPushButton" name="trainimageButton1">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QTextBrowser" name="routeInfo1">
-            <property name="styleSheet">
-             <string notr="true">border-color: rgb(255, 255, 255);
-background-color: rgb(211, 209, 209);</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_6">
-          <item>
-           <widget class="QPushButton" name="trainimageButton2">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QTextBrowser" name="routeInfo2">
-            <property name="styleSheet">
-             <string notr="true">border-color: rgb(255, 255, 255);
-background-color: rgb(211, 209, 209);</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_5">
-          <item>
-           <widget class="QPushButton" name="trainimageButton3">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QTextBrowser" name="routeInfo3">
-            <property name="styleSheet">
-             <string notr="true">border-color: rgb(255, 255, 255);
-background-color: rgb(211, 209, 209);</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_2">
-          <item>
-           <widget class="QPushButton" name="trainimageButton4">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QTextBrowser" name="routeInfo4">
-            <property name="styleSheet">
-             <string notr="true">border-color: rgb(255, 255, 255);
-background-color: rgb(211, 209, 209);</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" name="horizontalLayout_4">
-          <item>
-           <widget class="QPushButton" name="trainimageButton5">
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QTextBrowser" name="routeInfo5">
-            <property name="autoFillBackground">
-             <bool>false</bool>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">border-color: rgb(255, 255, 255);
-background-color: rgb(211, 209, 209);</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
+        <item row="0" column="8" colspan="2">
+         <widget class="QLineEdit" name="ModeEdit">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="acceptDrops">
+           <bool>false</bool>
+          </property>
+          <property name="styleSheet">
+           <string notr="true">border-color: rgb(255, 255, 255);
+background-color: rgb(255, 255, 255);</string>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
@@ -1884,4 +1928,31 @@ background-color: rgb(211, 209, 209);</string>
  <layoutdefault spacing="6" margin="11"/>
  <resources/>
  <connections/>
+ <buttongroups>
+  <buttongroup name="buttonGroup">
+   <property name="exclusive">
+    <bool>true</bool>
+   </property>
+  </buttongroup>
+  <buttongroup name="buttonGroup_2">
+   <property name="exclusive">
+    <bool>true</bool>
+   </property>
+  </buttongroup>
+  <buttongroup name="buttonGroup_3">
+   <property name="exclusive">
+    <bool>true</bool>
+   </property>
+  </buttongroup>
+  <buttongroup name="buttonGroup_4">
+   <property name="exclusive">
+    <bool>true</bool>
+   </property>
+  </buttongroup>
+  <buttongroup name="buttonGroup_5">
+   <property name="exclusive">
+    <bool>true</bool>
+   </property>
+  </buttongroup>
+ </buttongroups>
 </ui>
